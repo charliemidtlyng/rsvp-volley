@@ -14,14 +14,16 @@ apply plugin: 'idea'
 apply plugin: 'groovy'
 apply plugin: 'spring-boot'
 
-group = 'no.charlie'
-archivesBaseName = 'rsvp-app'
-version = '0.1'
+jar {
+    group = 'no.charlie'
+    baseName = 'rsvp-app'
+    version = '0.1'
+}
 
-def groovyVersion = '2.3.7'
-
+mainClassName = "no.charlie.rsvp.Application"
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
+def groovyVersion = '2.3.7'
 
 
 
@@ -42,4 +44,17 @@ dependencies {
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.2'
+}
+
+task stage(type: Copy, dependsOn: [clean, build]) {
+    from jar.archivePath
+    into project.rootDir
+    rename {
+        'app.jar'
+    }
+}
+stage.mustRunAfter(clean)
+
+clean << {
+    project.file('app.jar').delete()
 }

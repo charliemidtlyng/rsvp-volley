@@ -1,0 +1,45 @@
+repositories {
+    mavenCentral()
+}
+    
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.0.RELEASE")
+    }
+}
+apply plugin: 'idea'
+apply plugin: 'groovy'
+apply plugin: 'spring-boot'
+
+group = 'no.charlie'
+archivesBaseName = 'rsvp-app'
+version = '0.1'
+
+def groovyVersion = '2.3.7'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+
+
+dependencies {
+    compile "org.codehaus.groovy:groovy-all:${groovyVersion}",
+            'org.springframework.boot:spring-boot-starter-web',
+            'org.springframework.boot:spring-boot-starter-jersey',
+            'org.springframework:spring-web',
+            'org.slf4j:log4j-over-slf4j:1.7.7',
+            'com.fasterxml.jackson.core:jackson-core:2.4.3',
+            'com.fasterxml.jackson.core:jackson-databind:2.4.3',
+            'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.4.3',
+            'com.fasterxml.jackson.datatype:jackson-datatype-joda:2.4.3',
+            'com.fasterxml.jackson.datatype:jackson-datatype-hibernate4:2.4.3'
+            
+}
+
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.2'
+}

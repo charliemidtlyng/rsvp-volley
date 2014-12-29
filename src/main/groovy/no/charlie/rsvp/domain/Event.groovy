@@ -12,8 +12,8 @@ import org.joda.time.DateTime
 @RsvpEntity
 class Event {
     @GeneratedId Long id
-    @PDateTime DateTime start
-    @PDateTime DateTime end
+    @PDateTime DateTime startTime
+    @PDateTime DateTime endTime
     @PDateTime DateTime regStart
     @PDateTime DateTime regEnd
 

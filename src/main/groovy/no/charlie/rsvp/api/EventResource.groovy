@@ -61,10 +61,10 @@ class EventResource {
 
 
     Event validateEvent(Map map) {
-        validateProperties(map, 'subject', 'start', 'end', 'regStart', 'regEnd', 'creator', 'location')
+        validateProperties(map, 'subject', 'startTime', 'endTime', 'regStart', 'regEnd', 'creator', 'location')
         new Event(
-                start: toDateTime(map.start),
-                end: map.end ? toDateTime(map.end) : null,
+                startTime: toDateTime(map.startTime),
+                endTime: map.endTime ? toDateTime(map.endTime) : null,
                 regStart: map.regStart ? toDateTime(map.regStart) : null,
                 regEnd: map.regEnd ? toDateTime(map.regEnd) : null,
                 creator: map.creator,

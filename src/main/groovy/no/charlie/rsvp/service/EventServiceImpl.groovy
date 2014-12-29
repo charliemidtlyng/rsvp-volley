@@ -58,7 +58,7 @@ class EventServiceImpl implements EventService {
     }
 
     List<Event> findUpcomingEvents() {
-        return eventRepository.findByEndGreaterThan(new DateTime())
+        return eventRepository.findByEndTimeGreaterThan(new DateTime())
     }
 
     Event findEventById(Long eventId) {

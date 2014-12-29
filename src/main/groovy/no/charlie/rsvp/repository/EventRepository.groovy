@@ -9,5 +9,5 @@ import org.springframework.data.repository.CrudRepository
  */
 interface EventRepository extends CrudRepository<Event, Long>, EventRepositoryCustom {
 
-    List<Event> findByEndGreaterThan(DateTime fromDate)
+    List<Event> findByEndTimeGreaterThan(DateTime fromDate)
 }

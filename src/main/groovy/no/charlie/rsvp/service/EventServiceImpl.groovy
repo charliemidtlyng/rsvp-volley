@@ -37,13 +37,6 @@ class EventServiceImpl implements EventService {
         return eventRepository.save(event)
     }
 
-    def validateEventIsOpen(Event event) {
-        def currentTime = DateTime.now();
-        if (currentTime.isBefore(event.regStart) || currentTime.isAfter(event.regEnd)) {
-            throw new BadRequestException("Not possible to register for event at $currentTime. Register opens $event.regStart and closes $event.regEnd")
-        }
-    }
-
     Event removeParticipantFromEvent(Long eventId, Long participantId) {
         Event event = eventRepository.findWithPreFetch(eventId);
         validateEventIsOpen(event)
@@ -69,7 +62,15 @@ class EventServiceImpl implements EventService {
         eventRepository.delete(eventId)
     }
 
-    private History createHistory(Event event, Participant p, Change change) {
+    private static void validateEventIsOpen(Event event) {
+        def currentTime = DateTime.now();
+        if (currentTime.isBefore(event.regStart) || currentTime.isAfter(event.regEnd)) {
+            throw new BadRequestException("Not possible to register for event at $currentTime. Register opens $event.regStart and closes $event.regEnd")
+        }
+    }
+
+
+    private static History createHistory(Event event, Participant p, Change change) {
         new History(
                 event: event,
                 change: change,

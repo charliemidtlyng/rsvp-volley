@@ -34,7 +34,7 @@ class EventResource {
 
     @POST
     Response createEvent(Map valueMap) {
-        Event event = validateEvent(valueMap)
+        Event event = parseEvent(valueMap)
         return Response.accepted().entity(eventService.createEvent(event)).build()
     }
 
@@ -49,7 +49,7 @@ class EventResource {
     @POST
     @Path("/{id}/register")
     Response register(@PathParam('id') Long eventId, Map valueMap) {
-        Participant p = validateParticipant(valueMap)
+        Participant p = parseParticipant(valueMap)
         return Response.accepted().entity(eventService.addParticipantToEvent(eventId, p)).build()
     }
 
@@ -60,7 +60,7 @@ class EventResource {
     }
 
 
-    Event validateEvent(Map map) {
+    static Event parseEvent(Map map) {
         validateProperties(map, 'subject', 'startTime', 'endTime', 'regStart', 'regEnd', 'creator', 'location')
         new Event(
                 startTime: toDateTime(map.startTime),
@@ -73,6 +73,11 @@ class EventResource {
                 description: map.description,
                 maxNumber: map.maxNumber ? map.maxNumber : Integer.MAX_VALUE)
 
+    }
+
+    static Participant parseParticipant(Map map) {
+        validateProperties(map, 'name')
+        new Participant(name: map.name, email: map.email)
     }
 
     private static DateTime toDateTime(String stringValue) {
@@ -90,8 +95,5 @@ class EventResource {
         }
     }
 
-    Participant validateParticipant(Map map) {
-        validateProperties(map, 'name')
-        new Participant(name: map.name, email: map.email)
-    }
+
 }

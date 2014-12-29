@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -Ddatabase.url=$DATABASE_URL --spring.profiles.active=prod -jar app.jar
+web: java $JAVA_OPTS -Ddatabase.url=$DATABASE_URL -jar app.jar --spring.profiles.active=prod

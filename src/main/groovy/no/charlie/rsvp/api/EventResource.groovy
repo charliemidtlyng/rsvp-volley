@@ -2,7 +2,9 @@ package no.charlie.rsvp.api
 
 import no.charlie.rsvp.domain.Event
 import no.charlie.rsvp.domain.Participant
+import no.charlie.rsvp.service.EventService
 import org.joda.time.DateTime
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 import javax.ws.rs.*
@@ -17,40 +19,79 @@ import javax.ws.rs.core.Response
 @Path("/events")
 class EventResource {
 
-    List<Event> events = createEvents()
-
-    List<Event> createEvents() {
-        [new Event(
-                id: 1L,
-                start: new DateTime(),
-                end: new DateTime(),
-                creator: new Participant(name: "Charlie", email: "charlie.midtlyng@gmail.com"),
-                location: "Vallhall",
-                subject: "Trening",
-                description: "Oppmøte 19:45!",
-                limit: 15
-
-        )]
-    }
+    @Autowired EventService eventService
 
     @GET
     Response events() {
-        return Response.ok().entity(events).build()
+        return Response.ok().entity(eventService.findUpcomingEvents()).build()
+    }
+
+    @GET
+    @Path("/{eventId}")
+    Response eventById(@PathParam('eventId') Long eventId) {
+        return Response.ok().entity(eventService.findEventById(eventId)).build()
     }
 
     @POST
-    @Path("/{id}/attend")
-    Response attend(@PathParam("id") Long eventId, Map valueMap) {
-        addToEvents(valueMap);
-        return Response.ok().entity(events).build()
+    Response createEvent(Map valueMap) {
+        Event event = validateEvent(valueMap)
+        return Response.accepted().entity(eventService.createEvent(event)).build()
     }
 
-    def addToEvents(Map map) {
-        if (map && map.name) {
-            def participant = new Participant(name: map.name, email: map.email)
-            events.first().participants.add(participant)
-        } else {
-            throw new BadRequestException("Name is missing!")
+
+    @DELETE
+    @Path("/{eventId}")
+    Response deleteEvent(@PathParam('eventId') Long eventId) {
+        eventService.deleteEvent(eventId)
+        return Response.accepted().build()
+    }
+
+    @POST
+    @Path("/{id}/register")
+    Response register(@PathParam('id') Long eventId, Map valueMap) {
+        Participant p = validateParticipant(valueMap)
+        return Response.accepted().entity(eventService.addParticipantToEvent(eventId, p)).build()
+    }
+
+    @DELETE
+    @Path("/{eventId}/register/{participantId}")
+    Response unregister(@PathParam('eventId') Long eventId, @PathParam('participantId') Long participantId) {
+        return Response.accepted().entity(eventService.removeParticipantFromEvent(eventId, participantId)).build()
+    }
+
+
+    Event validateEvent(Map map) {
+        validateProperties(map, 'subject', 'start', 'end', 'regStart', 'regEnd', 'creator', 'location')
+        new Event(
+                start: toDateTime(map.start),
+                end: map.end ? toDateTime(map.end) : null,
+                regStart: map.regStart ? toDateTime(map.regStart) : null,
+                regEnd: map.regEnd ? toDateTime(map.regEnd) : null,
+                creator: map.creator,
+                location: map.location,
+                subject: map.subject,
+                description: map.description,
+                maxNumber: map.maxNumber ? map.maxNumber : Integer.MAX_VALUE)
+
+    }
+
+    private static DateTime toDateTime(String stringValue) {
+        DateTime.parse(stringValue)
+    }
+
+    static Boolean validateProperties(Map map, String... properties) {
+        if (!map) {
+            throw new BadRequestException("Missing json?")
         }
+        properties.each {
+            if (!map.containsKey(it)) {
+                throw new BadRequestException("$it is missing!")
+            }
+        }
+    }
+
+    Participant validateParticipant(Map map) {
+        validateProperties(map, 'name')
+        new Participant(name: map.name, email: map.email)
     }
 }

@@ -7,3 +7,7 @@ Må ha:
 - Påmelding -> Reserveliste hvis fullt
 - Epostutsending ved opprettelse
 - Epostutsending ved ledig plass
+
+
+Starte opp lokalt
+gw bootRun -Pprofile=dev

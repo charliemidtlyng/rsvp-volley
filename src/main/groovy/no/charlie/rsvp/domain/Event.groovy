@@ -1,25 +1,42 @@
 package no.charlie.rsvp.domain
 
+import no.charlie.rsvp.domain.Annotations.GeneratedId
+import no.charlie.rsvp.domain.Annotations.OneToManySubselect
+import no.charlie.rsvp.domain.Annotations.PDateTime
+import no.charlie.rsvp.domain.Annotations.RsvpEntity
 import org.joda.time.DateTime
 
 /**
  * @author Charlie Midtlyng (charlie.midtlyng@BEKK.no)
  */
+@RsvpEntity
 class Event {
-    long id
-    DateTime start
-    DateTime end
-    DateTime regStart
-    DateTime regEnd
+    @GeneratedId Long id
+    @PDateTime DateTime start
+    @PDateTime DateTime end
+    @PDateTime DateTime regStart
+    @PDateTime DateTime regEnd
 
-    Participant creator
+    String creator
     String location
     String subject
     String description
-    Integer limit = Integer.MAX_VALUE
+    Integer maxNumber = Integer.MAX_VALUE
 
-    Collection<Participant> participants = []
-    Collection<Participant> reserveList = []
-    Collection<History> history = []
+    @OneToManySubselect Set<Participant> participants = []
+    @OneToManySubselect Set<History> history = []
+
+    Event fetchMainCollections() {
+        participants.size()
+        history.size()
+        this
+    }
+
+    Event updateParticipants() {
+        participants.eachWithIndex { Participant entry, int index ->
+            entry.reserve = index >= maxNumber
+        }
+        this
+    }
 
 }

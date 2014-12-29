@@ -29,7 +29,7 @@ class JsonFeature implements Feature {
         ObjectMapper mapper = new ObjectMapper()
         mapper.registerModule(new JodaModule())
         mapper.registerModule(new RsvpJodaModule())
-//        mapper.registerModule(new Hibernate4Module())
+        mapper.registerModule(new Hibernate4Module())
         AnnotationIntrospector primary = new JacksonAnnotationIntrospector()
         AnnotationIntrospector secondary = new JaxbAnnotationIntrospector(mapper.getTypeFactory())
         AnnotationIntrospector introspector = new AnnotationIntrospectorPair(primary, secondary)

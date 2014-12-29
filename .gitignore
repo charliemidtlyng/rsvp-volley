@@ -3,3 +3,4 @@ target
 *.idea
 build/
 out
+app.jar

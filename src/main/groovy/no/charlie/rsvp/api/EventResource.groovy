@@ -21,8 +21,15 @@ class EventResource {
 
     @Autowired EventService eventService
 
+
     @GET
     Response events() {
+        return Response.ok().entity(eventService.findAllEvents()).build()
+    }
+
+    @GET
+    @Path("/upcoming")
+    Response upcomingEvents() {
         return Response.ok().entity(eventService.findUpcomingEvents()).build()
     }
 

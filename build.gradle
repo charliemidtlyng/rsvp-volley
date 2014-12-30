@@ -53,6 +53,16 @@ dependencies {
 
 }
 
+idea {
+    module {
+        excludeDirs += file('frontend/node_modules')
+        excludeDirs += file('frontend/bower_components')
+        excludeDirs += file('frontend/dist')
+        excludeDirs += file('frontend/build')
+        excludeDirs += file('src/main/resources/app/static/main.js')
+        excludeDirs += file('src/main/resources/app/static/main.css')
+    }
+}
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.2'

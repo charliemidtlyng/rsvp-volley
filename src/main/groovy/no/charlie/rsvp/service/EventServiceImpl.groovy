@@ -50,6 +50,10 @@ class EventServiceImpl implements EventService {
         return eventRepository.save(event)
     }
 
+    List<Event> findAllEvents() {
+        return eventRepository.findAll()
+    }
+
     List<Event> findUpcomingEvents() {
         return eventRepository.findByEndTimeGreaterThan(new DateTime())
     }

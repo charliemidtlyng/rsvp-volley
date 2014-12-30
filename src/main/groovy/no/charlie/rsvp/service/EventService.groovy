@@ -14,6 +14,8 @@ interface EventService {
 
     Event removeParticipantFromEvent(Long eventId, Long participantId)
 
+    List<Event> findAllEvents()
+
     List<Event> findUpcomingEvents()
 
     Event findEventById(Long eventId)

@@ -11,3 +11,6 @@ Må ha:
 
 Starte opp lokalt
 gw bootRun -Pprofile=dev
+
+Bygge frontend:
+cd frontend && npm install && gulp deploy

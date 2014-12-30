@@ -8,7 +8,6 @@ import org.hibernate.annotations.FetchMode
 import javax.persistence.FetchType
 import javax.persistence.OneToMany
 import javax.persistence.OrderBy
-import javax.persistence.OrderColumn
 
 import static javax.persistence.CascadeType.MERGE
 import static javax.persistence.CascadeType.PERSIST
@@ -20,7 +19,8 @@ import static javax.persistence.CascadeType.REMOVE
 @OneToMany(
         fetch = FetchType.LAZY,
         cascade = [PERSIST, REMOVE, MERGE],
-        mappedBy = 'event'
+        mappedBy = 'event',
+        orphanRemoval = true
 )
 @Fetch(FetchMode.SUBSELECT)
 @JsonManagedReference

@@ -23,7 +23,7 @@ var NewEvent = React.createClass({
     },
     createEvent: function (event) {
         event.preventDefault();
-        EventStore.addEvent(this.state, function (event) {
+        EventStore.addEvent(this.state).then(function (event) {
             this.transitionTo('event', {id: event.id});
         }.bind(this));
     },

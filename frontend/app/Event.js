@@ -98,6 +98,7 @@ var Event = React.createClass({
                     <div><strong>Påmelding åpner:</strong> {Utils.formatDateTime(event.regStart)}</div>
                     <div><strong>Maks antall:</strong> {event.maxNumber}</div>
                     <div><strong>Antall påmeldt:</strong> {event.participants.length}</div>
+                    <p>{event.description}</p>
                     <form className="margin-top-30 margin-bottom-30">
                         <fieldset>
                             <legend>Påmelding:</legend>

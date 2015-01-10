@@ -98,7 +98,6 @@ var Combobox = ReactWidgets.Combobox;
 
 var Participant= React.createClass({displayName: "Participant",
     render: function(){
-        debugger;
         return React.createElement("div", {key: this.props.participant.id}, 
             React.createElement("span", {className: "col-xs-8"}, this.props.participant.name), 
             React.createElement("span", {className: "col-xs-4"}, React.createElement("button", {"data-id": this.props.participant.id, className: "btn btn-danger btn-xs", onClick: this.props.unregister}, "[Avmeld]")
@@ -189,6 +188,7 @@ var Event = React.createClass({displayName: "Event",
                     React.createElement("div", null, React.createElement("strong", null, "Påmelding åpner:"), " ", Utils.formatDateTime(event.regStart)), 
                     React.createElement("div", null, React.createElement("strong", null, "Maks antall:"), " ", event.maxNumber), 
                     React.createElement("div", null, React.createElement("strong", null, "Antall påmeldt:"), " ", event.participants.length), 
+                    React.createElement("p", null, event.description), 
                     React.createElement("form", {className: "margin-top-30 margin-bottom-30"}, 
                         React.createElement("fieldset", null, 
                             React.createElement("legend", null, "Påmelding:"), 
@@ -200,7 +200,6 @@ var Event = React.createClass({displayName: "Event",
                                         suggest: true, 
                                         filter: 'contains'}
                                 )
-
                             ), 
                             React.createElement("div", {className: "form-group col-xs-12 col-sm-5 col-md-4"}, 
                                 React.createElement("label", {htmlFor: "email"}, "Epost"), 
@@ -383,7 +382,7 @@ var NewEvent = React.createClass({displayName: "NewEvent",
     },
     createEvent: function (event) {
         event.preventDefault();
-        EventStore.addEvent(this.state, function (event) {
+        EventStore.addEvent(this.state).then(function (event) {
             this.transitionTo('event', {id: event.id});
         }.bind(this));
     },
@@ -413,31 +412,31 @@ var NewEvent = React.createClass({displayName: "NewEvent",
                     React.createElement("div", {className: "form-group"}, 
                         React.createElement("label", {htmlFor: "subject", className: "col-sm-2 control-label"}, "Tittel"), 
                         React.createElement("div", {className: "col-sm-5"}, 
-                            React.createElement("input", {className: "form-control", type: "text", name: "subject", ref: "subject", placeholder: "subject", value: this.state.subject, onChange: this.onValueChange})
+                            React.createElement("input", {className: "form-control", type: "text", name: "subject", ref: "subject", placeholder: "tittel", value: this.state.subject, onChange: this.onValueChange})
                         )
                     ), 
                     React.createElement("div", {className: "form-group"}, 
-                        React.createElement("label", {htmlFor: "creator", className: "col-sm-2 control-label"}, "Tittel"), 
+                        React.createElement("label", {htmlFor: "creator", className: "col-sm-2 control-label"}, "Ansvarlig"), 
                         React.createElement("div", {className: "col-sm-5"}, 
-                            React.createElement("input", {className: "form-control", type: "text", name: "creator", ref: "creator", placeholder: "creator", value: this.state.creator, onChange: this.onValueChange})
+                            React.createElement("input", {className: "form-control", type: "text", name: "creator", ref: "creator", placeholder: "ansvarlig", value: this.state.creator, onChange: this.onValueChange})
                         )
                     ), 
                     React.createElement("div", {className: "form-group"}, 
                         React.createElement("label", {htmlFor: "description", className: "col-sm-2 control-label"}, "Beskrivelse"), 
                         React.createElement("div", {className: "col-sm-5"}, 
-                            React.createElement("textarea", {className: "form-control", type: "text", name: "description", ref: "description", placeholder: "description", value: this.state.description, onChange: this.onValueChange})
+                            React.createElement("textarea", {className: "form-control", type: "text", name: "description", ref: "description", placeholder: "kommentar", value: this.state.description, onChange: this.onValueChange})
                         )
                     ), 
                     React.createElement("div", {className: "form-group"}, 
                         React.createElement("label", {htmlFor: "location", className: "col-sm-2 control-label"}, "Sted"), 
                         React.createElement("div", {className: "col-sm-5"}, 
-                            React.createElement("input", {className: "form-control", type: "text", name: "location", ref: "location", placeholder: "location", value: this.state.location, onChange: this.onValueChange})
+                            React.createElement("input", {className: "form-control", type: "text", name: "location", ref: "location", placeholder: "sted", value: this.state.location, onChange: this.onValueChange})
                         )
                     ), 
                     React.createElement("div", {className: "form-group"}, 
                         React.createElement("label", {htmlFor: "maxNumber", className: "col-sm-2 control-label"}, "Maks antall"), 
                         React.createElement("div", {className: "col-sm-5"}, 
-                            React.createElement("input", {className: "form-control", type: "text", name: "maxNumber", ref: "maxNumber", placeholder: "maxNumber", value: this.state.maxNumber, onChange: this.onValueChange})
+                            React.createElement("input", {className: "form-control", type: "text", name: "maxNumber", ref: "maxNumber", placeholder: "maks antall", value: this.state.maxNumber, onChange: this.onValueChange})
                         )
                     ), 
                     React.createElement("div", {className: "form-group"}, 

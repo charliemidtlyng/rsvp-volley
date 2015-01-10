@@ -6,6 +6,8 @@ import no.charlie.rsvp.domain.Annotations.PDateTime
 import no.charlie.rsvp.domain.Annotations.RsvpEntity
 import org.joda.time.DateTime
 
+import javax.persistence.Column
+
 /**
  * @author Charlie Midtlyng (charlie.midtlyng@BEKK.no)
  */
@@ -20,7 +22,7 @@ class Event {
     String creator
     String location
     String subject
-    String description
+    @Column(length = 2048) String description
     Integer maxNumber = Integer.MAX_VALUE
 
     @OneToManySubselect Set<Participant> participants = []

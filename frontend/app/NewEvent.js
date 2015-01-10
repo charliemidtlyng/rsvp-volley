@@ -53,31 +53,31 @@ var NewEvent = React.createClass({
                     <div className="form-group">
                         <label htmlFor="subject" className="col-sm-2 control-label">Tittel</label>
                         <div className="col-sm-5">
-                            <input className="form-control" type="text" name="subject" ref="subject" placeholder="subject" value={this.state.subject} onChange={this.onValueChange}/>
+                            <input className="form-control" type="text" name="subject" ref="subject" placeholder="tittel" value={this.state.subject} onChange={this.onValueChange}/>
                         </div>
                     </div>
                     <div className="form-group">
-                        <label htmlFor="creator" className="col-sm-2 control-label">Tittel</label>
+                        <label htmlFor="creator" className="col-sm-2 control-label">Ansvarlig</label>
                         <div className="col-sm-5">
-                            <input className="form-control" type="text" name="creator" ref="creator" placeholder="creator" value={this.state.creator} onChange={this.onValueChange}/>
+                            <input className="form-control" type="text" name="creator" ref="creator" placeholder="ansvarlig" value={this.state.creator} onChange={this.onValueChange}/>
                         </div>
                     </div>
                     <div className="form-group">
                         <label htmlFor="description" className="col-sm-2 control-label">Beskrivelse</label>
                         <div className="col-sm-5">
-                            <textarea className="form-control" type="text" name="description" ref="description" placeholder="description" value={this.state.description} onChange={this.onValueChange} />
+                            <textarea className="form-control" type="text" name="description" ref="description" placeholder="kommentar" value={this.state.description} onChange={this.onValueChange} />
                         </div>
                     </div>
                     <div className="form-group">
                         <label htmlFor="location" className="col-sm-2 control-label">Sted</label>
                         <div className="col-sm-5">
-                            <input className="form-control" type="text" name="location" ref="location" placeholder="location" value={this.state.location} onChange={this.onValueChange} />
+                            <input className="form-control" type="text" name="location" ref="location" placeholder="sted" value={this.state.location} onChange={this.onValueChange} />
                         </div>
                     </div>
                     <div className="form-group">
                         <label htmlFor="maxNumber" className="col-sm-2 control-label">Maks antall</label>
                         <div className="col-sm-5">
-                            <input className="form-control" type="text" name="maxNumber" ref="maxNumber" placeholder="maxNumber" value={this.state.maxNumber} onChange={this.onValueChange} />
+                            <input className="form-control" type="text" name="maxNumber" ref="maxNumber" placeholder="maks antall" value={this.state.maxNumber} onChange={this.onValueChange} />
                         </div>
                     </div>
                     <div className="form-group">

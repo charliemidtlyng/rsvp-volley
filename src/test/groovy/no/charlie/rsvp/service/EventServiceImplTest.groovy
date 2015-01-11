@@ -3,7 +3,6 @@ package no.charlie.rsvp.service
 import no.charlie.rsvp.domain.Event
 import no.charlie.rsvp.domain.History
 import no.charlie.rsvp.domain.Participant
-import no.charlie.rsvp.exception.RsvpBadRequestException
 import no.charlie.rsvp.repository.EventRepository
 import spock.lang.Specification
 
@@ -37,7 +36,7 @@ class EventServiceImplTest extends Specification {
                     endTime: currentTimePlus2,
                     regEnd: currentTimePlus2
             )
-            thrown(RsvpBadRequestException)
+            Exception e = thrown()
     }
 
     def "should fail when attending too late"() {
@@ -50,7 +49,7 @@ class EventServiceImplTest extends Specification {
                     endTime: currentTimeMinus1,
                     regEnd: currentTimeMinus1
             )
-            thrown(RsvpBadRequestException)
+            Exception e = thrown()
     }
 
     def "should register participant to event"() {

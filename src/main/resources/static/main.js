@@ -155,6 +155,7 @@ var Event = React.createClass({displayName: "Event",
           'Kristoffer Liabø',
           'Jonatan Austigard',
           'Pål Moen Møst',
+          'Øyvind Kvangardsnes',
           'Sindre Nordbø'
       ]}
     },
@@ -189,13 +190,13 @@ var Event = React.createClass({displayName: "Event",
         var participants = event.participants.filter(function(participant){
             return participant.reserve === false;
         }).map(function(participant){
-            return React.createElement(Participant, {participant: participant, unregister: this.unregister})
+            return React.createElement(Participant, {key: participant.id, participant: participant, unregister: this.unregister})
         }.bind(this));
 
         var reserves = event.participants.filter(function(participant){
             return participant.reserve === true;
         }).map(function(participant){
-            return React.createElement(Participant, {participant: participant, unregister: this.unregister})
+            return React.createElement(Participant, {key: participant.id, participant: participant, unregister: this.unregister})
         }.bind(this));
 
         return (
@@ -218,7 +219,8 @@ var Event = React.createClass({displayName: "Event",
                                         data: this.props.listOfCandidates, 
                                         ref: "name", 
                                         suggest: true, 
-                                        filter: 'contains'}
+                                        filter: 'contains', 
+                                        messages: emptyFilter= 'Tomt'}
                                 )
                             ), 
                             React.createElement("div", {className: "form-group col-xs-12 col-sm-5 col-md-4"}, 

@@ -4,6 +4,7 @@ import no.charlie.rsvp.exception.RsvpBadRequestException
 import no.charlie.rsvp.service.EventService
 import spock.lang.Specification
 
+import javax.ws.rs.NotFoundException
 import javax.ws.rs.core.Response
 
 import static javax.ws.rs.core.Response.Status.ACCEPTED
@@ -28,7 +29,7 @@ class EventResourceTest extends Specification {
             Map valueMap = [:]
             resource.createEvent(valueMap)
         then:
-            def e = thrown(RsvpBadRequestException)
+            Exception e = thrown()
     }
 
     def "should create event"() {
@@ -66,7 +67,7 @@ class EventResourceTest extends Specification {
             Map valueMap = [:]
             resource.register(1L, valueMap)
         then:
-            def e = thrown(RsvpBadRequestException)
+            Exception e = thrown()
     }
 
     def "should remove participant from event"() {

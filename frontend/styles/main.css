@@ -8,7 +8,7 @@ a div:hover {
 	margin-bottom: 30px;
 }
 .rw-widget {
-	border-radius: 0;
+	border-radius: 1px;
 }
 .rw-input {
 	height: 39px;

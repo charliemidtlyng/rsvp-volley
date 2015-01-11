@@ -70,7 +70,7 @@ class EventServiceImpl implements EventService {
         if (currentTime.isBefore(event.regStart) || currentTime.isAfter(event.regEnd)) {
             def regStart = event.regStart?.toString('yyyy-MM-dd HH:mm')
             def regEnd = event.regEnd?.toString('yyyy-MM-dd HH:mm')
-            throw new RsvpBadRequestException("Kan ikke meldes på/av nå. Registrering åpner $regStart  og avsluttes $regEnd")
+            throw new RsvpBadRequestException("Kan ikke meldes på/av nå!")
         }
     }
 

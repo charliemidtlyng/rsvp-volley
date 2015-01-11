@@ -3,11 +3,9 @@ package no.charlie.rsvp.service
 import no.charlie.rsvp.domain.Event
 import no.charlie.rsvp.domain.History
 import no.charlie.rsvp.domain.Participant
+import no.charlie.rsvp.exception.RsvpBadRequestException
 import no.charlie.rsvp.repository.EventRepository
-import org.joda.time.DateTime
 import spock.lang.Specification
-
-import javax.ws.rs.BadRequestException
 
 import static org.joda.time.DateTime.now
 
@@ -39,7 +37,7 @@ class EventServiceImplTest extends Specification {
                     endTime: currentTimePlus2,
                     regEnd: currentTimePlus2
             )
-            thrown(BadRequestException)
+            thrown(RsvpBadRequestException)
     }
 
     def "should fail when attending too late"() {
@@ -52,7 +50,7 @@ class EventServiceImplTest extends Specification {
                     endTime: currentTimeMinus1,
                     regEnd: currentTimeMinus1
             )
-            thrown(BadRequestException)
+            thrown(RsvpBadRequestException)
     }
 
     def "should register participant to event"() {
@@ -148,8 +146,8 @@ class EventServiceImplTest extends Specification {
     }
 
     Set createParticipants(int number) {
-        (1..number).collect{
-            new Participant(id: it, name:"x", timestamp: currentTimeMinus1)
+        (1..number).collect {
+            new Participant(id: it, name: "x", timestamp: currentTimeMinus1)
         }
     }
 }

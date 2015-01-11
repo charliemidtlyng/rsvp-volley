@@ -2,6 +2,7 @@ package no.charlie.rsvp.api
 
 import no.charlie.rsvp.domain.Event
 import no.charlie.rsvp.domain.Participant
+import no.charlie.rsvp.exception.RsvpBadRequestException
 import no.charlie.rsvp.service.EventService
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
@@ -93,11 +94,11 @@ class EventResource {
 
     static Boolean validateProperties(Map map, String... properties) {
         if (!map) {
-            throw new BadRequestException("Missing json?")
+            throw new RsvpBadRequestException("Mangelfull utfylling")
         }
         properties.each {
             if (!map.containsKey(it)) {
-                throw new BadRequestException("$it is missing!")
+                throw new RsvpBadRequestException("Feltet $it mangler!")
             }
         }
     }

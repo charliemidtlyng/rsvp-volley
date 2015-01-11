@@ -37,7 +37,7 @@ function getJSON(url) {
                 resolve(JSON.parse(req.response));
             }
             else {
-                reject(Error(req.statusText));
+                reject(Error(req.response));
             }
         };
 
@@ -59,7 +59,7 @@ function postJSON(url, obj) {
                 resolve(JSON.parse(req.response));
             }
             else {
-                reject(Error(req.statusText));
+                reject(Error(req.response));
             }
         };
         req.open('POST', url);
@@ -76,7 +76,7 @@ function deleteJSON(url) {
                 resolve(req.response);
             }
             else {
-                reject(Error(req.statusText));
+                reject(Error(req.response));
             }
         };
         req.open('DELETE', url);

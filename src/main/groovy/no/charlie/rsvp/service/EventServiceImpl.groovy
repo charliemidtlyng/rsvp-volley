@@ -3,12 +3,11 @@ package no.charlie.rsvp.service
 import no.charlie.rsvp.domain.Event
 import no.charlie.rsvp.domain.History
 import no.charlie.rsvp.domain.Participant
+import no.charlie.rsvp.exception.RsvpBadRequestException
 import no.charlie.rsvp.repository.EventRepository
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-
-import javax.ws.rs.BadRequestException
 
 import static no.charlie.rsvp.domain.History.Change
 import static no.charlie.rsvp.domain.History.Change.Register
@@ -69,10 +68,11 @@ class EventServiceImpl implements EventService {
     private static void validateEventIsOpen(Event event) {
         def currentTime = DateTime.now();
         if (currentTime.isBefore(event.regStart) || currentTime.isAfter(event.regEnd)) {
-            throw new BadRequestException("Not possible to register for event at $currentTime. Register opens $event.regStart and closes $event.regEnd")
+            def regStart = event.regStart?.toString('yyyy-MM-dd HH:mm')
+            def regEnd = event.regEnd?.toString('yyyy-MM-dd HH:mm')
+            throw new RsvpBadRequestException("Kan ikke meldes på/av nå. Registrering åpner $regStart  og avsluttes $regEnd")
         }
     }
-
 
     private static History createHistory(Event event, Participant p, Change change) {
         new History(

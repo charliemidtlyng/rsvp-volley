@@ -5,6 +5,8 @@ var Router = require('react-router');
 var Utils = require('./Utils');
 var ReactWidgets = require('react-widgets');
 var Combobox = ReactWidgets.Combobox;
+var ReactBootstrap = require('react-bootstrap');
+var Panel = ReactBootstrap.Panel;
 
 var Participant= React.createClass({
     render: function(){
@@ -16,6 +18,18 @@ var Participant= React.createClass({
     }
 });
 
+var ErrorPanel = React.createClass({
+   render: function(){
+       var errorMessage = this.props.error;
+       if(!errorMessage) {
+           return <span />;
+       }
+       return <Panel header="Feilmelding" bsStyle="danger">
+        {errorMessage}
+       </Panel>
+   }
+});
+
 var Event = React.createClass({
 
     mixins: [ Router.Navigation, Router.State ],
@@ -23,7 +37,8 @@ var Event = React.createClass({
         return {
             currentEvent: {
                 participants: []
-            }
+            },
+            error: ""
         };
     },
     getDefaultProps: function(){
@@ -63,12 +78,11 @@ var Event = React.createClass({
             return;
         }
         EventStore.registerForEvent(this.getParams().id, {name: name, email: email})
-                .then(this.updateEvent);
+                .then(this.updateEvent, this.updateError);
     },
     unregister: function(event){
         var participantId = event.target.dataset.id, eventId = this.state.currentEvent.id
-        EventStore.unregisterForEvent(eventId, participantId).then(this.updateEvent);
-
+        EventStore.unregisterForEvent(eventId, participantId).then(this.updateEvent, this.updateError);
     },
     updateEvent: function(){
         EventStore.getEvent(this.getParams().id)
@@ -76,19 +90,24 @@ var Event = React.createClass({
                     this.setState({currentEvent: event});
                 }.bind(this));
     },
-
+    updateError: function(error){
+        this.setState({error: error.message});
+    },
     render: function () {
         var event = this.state.currentEvent;
+
         var participants = event.participants.filter(function(participant){
             return participant.reserve === false;
         }).map(function(participant){
             return <Participant participant={participant} unregister={this.unregister} />
         }.bind(this));
+
         var reserves = event.participants.filter(function(participant){
             return participant.reserve === true;
         }).map(function(participant){
             return <Participant participant={participant} unregister={this.unregister} />
         }.bind(this));
+
         return (
                 <div>
                     <h2>{event.subject}</h2>
@@ -102,6 +121,7 @@ var Event = React.createClass({
                     <form className="margin-top-30 margin-bottom-30">
                         <fieldset>
                             <legend>Påmelding:</legend>
+                            <ErrorPanel error={this.state.error} />
                             <div className="form-group col-xs-12 col-sm-5 col-md-4">
                                 <label htmlFor="name">Navn*</label>
                                 <Combobox

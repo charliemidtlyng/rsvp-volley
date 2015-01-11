@@ -95,6 +95,8 @@ var Router = require('react-router');
 var Utils = require('./Utils');
 var ReactWidgets = require('react-widgets');
 var Combobox = ReactWidgets.Combobox;
+var ReactBootstrap = require('react-bootstrap');
+var Panel = ReactBootstrap.Panel;
 
 var Participant= React.createClass({displayName: "Participant",
     render: function(){
@@ -106,6 +108,18 @@ var Participant= React.createClass({displayName: "Participant",
     }
 });
 
+var ErrorPanel = React.createClass({displayName: "ErrorPanel",
+   render: function(){
+       var errorMessage = this.props.error;
+       if(!errorMessage) {
+           return React.createElement("span", null);
+       }
+       return React.createElement(Panel, {header: "Feilmelding", bsStyle: "danger"}, 
+        errorMessage
+       )
+   }
+});
+
 var Event = React.createClass({displayName: "Event",
 
     mixins: [ Router.Navigation, Router.State ],
@@ -113,7 +127,8 @@ var Event = React.createClass({displayName: "Event",
         return {
             currentEvent: {
                 participants: []
-            }
+            },
+            error: ""
         };
     },
     getDefaultProps: function(){
@@ -153,12 +168,11 @@ var Event = React.createClass({displayName: "Event",
             return;
         }
         EventStore.registerForEvent(this.getParams().id, {name: name, email: email})
-                .then(this.updateEvent);
+                .then(this.updateEvent, this.updateError);
     },
     unregister: function(event){
         var participantId = event.target.dataset.id, eventId = this.state.currentEvent.id
-        EventStore.unregisterForEvent(eventId, participantId).then(this.updateEvent);
-
+        EventStore.unregisterForEvent(eventId, participantId).then(this.updateEvent, this.updateError);
     },
     updateEvent: function(){
         EventStore.getEvent(this.getParams().id)
@@ -166,19 +180,24 @@ var Event = React.createClass({displayName: "Event",
                     this.setState({currentEvent: event});
                 }.bind(this));
     },
-
+    updateError: function(error){
+        this.setState({error: error.message});
+    },
     render: function () {
         var event = this.state.currentEvent;
+
         var participants = event.participants.filter(function(participant){
             return participant.reserve === false;
         }).map(function(participant){
             return React.createElement(Participant, {participant: participant, unregister: this.unregister})
         }.bind(this));
+
         var reserves = event.participants.filter(function(participant){
             return participant.reserve === true;
         }).map(function(participant){
             return React.createElement(Participant, {participant: participant, unregister: this.unregister})
         }.bind(this));
+
         return (
                 React.createElement("div", null, 
                     React.createElement("h2", null, event.subject), 
@@ -192,6 +211,7 @@ var Event = React.createClass({displayName: "Event",
                     React.createElement("form", {className: "margin-top-30 margin-bottom-30"}, 
                         React.createElement("fieldset", null, 
                             React.createElement("legend", null, "Påmelding:"), 
+                            React.createElement(ErrorPanel, {error: this.state.error}), 
                             React.createElement("div", {className: "form-group col-xs-12 col-sm-5 col-md-4"}, 
                                 React.createElement("label", {htmlFor: "name"}, "Navn*"), 
                                 React.createElement(Combobox, {
@@ -221,7 +241,7 @@ var Event = React.createClass({displayName: "Event",
     }
 });
 module.exports = Event;
-},{"./EventStore":5,"./Utils":7,"react-router":96,"react-widgets":130,"react/addons":179}],4:[function(require,module,exports){
+},{"./EventStore":5,"./Utils":7,"react-bootstrap":76,"react-router":96,"react-widgets":130,"react/addons":179}],4:[function(require,module,exports){
 /** @jsx React.DOM */
 var React = require('react/addons');
 var EventStore = require('./EventStore');
@@ -309,7 +329,7 @@ function getJSON(url) {
                 resolve(JSON.parse(req.response));
             }
             else {
-                reject(Error(req.statusText));
+                reject(Error(req.response));
             }
         };
 
@@ -331,7 +351,7 @@ function postJSON(url, obj) {
                 resolve(JSON.parse(req.response));
             }
             else {
-                reject(Error(req.statusText));
+                reject(Error(req.response));
             }
         };
         req.open('POST', url);
@@ -348,7 +368,7 @@ function deleteJSON(url) {
                 resolve(req.response);
             }
             else {
-                reject(Error(req.statusText));
+                reject(Error(req.response));
             }
         };
         req.open('DELETE', url);

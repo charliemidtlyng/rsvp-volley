@@ -266,10 +266,14 @@ var EventList = React.createClass({displayName: "EventList",
     },
 
     render: function () {
+        var cx = React.addons.classSet;
         var events = this.state.events.map(function (event) {
-
+              var classes = cx({
+                'col-xs-4': true,
+                'old-event': Utils.isOldEvent(event)
+              });
             return React.createElement(Link, {to: "event", params: event, key: event.id}, 
-                React.createElement("div", {className: "col-xs-4"}, 
+                React.createElement("div", {className: classes}, 
                     React.createElement("h2", null, event.subject, " ", React.createElement("small", null, "(", Utils.formatDateTime(event.startTime, 'yyyy-MM-dd'), ")")), 
                     React.createElement("h5", null, React.createElement("strong", null, "Start:"), " ", Utils.formatDateTime(event.startTime)), 
                     React.createElement("div", null, React.createElement("strong", null, "Til:"), " ", Utils.formatDateTime(event.endTime)), 
@@ -508,6 +512,9 @@ var Utils = {
     },
     sortByTimestampDesc: function(eventA, eventB){
         return eventB.startTime - eventA.startTime;
+    },
+    isOldEvent: function(event) {
+    	return Date.today().isAfter(new Date(event.startTime));
     }
 };
 

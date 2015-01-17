@@ -10,6 +10,9 @@ var Utils = {
     },
     sortByTimestampDesc: function(eventA, eventB){
         return eventB.startTime - eventA.startTime;
+    },
+    isOldEvent: function(event) {
+    	return Date.today().isAfter(new Date(event.startTime));
     }
 };
 

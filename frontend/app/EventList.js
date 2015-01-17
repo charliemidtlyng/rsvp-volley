@@ -25,10 +25,14 @@ var EventList = React.createClass({
     },
 
     render: function () {
+        var cx = React.addons.classSet;
         var events = this.state.events.map(function (event) {
-
+              var classes = cx({
+                'col-xs-4': true,
+                'old-event': Utils.isOldEvent(event)
+              });
             return <Link to="event" params={event} key={event.id}>
-                <div className="col-xs-4">
+                <div className={classes}>
                     <h2>{event.subject} <small>({Utils.formatDateTime(event.startTime, 'yyyy-MM-dd')})</small></h2>
                     <h5><strong>Start:</strong> {Utils.formatDateTime(event.startTime)}</h5>
                     <div><strong>Til:</strong> {Utils.formatDateTime(event.endTime)}</div>

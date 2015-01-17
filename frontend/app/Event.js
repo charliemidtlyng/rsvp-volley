@@ -66,7 +66,9 @@ var Event = React.createClass({
           'Jonatan Austigard',
           'Pål Moen Møst',
           'Øyvind Kvangardsnes',
-          'Sindre Nordbø'
+          'Sindre Nordbø',
+          'Ole Hjalmar Herje',
+          'Per Gunnar Hagevik'
       ]}
     },
     componentDidMount: function () {
@@ -110,15 +112,15 @@ var Event = React.createClass({
         }.bind(this));
 
         return (
-                <div>
+                <div className="clearfix margin-bottom-30 margin-top-30">
                     <h2>{event.subject}</h2>
-                    <h5><strong>Start:</strong> {Utils.formatDateTime(event.startTime)}</h5>
+                    <h4><strong>Start:</strong> {Utils.formatDateTime(event.startTime)}</h4>
                     <div><strong>Til:</strong> {Utils.formatDateTime(event.endTime)}</div>
                     <div><strong>Sted:</strong> {event.location}</div>
                     <div><strong>Påmelding åpner:</strong> {Utils.formatDateTime(event.regStart)}</div>
                     <div><strong>Maks antall:</strong> {event.maxNumber}</div>
                     <div><strong>Antall påmeldt:</strong> {event.participants.length}</div>
-                    <p>{event.description}</p>
+                    <p className="pre">{event.description}</p>
                     <form className="margin-top-30 margin-bottom-30">
                         <fieldset>
                             <legend>Påmelding:</legend>
@@ -130,7 +132,7 @@ var Event = React.createClass({
                                         ref='name'
                                         suggest={true}
                                         filter={'contains'}
-                                        messages={emptyFilter= 'Tomt'}
+                                        messages={emptyFilter= {}}
                                 />
                             </div>
                             <div className="form-group col-xs-12 col-sm-5 col-md-4">
@@ -138,7 +140,7 @@ var Event = React.createClass({
                                 <input type="email" className="form-control col-xs-8 col-md-4" placeholder="epost" ref="email" />
                             </div>
                         </fieldset>
-                        <div className="col-xs-12"><button className="btn btn-primary" onClick={this.attend}>Meld på</button></div>
+                        <div className="col-xs-12"><button type="button" className="btn btn-primary" onClick={this.attend}>Meld på</button></div>
                     </form>
                     <div className="col-xs-12 col-sm-5">
                         <h3>Påmeldte</h3>

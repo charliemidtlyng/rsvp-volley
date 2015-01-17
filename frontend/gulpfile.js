@@ -53,7 +53,7 @@ var browserifyTask = function (options) {
   };
 
   // Fire up Watchify when developing
-  if (options.development) {
+  if (options.watch) {
     appBundler = watchify(appBundler);
     appBundler.on('update', rebundle);
   }
@@ -171,6 +171,24 @@ gulp.task('deploy', function () {
   });
   
   cssTask({
+    development: false,
+    src: './styles/**/*.css',
+    dest: '../src/main/resources/static'
+  });
+
+});
+
+gulp.task('deploywatch', function () {
+
+  browserifyTask({
+    watch: true,
+    development: false,
+    src: './app/main.js',
+    dest: '../src/main/resources/static'
+  });
+  
+  cssTask({
+    watch: true,
     development: false,
     src: './styles/**/*.css',
     dest: '../src/main/resources/static'

@@ -7,9 +7,18 @@ a div:hover {
 .margin-bottom-30 {
 	margin-bottom: 30px;
 }
+.margin-bottom-0 {
+	margin-bottom: 0px;
+}
 .rw-widget {
 	border-radius: 1px;
 }
 .rw-input {
 	height: 39px;
+}
+h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
+	color: #df691a;
+}
+.pre {
+	white-space: pre;
 }

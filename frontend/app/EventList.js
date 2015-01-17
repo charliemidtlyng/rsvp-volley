@@ -16,6 +16,7 @@ var EventList = React.createClass({
     componentDidMount: function () {
         EventStore.getEvents()
                 .then(function (events) {
+                    events.sort(Utils.sortByTimestampDesc);
                     this.setState({
                         events: events,
                         loading: false
@@ -28,7 +29,7 @@ var EventList = React.createClass({
 
             return <Link to="event" params={event} key={event.id}>
                 <div className="col-xs-4">
-                    <h2>{event.subject}</h2>
+                    <h2>{event.subject} <small>({Utils.formatDateTime(event.startTime, 'yyyy-MM-dd')})</small></h2>
                     <h5><strong>Start:</strong> {Utils.formatDateTime(event.startTime)}</h5>
                     <div><strong>Til:</strong> {Utils.formatDateTime(event.endTime)}</div>
                     <div><strong>Sted:</strong> {event.location}</div>
@@ -37,7 +38,8 @@ var EventList = React.createClass({
             </Link>;
         }.bind(this));
         return (
-                <div className="EventList row">
+                <div className="EventList row margin-bottom-30">
+                    <h2 className="page-header margin-bottom-0">Dette skjer!</h2>
                     {events}
                 </div>
         );

@@ -7,6 +7,9 @@ var Utils = {
             return new Date(timestamp).toString(formatter);
         }
         return '';
+    },
+    sortByTimestampDesc: function(eventA, eventB){
+        return eventB.startTime - eventA.startTime;
     }
 };
 

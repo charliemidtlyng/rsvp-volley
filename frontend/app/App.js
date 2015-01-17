@@ -36,13 +36,6 @@ var App = React.createClass({
                     </div>
                 </div>
                 <div className="container">
-                    <div className="page-header">
-                        <div className="row">
-                            <div className="col-lg-8 col-md-7 col-sm-6">
-                                <h1>Hendelser</h1>
-                            </div>
-                        </div>
-                    </div>
                     <RouteHandler/>
                 </div>
             </div>

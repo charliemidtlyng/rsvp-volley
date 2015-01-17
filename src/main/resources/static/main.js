@@ -72,13 +72,6 @@ var App = React.createClass({displayName: "App",
                     )
                 ), 
                 React.createElement("div", {className: "container"}, 
-                    React.createElement("div", {className: "page-header"}, 
-                        React.createElement("div", {className: "row"}, 
-                            React.createElement("div", {className: "col-lg-8 col-md-7 col-sm-6"}, 
-                                React.createElement("h1", null, "Hendelser")
-                            )
-                        )
-                    ), 
                     React.createElement(RouteHandler, null)
                 )
             )
@@ -156,7 +149,9 @@ var Event = React.createClass({displayName: "Event",
           'Jonatan Austigard',
           'Pål Moen Møst',
           'Øyvind Kvangardsnes',
-          'Sindre Nordbø'
+          'Sindre Nordbø',
+          'Ole Hjalmar Herje',
+          'Per Gunnar Hagevik'
       ]}
     },
     componentDidMount: function () {
@@ -200,15 +195,15 @@ var Event = React.createClass({displayName: "Event",
         }.bind(this));
 
         return (
-                React.createElement("div", null, 
+                React.createElement("div", {className: "clearfix margin-bottom-30 margin-top-30"}, 
                     React.createElement("h2", null, event.subject), 
-                    React.createElement("h5", null, React.createElement("strong", null, "Start:"), " ", Utils.formatDateTime(event.startTime)), 
+                    React.createElement("h4", null, React.createElement("strong", null, "Start:"), " ", Utils.formatDateTime(event.startTime)), 
                     React.createElement("div", null, React.createElement("strong", null, "Til:"), " ", Utils.formatDateTime(event.endTime)), 
                     React.createElement("div", null, React.createElement("strong", null, "Sted:"), " ", event.location), 
                     React.createElement("div", null, React.createElement("strong", null, "Påmelding åpner:"), " ", Utils.formatDateTime(event.regStart)), 
                     React.createElement("div", null, React.createElement("strong", null, "Maks antall:"), " ", event.maxNumber), 
                     React.createElement("div", null, React.createElement("strong", null, "Antall påmeldt:"), " ", event.participants.length), 
-                    React.createElement("p", null, event.description), 
+                    React.createElement("p", {className: "pre"}, event.description), 
                     React.createElement("form", {className: "margin-top-30 margin-bottom-30"}, 
                         React.createElement("fieldset", null, 
                             React.createElement("legend", null, "Påmelding:"), 
@@ -220,7 +215,7 @@ var Event = React.createClass({displayName: "Event",
                                         ref: "name", 
                                         suggest: true, 
                                         filter: 'contains', 
-                                        messages: emptyFilter= 'Tomt'}
+                                        messages: emptyFilter= {}}
                                 )
                             ), 
                             React.createElement("div", {className: "form-group col-xs-12 col-sm-5 col-md-4"}, 
@@ -228,7 +223,7 @@ var Event = React.createClass({displayName: "Event",
                                 React.createElement("input", {type: "email", className: "form-control col-xs-8 col-md-4", placeholder: "epost", ref: "email"})
                             )
                         ), 
-                        React.createElement("div", {className: "col-xs-12"}, React.createElement("button", {className: "btn btn-primary", onClick: this.attend}, "Meld på"))
+                        React.createElement("div", {className: "col-xs-12"}, React.createElement("button", {type: "button", className: "btn btn-primary", onClick: this.attend}, "Meld på"))
                     ), 
                     React.createElement("div", {className: "col-xs-12 col-sm-5"}, 
                         React.createElement("h3", null, "Påmeldte"), 
@@ -262,6 +257,7 @@ var EventList = React.createClass({displayName: "EventList",
     componentDidMount: function () {
         EventStore.getEvents()
                 .then(function (events) {
+                    events.sort(Utils.sortByTimestampDesc);
                     this.setState({
                         events: events,
                         loading: false
@@ -274,7 +270,7 @@ var EventList = React.createClass({displayName: "EventList",
 
             return React.createElement(Link, {to: "event", params: event, key: event.id}, 
                 React.createElement("div", {className: "col-xs-4"}, 
-                    React.createElement("h2", null, event.subject), 
+                    React.createElement("h2", null, event.subject, " ", React.createElement("small", null, "(", Utils.formatDateTime(event.startTime, 'yyyy-MM-dd'), ")")), 
                     React.createElement("h5", null, React.createElement("strong", null, "Start:"), " ", Utils.formatDateTime(event.startTime)), 
                     React.createElement("div", null, React.createElement("strong", null, "Til:"), " ", Utils.formatDateTime(event.endTime)), 
                     React.createElement("div", null, React.createElement("strong", null, "Sted:"), " ", event.location), 
@@ -283,7 +279,8 @@ var EventList = React.createClass({displayName: "EventList",
             );
         }.bind(this));
         return (
-                React.createElement("div", {className: "EventList row"}, 
+                React.createElement("div", {className: "EventList row margin-bottom-30"}, 
+                    React.createElement("h2", {className: "page-header margin-bottom-0"}, "Dette skjer!"), 
                     events
                 )
         );
@@ -430,64 +427,67 @@ var NewEvent = React.createClass({displayName: "NewEvent",
     },
     render: function () {
         return (
-                React.createElement("form", {className: "form-horizontal", onSubmit: this.createEvent}, 
-                    React.createElement("div", {className: "form-group"}, 
-                        React.createElement("label", {htmlFor: "subject", className: "col-sm-2 control-label"}, "Tittel"), 
-                        React.createElement("div", {className: "col-sm-5"}, 
-                            React.createElement("input", {className: "form-control", type: "text", name: "subject", ref: "subject", placeholder: "tittel", value: this.state.subject, onChange: this.onValueChange})
-                        )
-                    ), 
-                    React.createElement("div", {className: "form-group"}, 
-                        React.createElement("label", {htmlFor: "creator", className: "col-sm-2 control-label"}, "Ansvarlig"), 
-                        React.createElement("div", {className: "col-sm-5"}, 
-                            React.createElement("input", {className: "form-control", type: "text", name: "creator", ref: "creator", placeholder: "ansvarlig", value: this.state.creator, onChange: this.onValueChange})
-                        )
-                    ), 
-                    React.createElement("div", {className: "form-group"}, 
-                        React.createElement("label", {htmlFor: "description", className: "col-sm-2 control-label"}, "Beskrivelse"), 
-                        React.createElement("div", {className: "col-sm-5"}, 
-                            React.createElement("textarea", {className: "form-control", type: "text", name: "description", ref: "description", placeholder: "kommentar", value: this.state.description, onChange: this.onValueChange})
-                        )
-                    ), 
-                    React.createElement("div", {className: "form-group"}, 
-                        React.createElement("label", {htmlFor: "location", className: "col-sm-2 control-label"}, "Sted"), 
-                        React.createElement("div", {className: "col-sm-5"}, 
-                            React.createElement("input", {className: "form-control", type: "text", name: "location", ref: "location", placeholder: "sted", value: this.state.location, onChange: this.onValueChange})
-                        )
-                    ), 
-                    React.createElement("div", {className: "form-group"}, 
-                        React.createElement("label", {htmlFor: "maxNumber", className: "col-sm-2 control-label"}, "Maks antall"), 
-                        React.createElement("div", {className: "col-sm-5"}, 
-                            React.createElement("input", {className: "form-control", type: "text", name: "maxNumber", ref: "maxNumber", placeholder: "maks antall", value: this.state.maxNumber, onChange: this.onValueChange})
-                        )
-                    ), 
-                    React.createElement("div", {className: "form-group"}, 
-                        React.createElement("label", {htmlFor: "startTime", className: "col-sm-2 control-label"}, "Start"), 
-                        React.createElement("div", {className: "col-sm-5"}, 
-                            React.createElement(DateTimePicker, {css: "btn-default", format: "yyyy-MM-dd HH:mm", ref: "startTime", value: this.state.startTime, onChange: this.startTimeChange})
-                        )
-                    ), 
-                    React.createElement("div", {className: "form-group"}, 
-                        React.createElement("label", {htmlFor: "endTime", className: "col-sm-2 control-label"}, "Slutt"), 
-                        React.createElement("div", {className: "col-sm-5"}, 
-                            React.createElement(DateTimePicker, {css: "btn-default", format: "yyyy-MM-dd HH:mm", ref: "endTime", value: this.state.endTime, onChange: this.endTimeChange})
-                        )
-                    ), 
-                    React.createElement("div", {className: "form-group"}, 
-                        React.createElement("label", {htmlFor: "regStart", className: "col-sm-2 control-label"}, "Registrering åpner"), 
-                        React.createElement("div", {className: "col-sm-5"}, 
-                            React.createElement(DateTimePicker, {css: "btn-default", format: "yyyy-MM-dd HH:mm", ref: "regStart", value: this.state.regStart, onChange: this.regStartChange})
-                        )
-                    ), 
-                    React.createElement("div", {className: "form-group"}, 
-                        React.createElement("label", {htmlFor: "regEnd", className: "col-sm-2 control-label"}, "Registrering stenger"), 
-                        React.createElement("div", {className: "col-sm-5"}, 
-                            React.createElement(DateTimePicker, {css: "btn-default", format: "yyyy-MM-dd HH:mm", ref: "regEnd", value: this.state.regEnd, onChange: this.regEndChange})
-                        )
-                    ), 
-                    React.createElement("div", {className: "form-group"}, 
-                        React.createElement("div", {className: "col-sm-offset-2 col-sm-5"}, 
-                            React.createElement("button", {type: "submit", className: "btn btn-default"}, "Lagre")
+                React.createElement("div", null, 
+                    React.createElement("h2", {className: "page-header"}, "Ny hendelse"), 
+                    React.createElement("form", {className: "form-horizontal"}, 
+                        React.createElement("div", {className: "form-group"}, 
+                            React.createElement("label", {htmlFor: "subject", className: "col-sm-2 control-label"}, "Tittel"), 
+                            React.createElement("div", {className: "col-sm-5"}, 
+                                React.createElement("input", {className: "form-control", type: "text", name: "subject", ref: "subject", placeholder: "tittel", value: this.state.subject, onChange: this.onValueChange})
+                            )
+                        ), 
+                        React.createElement("div", {className: "form-group"}, 
+                            React.createElement("label", {htmlFor: "creator", className: "col-sm-2 control-label"}, "Ansvarlig"), 
+                            React.createElement("div", {className: "col-sm-5"}, 
+                                React.createElement("input", {className: "form-control", type: "text", name: "creator", ref: "creator", placeholder: "ansvarlig", value: this.state.creator, onChange: this.onValueChange})
+                            )
+                        ), 
+                        React.createElement("div", {className: "form-group"}, 
+                            React.createElement("label", {htmlFor: "description", className: "col-sm-2 control-label"}, "Beskrivelse"), 
+                            React.createElement("div", {className: "col-sm-5"}, 
+                                React.createElement("textarea", {className: "form-control", type: "text", name: "description", ref: "description", placeholder: "kommentar", value: this.state.description, onChange: this.onValueChange})
+                            )
+                        ), 
+                        React.createElement("div", {className: "form-group"}, 
+                            React.createElement("label", {htmlFor: "location", className: "col-sm-2 control-label"}, "Sted"), 
+                            React.createElement("div", {className: "col-sm-5"}, 
+                                React.createElement("input", {className: "form-control", type: "text", name: "location", ref: "location", placeholder: "sted", value: this.state.location, onChange: this.onValueChange})
+                            )
+                        ), 
+                        React.createElement("div", {className: "form-group"}, 
+                            React.createElement("label", {htmlFor: "maxNumber", className: "col-sm-2 control-label"}, "Maks antall"), 
+                            React.createElement("div", {className: "col-sm-5"}, 
+                                React.createElement("input", {className: "form-control", type: "text", name: "maxNumber", ref: "maxNumber", placeholder: "maks antall", value: this.state.maxNumber, onChange: this.onValueChange})
+                            )
+                        ), 
+                        React.createElement("div", {className: "form-group"}, 
+                            React.createElement("label", {htmlFor: "startTime", className: "col-sm-2 control-label"}, "Start"), 
+                            React.createElement("div", {className: "col-sm-5"}, 
+                                React.createElement(DateTimePicker, {css: "btn-default", format: "yyyy-MM-dd HH:mm", ref: "startTime", value: this.state.startTime, onChange: this.startTimeChange})
+                            )
+                        ), 
+                        React.createElement("div", {className: "form-group"}, 
+                            React.createElement("label", {htmlFor: "endTime", className: "col-sm-2 control-label"}, "Slutt"), 
+                            React.createElement("div", {className: "col-sm-5"}, 
+                                React.createElement(DateTimePicker, {css: "btn-default", format: "yyyy-MM-dd HH:mm", ref: "endTime", value: this.state.endTime, onChange: this.endTimeChange})
+                            )
+                        ), 
+                        React.createElement("div", {className: "form-group"}, 
+                            React.createElement("label", {htmlFor: "regStart", className: "col-sm-2 control-label"}, "Registrering åpner"), 
+                            React.createElement("div", {className: "col-sm-5"}, 
+                                React.createElement(DateTimePicker, {css: "btn-default", format: "yyyy-MM-dd HH:mm", ref: "regStart", value: this.state.regStart, onChange: this.regStartChange})
+                            )
+                        ), 
+                        React.createElement("div", {className: "form-group"}, 
+                            React.createElement("label", {htmlFor: "regEnd", className: "col-sm-2 control-label"}, "Registrering stenger"), 
+                            React.createElement("div", {className: "col-sm-5"}, 
+                                React.createElement(DateTimePicker, {css: "btn-default", format: "yyyy-MM-dd HH:mm", ref: "regEnd", value: this.state.regEnd, onChange: this.regEndChange})
+                            )
+                        ), 
+                        React.createElement("div", {className: "form-group"}, 
+                            React.createElement("div", {className: "col-sm-offset-2 col-sm-5"}, 
+                                React.createElement("button", {type: "button", className: "btn btn-default", onClick: this.createEvent}, "Lagre")
+                            )
                         )
                     )
                 )
@@ -505,6 +505,9 @@ var Utils = {
             return new Date(timestamp).toString(formatter);
         }
         return '';
+    },
+    sortByTimestampDesc: function(eventA, eventB){
+        return eventB.startTime - eventA.startTime;
     }
 };
 

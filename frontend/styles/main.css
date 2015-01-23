@@ -26,3 +26,6 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 .old-event {
 	opacity: 0.5;
 }
+.eventList a:hover {
+	text-decoration: none;
+}

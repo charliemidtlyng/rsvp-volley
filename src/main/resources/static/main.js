@@ -38,6 +38,10 @@ Router.run(routes, function (Handler) {
 var React = require('react/addons');
 var EventStore = require('./EventStore');
 var Router = require('react-router');
+var ReactBootstrap = require('react-bootstrap');
+var Navbar = ReactBootstrap.Navbar;
+var Nav = ReactBootstrap.Nav;
+var NavItem = ReactBootstrap.NavItem;
 
 var Route = Router.Route,
         DefaultRoute = Router.DefaultRoute,
@@ -49,26 +53,10 @@ var App = React.createClass({displayName: "App",
     render: function () {
         return (
             React.createElement("div", {className: "App"}, 
-                React.createElement("div", {className: "navbar navbar-default navbar-fixed-top"}, 
-                    React.createElement("div", {className: "container"}, 
-                        React.createElement("div", {className: "navbar-header"}, 
-                            React.createElement("a", {href: "/", className: "navbar-brand"}, "RSVP-app"), 
-                            React.createElement("button", {className: "navbar-toggle", type: "button", "data-toggle": "collapse", "data-target": "#navbar-main"}, 
-                                React.createElement("span", {className: "icon-bar"}), 
-                                React.createElement("span", {className: "icon-bar"}), 
-                                React.createElement("span", {className: "icon-bar"})
-                            )
-                        ), 
-                        React.createElement("div", {className: "navbar-collapse collapse", id: "navbar-main"}, 
-                            React.createElement("ul", {className: "nav navbar-nav"}, 
-                                React.createElement("li", null, 
-                                    React.createElement(Link, {to: "/"}, "Hendelser")
-                                ), 
-                                React.createElement("li", null, 
-                                    React.createElement(Link, {to: "new"}, "Ny hendelse")
-                                )
-                            )
-                        )
+                React.createElement(Navbar, {id: "main-nav", brand: React.createElement("a", {href: "#"}, "RSVP-app"), toggleNavKey: 1, fixedTop: true}, 
+                    React.createElement(Nav, {eventKey: 1}, 
+                      React.createElement(NavItem, {key: 1, href: "/#"}, "Hendelser"), 
+                      React.createElement(NavItem, {key: 2, href: "#/event/new"}, "Ny hendelse")
                     )
                 ), 
                 React.createElement("div", {className: "container"}, 
@@ -80,7 +68,7 @@ var App = React.createClass({displayName: "App",
 });
 
 module.exports = App;
-},{"./EventStore":5,"react-router":96,"react/addons":179}],3:[function(require,module,exports){
+},{"./EventStore":5,"react-bootstrap":76,"react-router":96,"react/addons":179}],3:[function(require,module,exports){
 /** @jsx React.DOM */
 var React = require('react/addons');
 var EventStore = require('./EventStore');
@@ -269,10 +257,9 @@ var EventList = React.createClass({displayName: "EventList",
         var cx = React.addons.classSet;
         var events = this.state.events.map(function (event) {
               var classes = cx({
-                'col-xs-4': true,
                 'old-event': Utils.isOldEvent(event)
               });
-            return React.createElement(Link, {to: "event", params: event, key: event.id}, 
+            return React.createElement(Link, {to: "event", className: "col-xs-6 col-sm-4", params: event, key: event.id}, 
                 React.createElement("div", {className: classes}, 
                     React.createElement("h2", null, event.subject, " ", React.createElement("small", null, "(", Utils.formatDateTime(event.startTime, 'yyyy-MM-dd'), ")")), 
                     React.createElement("h5", null, React.createElement("strong", null, "Start:"), " ", Utils.formatDateTime(event.startTime)), 
@@ -283,7 +270,7 @@ var EventList = React.createClass({displayName: "EventList",
             );
         }.bind(this));
         return (
-                React.createElement("div", {className: "EventList row margin-bottom-30"}, 
+                React.createElement("div", {className: "eventList row margin-bottom-30"}, 
                     React.createElement("h2", {className: "page-header margin-bottom-0"}, "Dette skjer!"), 
                     events
                 )

@@ -14,6 +14,7 @@ import static org.joda.time.DateTime.now
 class EventServiceImplTest extends Specification {
 
     def eventRepository = Mock(EventRepository)
+    def mailService = Mock(MailService)
     EventService eventService
     def currentTimePlus1 = now().plusDays(1)
     def currentTimePlus2 = now().plusDays(2)
@@ -22,7 +23,8 @@ class EventServiceImplTest extends Specification {
 
     def setup() {
         eventService = new EventServiceImpl(
-                eventRepository: eventRepository
+                eventRepository: eventRepository,
+                mailService: mailService
         )
     }
 
@@ -91,6 +93,8 @@ class EventServiceImplTest extends Specification {
                 it.first()
             }
 
+            0 * mailService.sendMail(_,_)
+
             event.participants.size() == 6
             !event.participants.first().reserve
             event.participants.last().reserve
@@ -112,6 +116,7 @@ class EventServiceImplTest extends Specification {
                 it.first()
             }
 
+            0 * mailService.sendMail(_,_)
             event.participants.size() == 1
             event.history.size() == 1
             event.history.first().change == History.Change.Unregister
@@ -138,7 +143,7 @@ class EventServiceImplTest extends Specification {
             eventRepository.save(_) >> {
                 it.first()
             }
-
+            1 * mailService.sendMail(_,_)
             event.participants.size() == 5
             !event.participants.first().reserve
             !event.participants.last().reserve

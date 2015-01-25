@@ -20,6 +20,7 @@ import static no.charlie.rsvp.domain.History.Change.Unregister
 class EventServiceImpl implements EventService {
 
     @Autowired EventRepository eventRepository
+    @Autowired MailService mailService
 
     Event createEvent(Event event) {
         return eventRepository.save(event);
@@ -42,11 +43,22 @@ class EventServiceImpl implements EventService {
         Participant p = event.participants.find {
             it.id == participantId
         }
+        def shouldSendMailToNextParticipant = isParticipantStatusChanging(event, p)
         event.participants.remove(p)
         event.updateParticipants()
-        History history = createHistory(event, p, Unregister)
-        event.history.add(history)
+
+        event.history.add(createHistory(event, p, Unregister))
+        if (shouldSendMailToNextParticipant) {
+            sendMailToNextParticipant(event)
+        }
         return eventRepository.save(event)
+    }
+
+    static boolean isParticipantStatusChanging(Event event, Participant participant) {
+        if (participant.reserve) {
+            return false
+        }
+        return event.participants.size() > event.maxNumber
     }
 
     List<Event> findAllEvents() {
@@ -65,11 +77,17 @@ class EventServiceImpl implements EventService {
         eventRepository.delete(eventId)
     }
 
+    void sendMailToNextParticipant(Event event) {
+        Participant newAttender = event.participants.findAll {
+            !it.reserve
+        }.last()
+        mailService.sendMail(newAttender, event)
+    }
+
+
     private static void validateEventIsOpen(Event event) {
         def currentTime = DateTime.now();
         if (currentTime.isBefore(event.regStart) || currentTime.isAfter(event.regEnd)) {
-            def regStart = event.regStart?.toString('yyyy-MM-dd HH:mm')
-            def regEnd = event.regEnd?.toString('yyyy-MM-dd HH:mm')
             throw new RsvpBadRequestException("Kan ikke meldes på/av nå!")
         }
     }

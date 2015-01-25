@@ -19,7 +19,7 @@ class MailServiceImpl implements MailService {
             email.addTo(participant.email)
             email.setFrom("charlie.midtlyng@bekk.no")
             email.setSubject("[BEKK-Fotball] - ${event.subject}")
-            email.setText("Noen har meldt seg av og du har dermed fått plass på ${event} som starter ${event.startTime?.toString('yyyy-MM-dd HH:mm')}. \n -Charlie")
+            email.setText("Noen har meldt seg av og du har dermed fått plass på ${event.subject} som starter ${event.startTime?.toString('yyyy-MM-dd HH:mm')}. \n -Charlie")
 
             try {
                 SendGrid.Response response = sendgrid.send(email)

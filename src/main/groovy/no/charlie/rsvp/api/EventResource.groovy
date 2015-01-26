@@ -3,6 +3,7 @@ package no.charlie.rsvp.api
 import no.charlie.rsvp.domain.Event
 import no.charlie.rsvp.domain.Participant
 import no.charlie.rsvp.exception.RsvpBadRequestException
+import no.charlie.rsvp.service.CaptchaService
 import no.charlie.rsvp.service.EventService
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component
 
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Request
 import javax.ws.rs.core.Response
 
 /**
@@ -21,6 +23,7 @@ import javax.ws.rs.core.Response
 class EventResource {
 
     @Autowired EventService eventService
+    @Autowired CaptchaService captchaService
 
 
     @GET
@@ -57,8 +60,22 @@ class EventResource {
     @POST
     @Path("/{id}/register")
     Response register(@PathParam('id') Long eventId, Map valueMap) {
+        String remoteIp = getRemoteIpFromHeroku()
+        if(!captchaService.IsHuman(valueMap.get("g-recaptcha-response"), remoteIp))
+            throw new RsvpBadRequestException("Captcha validerte ikke. ")
+
         Participant p = parseParticipant(valueMap)
         return Response.accepted().entity(eventService.addParticipantToEvent(eventId, p)).build()
+    }
+
+    String getRemoteIpFromHeroku() {
+        String ip = "0.0.0.0"
+
+        try {
+            ip = Request.getHeader("X-Forwarded-For").split(",")[0]
+        } catch (Exception ignored){}
+
+        return ip
     }
 
     @DELETE

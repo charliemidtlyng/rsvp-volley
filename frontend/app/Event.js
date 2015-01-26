@@ -6,6 +6,7 @@ var Utils = require('./Utils');
 var ReactWidgets = require('react-widgets');
 var Combobox = ReactWidgets.Combobox;
 var ReactBootstrap = require('react-bootstrap');
+var Recaptcha = require('./Recaptcha');
 var Panel = ReactBootstrap.Panel;
 
 var Participant= React.createClass({
@@ -77,11 +78,13 @@ var Event = React.createClass({
     attend: function(x) {
         var name = this.refs.name.state.value;
         var email = this.refs.email.getDOMNode().value.trim();
+        var captcha = grecaptcha.getResponse();
         if(name === '') {
             return;
         }
-        EventStore.registerForEvent(this.getParams().id, {name: name, email: email})
+        EventStore.registerForEvent(this.getParams().id, {name: name, email: email, 'g-recaptcha-response': captcha})
                 .then(this.updateEvent, this.updateError);
+        grecaptcha.reset();
     },
     unregister: function(event){
         var participantId = event.target.dataset.id, eventId = this.state.currentEvent.id
@@ -140,6 +143,10 @@ var Event = React.createClass({
                                 <input type="email" className="form-control col-xs-8 col-md-4" placeholder="epost" ref="email" />
                             </div>
                         </fieldset>
+                        <br/>
+                        <Recaptcha sitekey="6LfB7QATAAAAAMjr-w95hNK54bNkWAYXKOzJvzt-"
+                                   theme="dark" />
+                        <br/>
                         <div className="col-xs-12"><button type="button" className="btn btn-primary" onClick={this.attend}>Meld på</button></div>
                     </form>
                     <div className="col-xs-12 col-sm-5">

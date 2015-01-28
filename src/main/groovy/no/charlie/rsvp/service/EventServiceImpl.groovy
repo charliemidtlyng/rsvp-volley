@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service
 import static no.charlie.rsvp.domain.History.Change
 import static no.charlie.rsvp.domain.History.Change.Register
 import static no.charlie.rsvp.domain.History.Change.Unregister
+import static org.joda.time.DateTime.now
 
 /**
  * @author Charlie Midtlyng (charlie.midtlyng@BEKK.no)
@@ -21,13 +22,14 @@ class EventServiceImpl implements EventService {
 
     @Autowired EventRepository eventRepository
     @Autowired MailService mailService
+    @Autowired SmsService smsService
 
     Event createEvent(Event event) {
-        return eventRepository.save(event);
+        return eventRepository.save(event)
     }
 
     Event addParticipantToEvent(Long eventId, Participant p) {
-        Event event = eventRepository.findWithPreFetch(eventId);
+        Event event = eventRepository.findWithPreFetch(eventId)
         validateEventIsOpen(event)
         p.setEvent(event)
         event.participants.add(p)
@@ -38,18 +40,18 @@ class EventServiceImpl implements EventService {
     }
 
     Event removeParticipantFromEvent(Long eventId, Long participantId) {
-        Event event = eventRepository.findWithPreFetch(eventId);
+        Event event = eventRepository.findWithPreFetch(eventId)
         validateEventIsOpen(event)
         Participant p = event.participants.find {
             it.id == participantId
         }
-        def shouldSendMailToNextParticipant = isParticipantStatusChanging(event, p)
+        def shouldNotifyNextParticipant = isParticipantStatusChanging(event, p)
         event.participants.remove(p)
         event.updateParticipants()
 
         event.history.add(createHistory(event, p, Unregister))
-        if (shouldSendMailToNextParticipant) {
-            sendMailToNextParticipant(event)
+        if (shouldNotifyNextParticipant) {
+            notifyNextParticipant(event)
         }
         return eventRepository.save(event)
     }
@@ -77,16 +79,17 @@ class EventServiceImpl implements EventService {
         eventRepository.delete(eventId)
     }
 
-    void sendMailToNextParticipant(Event event) {
+    void notifyNextParticipant(Event event) {
         Participant newAttender = event.participants.findAll {
             !it.reserve
         }.last()
         mailService.sendMail(newAttender, event)
+        smsService.sendSms(newAttender, '[BEKK-Fotball] Du er flyttet fra reservelisten til påmeldtlisten! PS:meld deg av dersom du ikke kan stille. -Charlie')
     }
 
 
     private static void validateEventIsOpen(Event event) {
-        def currentTime = DateTime.now();
+        def currentTime = now()
         if (currentTime.isBefore(event.regStart) || currentTime.isAfter(event.regEnd)) {
             throw new RsvpBadRequestException("Kan ikke meldes på/av nå!")
         }

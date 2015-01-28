@@ -15,6 +15,7 @@ class EventServiceImplTest extends Specification {
 
     def eventRepository = Mock(EventRepository)
     def mailService = Mock(MailService)
+    def smsService = Mock(SmsService)
     EventService eventService
     def currentTimePlus1 = now().plusDays(1)
     def currentTimePlus2 = now().plusDays(2)
@@ -24,7 +25,8 @@ class EventServiceImplTest extends Specification {
     def setup() {
         eventService = new EventServiceImpl(
                 eventRepository: eventRepository,
-                mailService: mailService
+                mailService: mailService,
+                smsService: smsService
         )
     }
 
@@ -94,6 +96,7 @@ class EventServiceImplTest extends Specification {
             }
 
             0 * mailService.sendMail(_,_)
+            0 * smsService.sendSms(_,_)
 
             event.participants.size() == 6
             !event.participants.first().reserve
@@ -117,6 +120,7 @@ class EventServiceImplTest extends Specification {
             }
 
             0 * mailService.sendMail(_,_)
+            0 * smsService.sendSms(_,_)
             event.participants.size() == 1
             event.history.size() == 1
             event.history.first().change == History.Change.Unregister
@@ -144,6 +148,7 @@ class EventServiceImplTest extends Specification {
                 it.first()
             }
             1 * mailService.sendMail(_,_)
+            1 * smsService.sendSms(_,_)
             event.participants.size() == 5
             !event.participants.first().reserve
             !event.participants.last().reserve

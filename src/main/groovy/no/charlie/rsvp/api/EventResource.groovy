@@ -61,22 +61,14 @@ class EventResource {
     @Path("/{id}/register")
     Response register(@PathParam('id') Long eventId, Map valueMap) {
         String remoteIp = getRemoteIpFromHeroku()
-        if(!captchaService.IsHuman(valueMap.get("g-recaptcha-response"), remoteIp))
+        if (!captchaService.isHuman(valueMap.get("g-recaptcha-response"), remoteIp)) {
             throw new RsvpBadRequestException("Captcha validerte ikke. ")
+        }
 
         Participant p = parseParticipant(valueMap)
         return Response.accepted().entity(eventService.addParticipantToEvent(eventId, p)).build()
     }
 
-    String getRemoteIpFromHeroku() {
-        String ip = "0.0.0.0"
-
-        try {
-            ip = Request.getHeader("X-Forwarded-For").split(",")[0]
-        } catch (Exception ignored){}
-
-        return ip
-    }
 
     @DELETE
     @Path("/{eventId}/register/{participantId}")
@@ -118,6 +110,17 @@ class EventResource {
                 throw new RsvpBadRequestException("Feltet $it mangler!")
             }
         }
+    }
+
+    String getRemoteIpFromHeroku() {
+        String ip = "0.0.0.0"
+        try {
+            ip = Request.getHeader("X-Forwarded-For").split(",")[0]
+        } catch (Exception ignored) {
+
+        }
+
+        return ip
     }
 
 

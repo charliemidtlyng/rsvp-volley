@@ -1,10 +1,9 @@
 package no.charlie.rsvp.api
 
-import no.charlie.rsvp.exception.RsvpBadRequestException
 import no.charlie.rsvp.service.EventService
+import no.charlie.rsvp.service.ReCaptchaService
 import spock.lang.Specification
 
-import javax.ws.rs.NotFoundException
 import javax.ws.rs.core.Response
 
 import static javax.ws.rs.core.Response.Status.ACCEPTED
@@ -15,11 +14,13 @@ import static javax.ws.rs.core.Response.Status.ACCEPTED
 class EventResourceTest extends Specification {
 
     def eventService = Mock(EventService)
+    def recaptchaService = Mock(ReCaptchaService)
     EventResource resource
 
     def setup() {
         resource = new EventResource(
-                eventService: eventService
+                eventService: eventService,
+                captchaService: recaptchaService
         )
     }
 
@@ -58,6 +59,7 @@ class EventResourceTest extends Specification {
             ]
             Response response = resource.register(1L, valueMap)
         then:
+            recaptchaService.isHuman(_, _) >> true
             response.status == ACCEPTED.statusCode
 
     }

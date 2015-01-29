@@ -5,4 +5,4 @@ build/
 out
 app.jar
 frontend/node_modules
-.gradle/
+.gradle

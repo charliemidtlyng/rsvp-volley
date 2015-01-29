@@ -24,7 +24,16 @@ var Recaptcha = React.createClass({
       type: 'image'
     };
   },
+  resetRecaptcha: function(){
+    // Two lines of hacky code - not able to destroy previously created reCaptchas
+    if(___grecaptcha_cfg) {
+      ___grecaptcha_cfg.Ye = {};
+      ___grecaptcha_cfg.count = 0;
+    }
+
+  },
   renderAsyncRecaptcha: function(){
+    this.resetRecaptcha();
     grecaptcha.render(this.props.elementID, {
       'sitekey': this.props.sitekey,
       'callback': (this.props.verifyCallback) ? this.props.verifyCallback : undefined,

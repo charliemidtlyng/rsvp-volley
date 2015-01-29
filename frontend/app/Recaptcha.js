@@ -1,4 +1,5 @@
 // From https://github.com/appleboy/react-recaptcha
+// Changed to fulfill requirements of loading script in different ways
 'use strict';
 
 var React = require('react');
@@ -16,28 +17,36 @@ var Recaptcha = React.createClass({
     return {
       elementID: 'g-recaptcha',
       onloadCallback: undefined,
-      onloadCallbackName: 'onloadCallback',
+      onloadCallbackName: 'onloadRecaptchaCallback',
       verifyCallback: undefined,
       render: 'onload',
       theme: 'light',
       type: 'image'
     };
   },
+  renderAsyncRecaptcha: function(){
+    grecaptcha.render(this.props.elementID, {
+      'sitekey': this.props.sitekey,
+      'callback': (this.props.verifyCallback) ? this.props.verifyCallback : undefined,
+      'theme': this.props.theme,
+      'type': this.props.type
+    });
 
-  render: function() {
-    if (this.props.render == 'explicit' && this.props.onloadCallback) {
+    if (this.props.onloadCallback) {
+      this.props.onloadCallback();
+    }
+  },
+  componentDidMount: function () {
+    // Check if the grecaptcha is already loaded, if not - add a callback
+    if(window.grecaptcha) {
+      this.renderAsyncRecaptcha();
+    } else {
       window[this.props.onloadCallbackName] = function () {
-        grecaptcha.render(this.props.elementID, {
-          'sitekey': this.props.sitekey,
-          'callback': (this.props.verifyCallback) ? this.props.verifyCallback : undefined,
-          'theme': this.props.theme,
-          'type': this.props.type
-        });
-
-        if (this.props.onloadCallback) {
-          this.props.onloadCallback();
-        }
+        this.renderAsyncRecaptcha()
       }.bind(this);
+    }
+  },
+  render: function() {
       return (
         <div id={this.props.elementID}
           data-onloadcallbackname={this.props.onloadCallbackName}
@@ -45,16 +54,6 @@ var Recaptcha = React.createClass({
           >
         </div>
       );
-    } else {
-      return (
-        <div className='g-recaptcha'
-          data-sitekey={this.props.sitekey}
-          data-theme={this.props.theme}
-          data-type={this.props.type}
-          >
-        </div>
-      );
-    }
   }
 });
 

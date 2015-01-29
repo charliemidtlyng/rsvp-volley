@@ -144,8 +144,10 @@ var Event = React.createClass({
                             </div>
                         </fieldset>
                         <br/>
-                        <Recaptcha sitekey="6LfB7QATAAAAAMjr-w95hNK54bNkWAYXKOzJvzt-"
-                                   theme="dark" />
+                        <Recaptcha
+                                sitekey="6LfB7QATAAAAAMjr-w95hNK54bNkWAYXKOzJvzt-"
+                                theme="dark"
+                                render="explicit" />
                         <br/>
                         <div className="col-xs-12"><button type="button" className="btn btn-primary" onClick={this.attend}>Meld på</button></div>
                     </form>

@@ -94,7 +94,19 @@ class EventResource {
 
     static Participant parseParticipant(Map map) {
         validateProperties(map, 'name')
-        new Participant(name: map.name, email: map.email)
+        validatePhoneNumber(map);
+        new Participant(name: map.name, email: map.email, phoneNumber: map.phoneNumber)
+    }
+
+    static Boolean validatePhoneNumber(Map map) {
+        String phoneNumber = map.phoneNumber
+        if (phoneNumber) {
+            if (phoneNumber.length() == 8 && (phoneNumber.startsWith('4') || phoneNumber.startsWith('9'))) {
+                return true;
+            }
+            throw new RsvpBadRequestException("Feltet mobiltlf må være 8 tegn og begynne på 9 eller 4!")
+        }
+        return true;
     }
 
     private static DateTime toDateTime(String stringValue) {

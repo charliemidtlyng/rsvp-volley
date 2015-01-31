@@ -149,11 +149,12 @@ var Event = React.createClass({displayName: "Event",
     attend: function(x) {
         var name = this.refs.name.state.value;
         var email = this.refs.email.getDOMNode().value.trim();
+        var phoneNumber = this.refs.phoneNumber.getDOMNode().value.trim();
         var captcha = grecaptcha.getResponse();
         if(name === '') {
             return;
         }
-        EventStore.registerForEvent(this.getParams().id, {name: name, email: email, 'g-recaptcha-response': captcha})
+        EventStore.registerForEvent(this.getParams().id, {name: name, phoneNumber: phoneNumber, email: email, 'g-recaptcha-response': captcha})
                 .then(this.updateEvent, this.updateError);
         grecaptcha.reset();
     },
@@ -164,7 +165,7 @@ var Event = React.createClass({displayName: "Event",
     updateEvent: function(){
         EventStore.getEvent(this.getParams().id)
                 .then(function(event){
-                    this.setState({currentEvent: event});
+                    this.setState({currentEvent: event, error: ''});
                 }.bind(this));
     },
     updateError: function(error){
@@ -199,7 +200,7 @@ var Event = React.createClass({displayName: "Event",
                         React.createElement("fieldset", null, 
                             React.createElement("legend", null, "Påmelding:"), 
                             React.createElement(ErrorPanel, {error: this.state.error}), 
-                            React.createElement("div", {className: "form-group col-xs-12 col-sm-5 col-md-4"}, 
+                            React.createElement("div", {className: "form-group col-xs-12 col-sm-4 col-md-4"}, 
                                 React.createElement("label", {htmlFor: "name"}, "Navn*"), 
                                 React.createElement(Combobox, {
                                         data: this.props.listOfCandidates, 
@@ -209,7 +210,11 @@ var Event = React.createClass({displayName: "Event",
                                         messages: emptyFilter= {}}
                                 )
                             ), 
-                            React.createElement("div", {className: "form-group col-xs-12 col-sm-5 col-md-4"}, 
+                            React.createElement("div", {className: "form-group col-xs-12 col-sm-4 col-md-4"}, 
+                                React.createElement("label", {htmlFor: "phoneNumber"}, "Mobil"), 
+                                React.createElement("input", {type: "tel", className: "form-control col-xs-8 col-md-4", placeholder: "mobilnr", ref: "phoneNumber"})
+                            ), 
+                            React.createElement("div", {className: "form-group col-xs-12 col-sm-4 col-md-4"}, 
                                 React.createElement("label", {htmlFor: "email"}, "Epost"), 
                                 React.createElement("input", {type: "email", className: "form-control col-xs-8 col-md-4", placeholder: "epost", ref: "email"})
                             )

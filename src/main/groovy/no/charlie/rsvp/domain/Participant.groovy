@@ -18,6 +18,7 @@ class Participant {
     @ManyToOneLazyNoCascade @JsonBackReference Event event
     String name
     String email
+    String phoneNumber
     Boolean reserve = false
     @PDateTime DateTime timestamp = now()
 }

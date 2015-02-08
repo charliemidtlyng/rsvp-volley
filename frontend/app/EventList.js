@@ -32,7 +32,7 @@ var EventList = React.createClass({
               });
             return <Link to="event" className='col-xs-6 col-sm-4' params={event} key={event.id}>
                 <div className={classes}>
-                    <h2>{event.subject} <small>({Utils.formatDateTime(event.startTime, 'yyyy-MM-dd')})</small></h2>
+                    <h2>{event.subject} <small> ({Utils.timeStampToDate(event.startTime)}-{Utils.formatDateTime(event.startTime, 'yyyy-MM-dd')})</small></h2>
                     <h5><strong>Start:</strong> {Utils.formatDateTime(event.startTime)}</h5>
                     <div><strong>Til:</strong> {Utils.formatDateTime(event.endTime)}</div>
                     <div><strong>Sted:</strong> {event.location}</div>

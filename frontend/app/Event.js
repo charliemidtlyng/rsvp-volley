@@ -118,7 +118,7 @@ var Event = React.createClass({
         return (
                 <div className="clearfix margin-bottom-30 margin-top-30">
                     <h2>{event.subject}</h2>
-                    <h4><strong>Start:</strong> {Utils.formatDateTime(event.startTime)}</h4>
+                    <h4><strong>Start:</strong> {Utils.timeStampToDate(event.startTime)} - {Utils.formatDateTime(event.startTime)}</h4>
                     <div><strong>Til:</strong> {Utils.formatDateTime(event.endTime)}</div>
                     <div><strong>Sted:</strong> {event.location}</div>
                     <div><strong>Påmelding åpner:</strong> {Utils.formatDateTime(event.regStart)}</div>

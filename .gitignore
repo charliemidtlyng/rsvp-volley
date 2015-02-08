@@ -7,3 +7,5 @@ app.jar
 frontend/node_modules
 .gradle
 .gradle/
+gradle
+gradle/

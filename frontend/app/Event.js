@@ -89,7 +89,9 @@ var Event = React.createClass({
     },
     unregister: function(event){
         var participantId = event.target.dataset.id, eventId = this.state.currentEvent.id
-        EventStore.unregisterForEvent(eventId, participantId).then(this.updateEvent, this.updateError);
+        if (confirm("Vil du virkelig slette denne deltageren?")) {
+            EventStore.unregisterForEvent(eventId, participantId).then(this.updateEvent, this.updateError);      
+        }
     },
     updateEvent: function(){
         EventStore.getEvent(this.getParams().id)

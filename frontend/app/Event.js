@@ -13,7 +13,7 @@ var Participant= React.createClass({
     render: function(){
         return <div key={this.props.participant.id}>
             <span className="col-xs-8">{this.props.participant.name}</span>
-            <span className="col-xs-4"><button data-id={this.props.participant.id} className="btn btn-danger btn-xs" onClick={this.props.unregister}>[Avmeld]</button>
+            <span className="col-xs-4"><button data-id={this.props.participant.id} data-name={this.props.participant.name} className="btn btn-danger btn-xs" onClick={this.props.unregister}>[Avmeld]</button>
             </span>
         </div>
     }
@@ -88,8 +88,9 @@ var Event = React.createClass({
         grecaptcha.reset();
     },
     unregister: function(event){
-        var participantId = event.target.dataset.id, eventId = this.state.currentEvent.id
-        if (confirm("Vil du melde av denne deltageren?")) {
+        var participantId = event.target.dataset.id, eventId = this.state.currentEvent.id;
+		var participantName = event.target.dataset.name;
+        if (confirm("Vil du melde av " + participantName + "?")) {
             EventStore.unregisterForEvent(eventId, participantId).then(this.updateEvent, this.updateError);      
         }
     },

@@ -84,7 +84,7 @@ var Participant= React.createClass({displayName: "Participant",
     render: function(){
         return React.createElement("div", {key: this.props.participant.id}, 
             React.createElement("span", {className: "col-xs-8"}, this.props.participant.name), 
-            React.createElement("span", {className: "col-xs-4"}, React.createElement("button", {"data-id": this.props.participant.id, className: "btn btn-danger btn-xs", onClick: this.props.unregister}, "[Avmeld]")
+            React.createElement("span", {className: "col-xs-4"}, React.createElement("button", {"data-id": this.props.participant.id, "data-name": this.props.participant.name, className: "btn btn-danger btn-xs", onClick: this.props.unregister}, "[Avmeld]")
             )
         )
     }
@@ -159,8 +159,11 @@ var Event = React.createClass({displayName: "Event",
         grecaptcha.reset();
     },
     unregister: function(event){
-        var participantId = event.target.dataset.id, eventId = this.state.currentEvent.id
-        EventStore.unregisterForEvent(eventId, participantId).then(this.updateEvent, this.updateError);
+        var participantId = event.target.dataset.id, eventId = this.state.currentEvent.id;
+		var participantName = event.target.dataset.name;
+        if (confirm("Vil du melde av " + participantName + "?")) {
+            EventStore.unregisterForEvent(eventId, participantId).then(this.updateEvent, this.updateError);      
+        }
     },
     updateEvent: function(){
         EventStore.getEvent(this.getParams().id)
@@ -240,6 +243,7 @@ var Event = React.createClass({displayName: "Event",
     }
 });
 module.exports = Event;
+
 },{"./EventStore":5,"./Recaptcha":7,"./Utils":8,"react-bootstrap":78,"react-router":98,"react-widgets":132,"react/addons":181}],4:[function(require,module,exports){
 /** @jsx React.DOM */
 var React = require('react/addons');

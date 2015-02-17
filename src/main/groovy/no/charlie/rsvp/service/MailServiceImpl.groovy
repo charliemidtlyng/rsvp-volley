@@ -17,7 +17,7 @@ class MailServiceImpl implements MailService {
             SendGrid sendgrid = new SendGrid(System.getenv("SENDGRID_USERNAME"), System.getenv("SENDGRID_PASSWORD"))
             SendGrid.Email email = new SendGrid.Email()
             email.addTo(participant.email)
-            email.setFrom("charlie.midtlyng@bekk.no")
+            email.setFrom("charlie.midtlyng@gmail.com")
             email.setSubject("[BEKK-Fotball] - ${event.subject}")
             email.setText("Noen har meldt seg av og du har dermed fått plass på ${event.subject} som starter ${event.startTime?.toString('yyyy-MM-dd HH:mm')}. \n -Charlie")
 

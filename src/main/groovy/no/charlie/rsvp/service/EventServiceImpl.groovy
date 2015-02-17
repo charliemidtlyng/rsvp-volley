@@ -84,7 +84,7 @@ class EventServiceImpl implements EventService {
             !it.reserve
         }.last()
         mailService.sendMail(newAttender, event)
-        smsService.sendSms(newAttender, '[BEKK-Fotball] Du er flyttet fra reservelisten til påmeldtlisten! PS:meld deg av dersom du ikke kan stille. -Charlie')
+        smsService.sendSms(newAttender, '[BEKK-Fotball] Du er flyttet fra reservelisten til paameldtlisten! PS:meld deg av dersom du ikke kan stille. -Charlie')
     }
 
 

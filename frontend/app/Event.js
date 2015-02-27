@@ -69,7 +69,8 @@ var Event = React.createClass({
           'Øyvind Kvangardsnes',
           'Sindre Nordbø',
           'Ole Hjalmar Herje',
-          'Per Gunnar Hagevik'
+          'Per Gunnar Hagevik',
+          'Nikolai Norman Andersen'
       ]}
     },
     componentDidMount: function () {

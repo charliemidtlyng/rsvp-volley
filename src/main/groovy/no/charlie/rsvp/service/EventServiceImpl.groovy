@@ -7,6 +7,7 @@ import no.charlie.rsvp.exception.RsvpBadRequestException
 import no.charlie.rsvp.repository.EventRepository
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 
 import static no.charlie.rsvp.domain.History.Change
@@ -79,6 +80,7 @@ class EventServiceImpl implements EventService {
         eventRepository.delete(eventId)
     }
 
+    @Async
     void notifyNextParticipant(Event event) {
         Participant newAttender = event.participants.findAll {
             !it.reserve

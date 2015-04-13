@@ -9,3 +9,4 @@ frontend/node_modules
 .gradle/
 gradle
 gradle/
+.gradle/2.2/taskArtifacts/**

@@ -1,10 +1,9 @@
 package no.charlie.rsvp.service
 
-import no.charlie.rsvp.domain.Event
-import no.charlie.rsvp.domain.History
-import no.charlie.rsvp.domain.Participant
+import no.charlie.rsvp.domain.*
 import no.charlie.rsvp.exception.RsvpBadRequestException
 import no.charlie.rsvp.repository.EventRepository
+import no.charlie.rsvp.repository.OtpRepository
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Async
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Service
 import static no.charlie.rsvp.domain.History.Change
 import static no.charlie.rsvp.domain.History.Change.Register
 import static no.charlie.rsvp.domain.History.Change.Unregister
+import static no.charlie.rsvp.domain.Otp.generatePassword
 import static org.joda.time.DateTime.now
 
 /**
@@ -22,12 +22,16 @@ import static org.joda.time.DateTime.now
 class EventServiceImpl implements EventService {
 
     @Autowired EventRepository eventRepository
+    @Autowired OtpRepository otpRepository
     @Autowired MailService mailService
     @Autowired SmsService smsService
 
     Event createEvent(Event event) {
-        return eventRepository.save(event)
+        Event savedEvent = eventRepository.save(event)
+        otpRepository.save(createOtp(savedEvent.id))
+        return savedEvent
     }
+
 
     Event addParticipantToEvent(Long eventId, Participant p) {
         Event event = eventRepository.findWithPreFetch(eventId)
@@ -105,5 +109,8 @@ class EventServiceImpl implements EventService {
         )
     }
 
+    private static Otp createOtp(Event eventId) {
+        new Otp(eventId: eventId, password: generatePassword())
+    }
 
 }

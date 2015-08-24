@@ -1,18 +1,19 @@
 package no.charlie.rsvp.api
 
 import no.charlie.rsvp.domain.Event
+import no.charlie.rsvp.domain.Otp
 import no.charlie.rsvp.domain.Participant
 import no.charlie.rsvp.exception.RsvpBadRequestException
+import no.charlie.rsvp.repository.OtpRepository
 import no.charlie.rsvp.service.CaptchaService
 import no.charlie.rsvp.service.EventService
+import no.charlie.rsvp.service.SmsService
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 import javax.ws.rs.*
-import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Request
-import javax.ws.rs.core.Response
+import javax.ws.rs.core.*
 
 /**
  * @author Charlie Midtlyng (charlie.midtlyng@BEKK.no)
@@ -23,6 +24,8 @@ import javax.ws.rs.core.Response
 class EventResource {
 
     @Autowired EventService eventService
+    @Autowired SmsService smsService
+    @Autowired OtpRepository otpRepository
     @Autowired CaptchaService captchaService
 
 
@@ -60,13 +63,27 @@ class EventResource {
     @POST
     @Path("/{id}/register")
     Response register(@PathParam('id') Long eventId, Map valueMap) {
-        String remoteIp = getRemoteIpFromHeroku()
-        if (!captchaService.isHuman(valueMap.get("g-recaptcha-response"), remoteIp)) {
-            throw new RsvpBadRequestException("Captcha validerte ikke. ")
+        String otp = valueMap.otp
+        if (otp) {
+            validateOtp(eventId, otp)
+        } else {
+            validateCaptcha(valueMap)
         }
 
         Participant p = parseParticipant(valueMap)
         return Response.accepted().entity(eventService.addParticipantToEvent(eventId, p)).build()
+    }
+
+    @POST
+    @Path("/{id}/otp")
+    Response sendOtp(@PathParam('id') Long eventId, Map valueMap) {
+        String phoneNumber = valueMap.phoneNumber
+        if (!phoneNumber) {
+            throw new RsvpBadRequestException('Må fylle ut mobilnummer for å få engangskode på SMS')
+        }
+        validatePhoneNumber(valueMap)
+        Otp otp = otpRepository.findByEventId(eventId)
+        return Response.accepted().entity(smsService.sendOtpSms(otp.password, phoneNumber)).build()
     }
 
 
@@ -94,7 +111,7 @@ class EventResource {
 
     static Participant parseParticipant(Map map) {
         validateProperties(map, 'name')
-        validatePhoneNumber(map);
+        validatePhoneNumber(map)
         new Participant(name: map.name, email: map.email, phoneNumber: map.phoneNumber)
     }
 
@@ -102,11 +119,11 @@ class EventResource {
         String phoneNumber = map.phoneNumber
         if (phoneNumber) {
             if (phoneNumber.length() == 8 && (phoneNumber.startsWith('4') || phoneNumber.startsWith('9'))) {
-                return true;
+                return true
             }
             throw new RsvpBadRequestException("Feltet mobiltlf må være 8 tegn og begynne på 9 eller 4!")
         }
-        return true;
+        return true
     }
 
     private static DateTime toDateTime(String stringValue) {
@@ -133,6 +150,19 @@ class EventResource {
         }
 
         return ip
+    }
+
+    private void validateOtp(long eventId, String password) {
+        Otp otp = otpRepository.findByEventId(eventId)
+        if (!otp || !otp.password.equals(password)) {
+            throw new RsvpBadRequestException("Engangspassord validerte ikke. ")
+        }
+    }
+
+    private void validateCaptcha(Map valueMap) {
+        if (!captchaService.isHuman(valueMap.get("g-recaptcha-response"), getRemoteIpFromHeroku())) {
+            throw new RsvpBadRequestException("Captcha validerte ikke. ")
+        }
     }
 
 

@@ -9,4 +9,6 @@ interface SmsService {
 
     void sendSms(Participant participant, String message)
 
+    void sendOtpSms(String otp, String phoneNumber)
+
 }

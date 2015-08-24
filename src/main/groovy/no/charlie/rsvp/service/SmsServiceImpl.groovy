@@ -34,4 +34,23 @@ class SmsServiceImpl implements SmsService {
 
 
     }
+
+    @Override
+    void sendOtpSms(String otp, String phoneNumber) {
+        String password = System.getenv('SMS_PASSWORD')
+
+        def http = new HTTPBuilder('https://telenormobil.no')
+        http.get(
+                path: '/ums/smapi/input',
+                query: [
+                        sender             : FROM_NUMBER,
+                        password           : password,
+                        recipients         : phoneNumber,
+                        sId                : '1000000000',
+                        content            : "[BEKK-Fotball] Engangspassord: ${otp}",
+                        responseContentType: 'text/plain'
+
+                ]);
+
+    }
 }

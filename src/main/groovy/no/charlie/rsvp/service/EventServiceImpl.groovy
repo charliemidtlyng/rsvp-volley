@@ -109,7 +109,7 @@ class EventServiceImpl implements EventService {
         )
     }
 
-    private static Otp createOtp(Event eventId) {
+    private static Otp createOtp(Long eventId) {
         new Otp(eventId: eventId, password: generatePassword())
     }
 

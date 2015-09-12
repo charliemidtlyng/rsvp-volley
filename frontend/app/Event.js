@@ -66,10 +66,16 @@ var Event = React.createClass({
           'Kristoffer Liabø',
           'Jonatan Austigard',
           'Pål Moen Møst',
-          'Øyvind Kvangardsnes',
           'Sindre Nordbø',
           'Ole Hjalmar Herje',
-          'Per Gunnar Hagevik',
+          'Emil Lunde',
+          'Morten Øvrebø',
+          'Andreas Moe',
+          'Stian Surén',
+          'Simen Støa',
+          'Hannes Waller',
+          'Fredrik Einarsson',
+          'Emil Staurset',
           'Nikolai Norman Andersen'
       ]}
     },
@@ -92,7 +98,7 @@ var Event = React.createClass({
         var participantId = event.target.dataset.id, eventId = this.state.currentEvent.id;
 		var participantName = event.target.dataset.name;
         if (confirm("Vil du melde av " + participantName + "?")) {
-            EventStore.unregisterForEvent(eventId, participantId).then(this.updateEvent, this.updateError);      
+            EventStore.unregisterForEvent(eventId, participantId).then(this.updateEvent, this.updateError);
         }
     },
     updateEvent: function(){

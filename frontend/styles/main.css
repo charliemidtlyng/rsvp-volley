@@ -1,5 +1,5 @@
 a div:hover {
-	background-color: #4e5d6c;
+	background-color: #3f3f3f;
 }
 .margin-top-30 {
 	margin-top: 30px;
@@ -16,15 +16,25 @@ a div:hover {
 .rw-input {
 	height: 39px;
 }
-h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
-	color: #df691a;
+h1 small, h2 small, h3 small, h4 small{
+	color: #fd5158;
+}
+h1, h2, h3, h4 {
+	color: #fd5158;
+}
+
+a {
+    color: #ebebeb;
+}
+a:hover {
+    color: #ebebeb;
 }
 .pre {
 	white-space: pre;
 }
 
 .old-event {
-	opacity: 0.5;
+	opacity: 0.7;
 }
 .eventList a:hover {
 	text-decoration: none;

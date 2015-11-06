@@ -20,3 +20,12 @@ Starte opp lokalt
 
 Bygge frontend:
 - cd frontend && npm install && gulp deploy
+
+
+
+Deploye - 
+- Endringer i frontend må bygges først:
+  -- cd frontend && npm install && gulp deploy
+- git commit ...
+- git push
+- git push heroku master

@@ -76,7 +76,9 @@ var Event = React.createClass({
           'Hannes Waller',
           'Fredrik Einarsson',
           'Emil Staurset',
-          'Nikolai Norman Andersen'
+          'Nikolai Norman Andersen',
+          'Severin Sverdvik',
+          'Morten Utengen'
       ]}
     },
     componentDidMount: function () {
@@ -144,7 +146,6 @@ var Event = React.createClass({
                                 <Combobox
                                         data={this.props.listOfCandidates}
                                         ref='name'
-                                        suggest={true}
                                         filter={'contains'}
                                         messages={emptyFilter= {}}
                                 />

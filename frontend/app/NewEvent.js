@@ -3,6 +3,7 @@ var React = require('react/addons');
 var EventStore = require('./EventStore');
 var Router = require('react-router');
 var ReactWidgets = require('react-widgets');
+var DefaultEvents = require('./DefaultEvents');
 var DateTimePicker = ReactWidgets.DateTimePicker;
 var Link = Router.Link;
 var NewEvent = React.createClass({
@@ -27,7 +28,7 @@ var NewEvent = React.createClass({
             this.transitionTo('event', {id: event.id});
         }.bind(this));
     },
-    onValueChange: function (event, x, y) {
+    onValueChange: function (event) {
         var inputName = event.target.name;
         var stateValue = {};
         var value = event.target.value
@@ -35,23 +36,42 @@ var NewEvent = React.createClass({
         stateValue[inputName] = value;
         this.setState(stateValue);
     },
-    startTimeChange: function (date, dateString) {
+    startTimeChange: function (date) {
         this.setState({startTime: date});
     },
-    endTimeChange: function (date, dateString) {
+    endTimeChange: function (date) {
         this.setState({endTime: date});
     },
-    regStartChange: function (date, dateString) {
+    regStartChange: function (date) {
         this.setState({regStart: date});
     },
-    regEndChange: function (date, dateString) {
+    regEndChange: function (date) {
         this.setState({regEnd: date});
+    },
+    defaultFootball: function() {
+        var defaultValue = DefaultEvents.football();
+        this.setState({
+            subject: defaultValue.subject,
+            description: defaultValue.description,
+            location: defaultValue.location,
+            maxNumber: defaultValue.maxNumber,
+            startTime: defaultValue.startTime,
+            endTime: defaultValue.endTime,
+            regStart: defaultValue.regStart,
+            regEnd: defaultValue.regEnd,
+            creator: defaultValue.creator
+        });
     },
     render: function () {
         return (
                 <div>
                     <h2 className="page-header">Ny hendelse</h2>
                     <form className="form-horizontal">
+                        <div className="form-group">
+                            <div className="col-sm-offset-2 col-sm-5">
+                                <button type="button" className="btn btn-default" onClick={this.defaultFootball}>Ferdigutfyll fotballtrening</button>
+                            </div>
+                        </div>
                         <div className="form-group">
                             <label htmlFor="subject" className="col-sm-2 control-label">Tittel</label>
                             <div className="col-sm-5">

@@ -16,6 +16,7 @@ For å slippe å skrive .gradlew overalt, og heller skrive gw ->
 
 Starte opp lokalt
 - gw bootRun -Pprofile=dev
+- cd frontend && gulp deploywatch
 
 
 Bygge frontend:

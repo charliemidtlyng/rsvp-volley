@@ -20,6 +20,7 @@ class SmsServiceImpl implements SmsService {
         String password = System.getenv('SMS_PASSWORD')
 
         def http = new HTTPBuilder('https://telenormobil.no')
+        http.ignoreSSLIssues()
         http.get(
                 path: '/ums/smapi/input',
                 query: [

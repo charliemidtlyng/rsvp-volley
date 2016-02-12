@@ -16,6 +16,7 @@ For å slippe å skrive .gradlew overalt, og heller skrive gw ->
 
 Starte opp lokalt
 - gw bootRun -Pprofile=dev
+(evt. mot postgresql base: gw bootRun -Pprofile=test) 
 - cd frontend && gulp deploywatch
 
 

@@ -23,6 +23,9 @@ var EventStore = module.exports = {
     },
     unregisterForEvent: function(id, participantId) {
         return deleteJSON(API + '/' + id + '/register/' + participantId);
+    },
+    confirmLineup: function(id, lineupMap) {
+        return postJSON(API + '/' + id + '/confirmLineup', lineupMap);
     }
 };
 

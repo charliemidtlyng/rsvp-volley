@@ -1,13 +1,11 @@
 package no.charlie.rsvp.api
 
-import no.charlie.rsvp.domain.Event
-import no.charlie.rsvp.domain.Otp
-import no.charlie.rsvp.domain.Participant
+import no.charlie.rsvp.domain.*
+import no.charlie.rsvp.domain.Event.EventSubType
+import no.charlie.rsvp.domain.Event.EventType
 import no.charlie.rsvp.exception.RsvpBadRequestException
 import no.charlie.rsvp.repository.OtpRepository
-import no.charlie.rsvp.service.CaptchaService
-import no.charlie.rsvp.service.EventService
-import no.charlie.rsvp.service.SmsService
+import no.charlie.rsvp.service.*
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -30,14 +28,16 @@ class EventResource {
 
 
     @GET
-    Response events() {
-        return Response.ok().entity(eventService.findAllEvents()).build()
+    Response events(@QueryParam('eventType') EventType eventType,
+                    @QueryParam('eventSubType') EventSubType eventSubType) {
+        return Response.ok().entity(eventService.findAllEvents(eventType, eventSubType)).build()
     }
 
     @GET
     @Path("/upcoming")
-    Response upcomingEvents() {
-        return Response.ok().entity(eventService.findUpcomingEvents()).build()
+    Response upcomingEvents(@QueryParam('eventType') EventType eventType,
+                            @QueryParam('eventSubType') EventSubType eventSubType) {
+        return Response.ok().entity(eventService.findUpcomingEvents(eventType, eventSubType)).build()
     }
 
     @GET
@@ -93,6 +93,17 @@ class EventResource {
         return Response.accepted().entity(eventService.removeParticipantFromEvent(eventId, participantId)).build()
     }
 
+    @POST
+    @Path("/{eventId}/confirmLineup")
+    Response confirmLineup(@PathParam('eventId') Long eventId, Map lineupMap) {
+        println lineupMap
+        if(!lineupMap) {
+            throw new RsvpBadRequestException('Må legge ved uttakslista')
+        }
+        println 'got past this...'
+        Response.accepted().entity(eventService.confirmLineup(eventId, lineupMap)).build()
+    }
+
 
     static Event parseEvent(Map map) {
         validateProperties(map, 'subject', 'startTime', 'endTime', 'regStart', 'regEnd', 'creator', 'location')
@@ -105,8 +116,9 @@ class EventResource {
                 location: map.location,
                 subject: map.subject,
                 description: map.description,
+                eventType: map.eventType ? map.eventType as EventType: EventType.Football,
+                eventSubType: map.eventSubType ? map.eventSubType as EventSubType : EventSubType.Training,
                 maxNumber: map.maxNumber ? map.maxNumber : Integer.MAX_VALUE)
-
     }
 
     static Participant parseParticipant(Map map) {

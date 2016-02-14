@@ -34,7 +34,6 @@ var EventList = React.createClass({
                 <div className={classes}>
                     <h2 className='text-nowrap'>{event.subject} <small><br /> ({Utils.timeStampToDate(event.startTime)}-{Utils.formatDateTime(event.startTime, 'yyyy-MM-dd')})</small></h2>
                     <h5><strong>Start:</strong> {Utils.formatDateTime(event.startTime)}</h5>
-                    <div><strong>Til:</strong> {Utils.formatDateTime(event.endTime)}</div>
                     <div><strong>Sted:</strong> {event.location}</div>
                     <div><strong>Påmelding åpner:</strong> {Utils.formatDateTime(event.regStart)}</div>
                 </div>

@@ -5,6 +5,7 @@ var Router = require('react-router');
 var ReactWidgets = require('react-widgets');
 var DefaultEvents = require('./DefaultEvents');
 var DateTimePicker = ReactWidgets.DateTimePicker;
+var Combobox = ReactWidgets.Combobox;
 var Link = Router.Link;
 var NewEvent = React.createClass({
 
@@ -19,8 +20,16 @@ var NewEvent = React.createClass({
             endTime: null,
             regStart: null,
             regEnd: null,
+            eventType: 'Football',
+            eventSubType: 'Training',
             creator: ''
         }
+    },
+    getDefaultProps: function(){
+      return {
+          listOfEventTypes: ['Football'],
+          listOfEventSubTypes: ['Match', 'Training']
+      }
     },
     createEvent: function (event) {
         event.preventDefault();
@@ -32,7 +41,7 @@ var NewEvent = React.createClass({
         var inputName = event.target.name;
         var stateValue = {};
         var value = event.target.value
-        value = inputName == 'maxNumber' ? parseInt(value) : value;
+        value = inputName == 'maxNumber' && value && !isNaN(parseInt(value)) ? parseInt(value) : value;
         stateValue[inputName] = value;
         this.setState(stateValue);
     },
@@ -48,8 +57,13 @@ var NewEvent = React.createClass({
     regEndChange: function (date) {
         this.setState({regEnd: date});
     },
-    defaultFootball: function() {
-        var defaultValue = DefaultEvents.football();
+    regEventType: function (eventType) {
+        this.setState({eventType: eventType});
+    },
+    regEventSubType: function (eventSubType) {
+        this.setState({eventSubType: eventSubType});
+    },
+    updateWithDefaultValue(defaultValue){
         this.setState({
             subject: defaultValue.subject,
             description: defaultValue.description,
@@ -59,8 +73,17 @@ var NewEvent = React.createClass({
             endTime: defaultValue.endTime,
             regStart: defaultValue.regStart,
             regEnd: defaultValue.regEnd,
-            creator: defaultValue.creator
+            creator: defaultValue.creator,
+            eventSubType: defaultValue.eventSubType
         });
+    },
+    defaultFootball: function() {
+        var defaultValue = DefaultEvents.football();
+        this.updateWithDefaultValue(defaultValue);
+    },
+    defaultFootballMatch: function() {
+        var defaultValue = DefaultEvents.footballMatch();
+        this.updateWithDefaultValue(defaultValue)
     },
     render: function () {
         return (
@@ -68,9 +91,12 @@ var NewEvent = React.createClass({
                     <h2 className="page-header">Ny hendelse</h2>
                     <form className="form-horizontal">
                         <div className="form-group">
-                            <div className="col-sm-offset-2 col-sm-5">
+                            <span className="col-sm-offset-2 col-sm-3">
                                 <button type="button" className="btn btn-default" onClick={this.defaultFootball}>Ferdigutfyll fotballtrening</button>
-                            </div>
+                            </span>
+                            <span className="col-sm-3">
+                                <button type="button" className="btn btn-default" onClick={this.defaultFootballMatch}>Ferdigutfyll fotballkamp</button>
+                            </span>
                         </div>
                         <div className="form-group">
                             <label htmlFor="subject" className="col-sm-2 control-label">Tittel</label>
@@ -124,6 +150,32 @@ var NewEvent = React.createClass({
                             <label htmlFor="regEnd" className="col-sm-2 control-label">Registrering stenger</label>
                             <div className="col-sm-5">
                                 <DateTimePicker css="btn-default" format="yyyy-MM-dd HH:mm"  ref="regEnd" value={this.state.regEnd} onChange={this.regEndChange} />
+                            </div>
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="regEnd" className="col-sm-2 control-label">Idrett</label>
+                            <div className="col-sm-5">
+                                <Combobox
+                                        data={this.props.listOfEventTypes}
+                                        ref='name'
+                                        filter={'contains'}
+                                        messages={emptyFilter= {}}
+                                        value={this.state.eventType}
+                                        onChange={this.regEventType}
+                                />
+                            </div>
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="regEnd" className="col-sm-2 control-label">Kamp/Trening</label>
+                            <div className="col-sm-5">
+                                <Combobox
+                                        data={this.props.listOfEventSubTypes}
+                                        ref='name'
+                                        filter={'contains'}
+                                        messages={emptyFilter= {}}
+                                        value={this.state.eventSubType}
+                                        onChange={this.regEventSubType}
+                                />
                             </div>
                         </div>
                         <div className="form-group">

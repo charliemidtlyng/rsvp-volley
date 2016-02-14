@@ -1,12 +1,13 @@
 package no.charlie.rsvp.domain
 
-import no.charlie.rsvp.domain.Annotations.GeneratedId
-import no.charlie.rsvp.domain.Annotations.OneToManySubselect
-import no.charlie.rsvp.domain.Annotations.PDateTime
-import no.charlie.rsvp.domain.Annotations.RsvpEntity
+import no.charlie.rsvp.domain.Annotations.*
 import org.joda.time.DateTime
 
 import javax.persistence.Column
+
+import static no.charlie.rsvp.domain.Event.EventSubType.Match
+import static no.charlie.rsvp.domain.Event.EventSubType.Training
+import static no.charlie.rsvp.domain.Event.EventType.Football
 
 /**
  * @author Charlie Midtlyng (charlie.midtlyng@BEKK.no)
@@ -18,6 +19,9 @@ class Event {
     @PDateTime DateTime endTime
     @PDateTime DateTime regStart
     @PDateTime DateTime regEnd
+
+    @PEnum EventType eventType = Football
+    @PEnum EventSubType eventSubType = Training
 
     String creator
     String location
@@ -35,10 +39,26 @@ class Event {
     }
 
     Event updateParticipants() {
+        if (hasManualLineUp()) {
+            return this
+        }
         participants.eachWithIndex { Participant entry, int index ->
             entry.reserve = index >= maxNumber
         }
         this
+    }
+
+    boolean hasManualLineUp() {
+        eventSubType && eventSubType == Match
+    }
+
+    public static enum EventType {
+        Football
+    }
+
+    public static enum EventSubType {
+        Training,
+        Match
     }
 
 }

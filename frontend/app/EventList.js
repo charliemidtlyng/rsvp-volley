@@ -28,20 +28,23 @@ var EventList = React.createClass({
         var cx = React.addons.classSet;
         var events = this.state.events.map(function (event) {
               var classes = cx({
-                'old-event': Utils.isOldEvent(event)
+                'old-event': Utils.isOldEvent(event),
+                'event': true,
+                  'col-xs-12': true,
+                  'col-md-9': true,
+                  'clearfix': true
               });
-            return <Link to="event" className='col-xs-12 col-sm-4 clearfix' params={event} key={event.id}>
-                <div className={classes}>
-                    <h2 className='text-nowrap'>{event.subject} <small><br /> ({Utils.timeStampToDate(event.startTime)}-{Utils.formatDateTime(event.startTime, 'yyyy-MM-dd')})</small></h2>
-                    <h5><strong>Start:</strong> {Utils.formatDateTime(event.startTime)}</h5>
-                    <div><strong>Sted:</strong> {event.location}</div>
-                    <div><strong>Påmelding åpner:</strong> {Utils.formatDateTime(event.regStart)}</div>
+            return <Link to="event" className={classes} params={event} key={event.id}>
+                <div >
+                    <h6 className="margin-bottom-0">{event.subject}</h6>
+                    <h2 className='margin-top-10'><span>{event.location}</span> <span className="gray">({Utils.timeStampToDate(event.startTime)} {Utils.formatDateTime(event.startTime, 'dd. MMMM')})</span></h2>
+                    <div><strong>Start:</strong> {Utils.formatDateTime(event.startTime, 'HH:mm')}</div>
+                    <div><strong>Påmelding åpner:</strong> {Utils.formatDateTime(event.regStart, 'dd. MMMM (HH:mm)')}</div>
                 </div>
             </Link>;
         }.bind(this));
         return (
-                <div className="eventList row margin-bottom-30">
-                    <h2 className="page-header margin-bottom-0">Dette skjer!</h2>
+                <div className="eventList row margin-bottom-30 margin-top-50 ">
                     {events}
                 </div>
         );

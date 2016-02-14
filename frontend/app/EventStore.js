@@ -14,6 +14,10 @@ var EventStore = module.exports = {
         return getJSON(API);
     },
 
+    getUpcomingEvents: function () {
+        return getJSON(API + '/upcoming');
+    },
+
     getEvent: function (id) {
         return getJSON(API + '/' + id);
     },

@@ -1,14 +1,20 @@
-a div:hover {
+a:hover {
 	background-color: #3f3f3f;
 }
 .margin-top-30 {
 	margin-top: 30px;
+}
+.margin-top-50 {
+	margin-top: 50px;
 }
 .margin-bottom-30 {
 	margin-bottom: 30px;
 }
 .margin-bottom-0 {
 	margin-bottom: 0px;
+}
+.margin-top-10 {
+	margin-top: 10px;
 }
 .rw-widget {
 	border-radius: 1px;
@@ -17,10 +23,13 @@ a div:hover {
 	height: 39px;
 }
 h1 small, h2 small, h3 small, h4 small{
-	color: #fd5158;
+	color: #808080;
 }
 h1, h2, h3, h4 {
-	color: #fd5158;
+	color: #FFFFFF;
+}
+h2 .gray {
+	color: #808080;
 }
 
 a {
@@ -34,7 +43,7 @@ a:hover {
 }
 
 .old-event {
-	opacity: 0.7;
+	opacity: 0.3;
 }
 .eventList a:hover {
 	text-decoration: none;
@@ -45,4 +54,18 @@ a:hover {
 
 .form-group.lol {
 	margin: 0;
+}
+
+body {
+	background-color: #141414;
+}
+
+.navbar-default, .event {
+	background-color: #212121;
+}
+.event {
+	margin-bottom: 20px;
+}
+.event-with-padding {
+	padding: 10px
 }

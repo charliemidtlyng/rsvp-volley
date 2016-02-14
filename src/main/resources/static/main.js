@@ -199,6 +199,11 @@ var Event = React.createClass({displayName: "Event",
           'Emil Staurset',
           'Nikolai Norman Andersen',
           'Severin Sverdvik',
+          'Helen Le',
+          'Hallvard Braaten',
+          'Anne Berit Bjering',
+          'Silje Kandal',
+          'Kjersti Barstad Strand',
           'Morten Utengen'
       ]}
     },
@@ -249,15 +254,18 @@ var Event = React.createClass({displayName: "Event",
         }.bind(this));
 
         return (
-                React.createElement("div", {className: "clearfix margin-bottom-30 margin-top-30"}, 
-                    React.createElement("h2", null, event.subject), 
-                    React.createElement("h4", null, React.createElement("strong", null, "Start:"), " ", Utils.timeStampToDate(event.startTime), " - ", Utils.formatDateTime(event.startTime)), 
-                    React.createElement("div", null, React.createElement("strong", null, "Til:"), " ", Utils.formatDateTime(event.endTime)), 
-                    React.createElement("div", null, React.createElement("strong", null, "Sted:"), " ", event.location), 
-                    React.createElement("div", null, React.createElement("strong", null, "Påmelding åpner:"), " ", Utils.formatDateTime(event.regStart)), 
-                    React.createElement("div", null, React.createElement("strong", null, "Maks antall:"), " ", event.maxNumber), 
-                    React.createElement("div", null, React.createElement("strong", null, "Antall påmeldt:"), " ", event.participants.length), 
-                    React.createElement("p", {className: "pre"}, event.description), 
+                React.createElement("div", null, 
+                    React.createElement("div", {className: "clearfix margin-bottom-30 margin-top-50 event event-with-padding"}, 
+                        React.createElement("h6", {className: "margin-bottom-0"}, event.subject), 
+                        React.createElement("h2", {className: "margin-top-10 text-nowrap"}, React.createElement("span", null, event.location), " ", React.createElement("span", {className: "gray"}, "(", Utils.timeStampToDate(event.startTime), " ", Utils.formatDateTime(event.startTime, 'dd. MMMM'), ")")), 
+                        React.createElement("div", null, React.createElement("strong", null, "Tid:"), " ", Utils.formatDateTime(event.startTime, 'HH:mm'), " - ", Utils.formatDateTime(event.endTime, 'HH:mm')), 
+                        React.createElement("div", null, React.createElement("strong", null, "Påmelding åpner:"), " ", Utils.formatDateTime(event.regStart, 'dd. MMMM (HH:mm)')), 
+                        React.createElement("div", null, React.createElement("strong", null, "Påmeldt:"), " ", event.participants.length, " / ", event.maxNumber)
+                    ), 
+                    React.createElement("div", {className: "event event-with-padding"}, 
+                        React.createElement("p", {className: "pre"}, event.description)
+                    ), 
+                    React.createElement("div", null, 
                     React.createElement("form", {className: "margin-top-30 margin-bottom-30"}, 
                         React.createElement("fieldset", null, 
                             React.createElement("legend", null, "Påmelding:"), 
@@ -296,6 +304,7 @@ var Event = React.createClass({displayName: "Event",
                         React.createElement("h3", null, "Reserveliste"), 
                         React.createElement("div", {className: "row"}, reserves)
                     )
+                )
                 )
         );
     }
@@ -443,20 +452,23 @@ var EventList = React.createClass({displayName: "EventList",
         var cx = React.addons.classSet;
         var events = this.state.events.map(function (event) {
               var classes = cx({
-                'old-event': Utils.isOldEvent(event)
+                'old-event': Utils.isOldEvent(event),
+                'event': true,
+                  'col-xs-12': true,
+                  'col-md-9': true,
+                  'clearfix': true
               });
-            return React.createElement(Link, {to: "event", className: "col-xs-12 col-sm-4 clearfix", params: event, key: event.id}, 
-                React.createElement("div", {className: classes}, 
-                    React.createElement("h2", {className: "text-nowrap"}, event.subject, " ", React.createElement("small", null, React.createElement("br", null), " (", Utils.timeStampToDate(event.startTime), "-", Utils.formatDateTime(event.startTime, 'yyyy-MM-dd'), ")")), 
-                    React.createElement("h5", null, React.createElement("strong", null, "Start:"), " ", Utils.formatDateTime(event.startTime)), 
-                    React.createElement("div", null, React.createElement("strong", null, "Sted:"), " ", event.location), 
-                    React.createElement("div", null, React.createElement("strong", null, "Påmelding åpner:"), " ", Utils.formatDateTime(event.regStart))
+            return React.createElement(Link, {to: "event", className: classes, params: event, key: event.id}, 
+                React.createElement("div", null, 
+                    React.createElement("h6", {className: "margin-bottom-0"}, event.subject), 
+                    React.createElement("h2", {className: "margin-top-10"}, React.createElement("span", null, event.location), " ", React.createElement("span", {className: "gray"}, "(", Utils.timeStampToDate(event.startTime), " ", Utils.formatDateTime(event.startTime, 'dd. MMMM'), ")")), 
+                    React.createElement("div", null, React.createElement("strong", null, "Start:"), " ", Utils.formatDateTime(event.startTime, 'HH:mm')), 
+                    React.createElement("div", null, React.createElement("strong", null, "Påmelding åpner:"), " ", Utils.formatDateTime(event.regStart, 'dd. MMMM (HH:mm)'))
                 )
             );
         }.bind(this));
         return (
-                React.createElement("div", {className: "eventList row margin-bottom-30"}, 
-                    React.createElement("h2", {className: "page-header margin-bottom-0"}, "Dette skjer!"), 
+                React.createElement("div", {className: "eventList row margin-bottom-30 margin-top-50 "}, 
                     events
                 )
         );
@@ -479,6 +491,10 @@ var EventStore = module.exports = {
 
     getEvents: function () {
         return getJSON(API);
+    },
+
+    getUpcomingEvents: function () {
+        return getJSON(API + '/upcoming');
     },
 
     getEvent: function (id) {

@@ -78,6 +78,11 @@ var Event = React.createClass({
           'Emil Staurset',
           'Nikolai Norman Andersen',
           'Severin Sverdvik',
+          'Helen Le',
+          'Hallvard Braaten',
+          'Anne Berit Bjering',
+          'Silje Kandal',
+          'Kjersti Barstad Strand',
           'Morten Utengen'
       ]}
     },
@@ -128,15 +133,18 @@ var Event = React.createClass({
         }.bind(this));
 
         return (
-                <div className="clearfix margin-bottom-30 margin-top-30">
-                    <h2>{event.subject}</h2>
-                    <h4><strong>Start:</strong> {Utils.timeStampToDate(event.startTime)} - {Utils.formatDateTime(event.startTime)}</h4>
-                    <div><strong>Til:</strong> {Utils.formatDateTime(event.endTime)}</div>
-                    <div><strong>Sted:</strong> {event.location}</div>
-                    <div><strong>Påmelding åpner:</strong> {Utils.formatDateTime(event.regStart)}</div>
-                    <div><strong>Maks antall:</strong> {event.maxNumber}</div>
-                    <div><strong>Antall påmeldt:</strong> {event.participants.length}</div>
-                    <p className="pre">{event.description}</p>
+                <div>
+                    <div className="clearfix margin-bottom-30 margin-top-50 event event-with-padding">
+                        <h6 className="margin-bottom-0">{event.subject}</h6>
+                        <h2 className='margin-top-10 text-nowrap'><span>{event.location}</span> <span className="gray">({Utils.timeStampToDate(event.startTime)} {Utils.formatDateTime(event.startTime, 'dd. MMMM')})</span></h2>
+                        <div><strong>Tid:</strong> {Utils.formatDateTime(event.startTime, 'HH:mm')} - {Utils.formatDateTime(event.endTime, 'HH:mm')}</div>
+                        <div><strong>Påmelding åpner:</strong> {Utils.formatDateTime(event.regStart, 'dd. MMMM (HH:mm)')}</div>
+                        <div><strong>Påmeldt:</strong> {event.participants.length} / {event.maxNumber}</div>
+                    </div>
+                    <div className="event event-with-padding">
+                        <p className="pre">{event.description}</p>
+                    </div>
+                    <div>
                     <form className="margin-top-30 margin-bottom-30">
                         <fieldset>
                             <legend>Påmelding:</legend>
@@ -175,6 +183,7 @@ var Event = React.createClass({
                         <h3>Reserveliste</h3>
                         <div className="row">{reserves}</div>
                     </div>
+                </div>
                 </div>
         );
     }

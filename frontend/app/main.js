@@ -3,6 +3,7 @@ var React = require('react/addons');
 var EventStore = require('./EventStore');
 var NewEvent = require('./NewEvent');
 var Event = require('./Event');
+var EventLineup = require('./EventLineup');
 var App = require('./App')
 var Router = require('react-router');
 var Bootstrap = require('react-bootstrap');
@@ -25,6 +26,7 @@ var routes = (
             <DefaultRoute handler={EventList}/>
             <Route name="new" path="event/new" handler={NewEvent}/>
             <Route name="event" path="event/:id" handler={Event}/>
+            <Route name="lineup" path="event/:id/lineup" handler={EventLineup}/>
             <NotFoundRoute handler={NotFound}/>
         </Route>
 );

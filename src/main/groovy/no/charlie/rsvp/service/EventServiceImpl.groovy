@@ -1,6 +1,8 @@
 package no.charlie.rsvp.service
 
 import no.charlie.rsvp.domain.*
+import no.charlie.rsvp.domain.Event.EventSubType
+import no.charlie.rsvp.domain.Event.EventType
 import no.charlie.rsvp.exception.RsvpBadRequestException
 import no.charlie.rsvp.repository.EventRepository
 import no.charlie.rsvp.repository.OtpRepository
@@ -55,7 +57,7 @@ class EventServiceImpl implements EventService {
         event.updateParticipants()
 
         event.history.add(createHistory(event, p, Unregister))
-        if (shouldNotifyNextParticipant) {
+        if (shouldNotifyNextParticipant && !event.hasManualLineUp()) {
             notifyNextParticipant(event)
         }
         return eventRepository.save(event)
@@ -68,12 +70,16 @@ class EventServiceImpl implements EventService {
         return event.participants.size() > event.maxNumber
     }
 
-    List<Event> findAllEvents() {
-        return eventRepository.findAll()
+    List<Event> findAllEvents(EventType eventType, EventSubType eventSubType) {
+        return eventRepository
+                .findAll()
+                .findAll(filterByEventType(eventType, eventSubType))
     }
 
-    List<Event> findUpcomingEvents() {
-        return eventRepository.findByEndTimeGreaterThan(new DateTime())
+    List<Event> findUpcomingEvents(EventType eventType, EventSubType eventSubType) {
+        return eventRepository
+                .findByEndTimeGreaterThan(new DateTime())
+                .findAll(filterByEventType(eventType, eventSubType))
     }
 
     Event findEventById(Long eventId) {
@@ -82,6 +88,17 @@ class EventServiceImpl implements EventService {
 
     void deleteEvent(Long eventId) {
         eventRepository.delete(eventId)
+    }
+
+    Event confirmLineup(Long eventId, Map lineupMap) {
+        Event event = eventRepository.findWithPreFetch(eventId)
+        if (!event.hasManualLineUp()) {
+            throw new RsvpBadRequestException('Må legge ved uttakslista')
+        }
+        event.participants.each {
+            it.reserve = lineupMap.get(it.id.toString())
+        }
+        eventRepository.save(event)
     }
 
     @Async
@@ -113,4 +130,13 @@ class EventServiceImpl implements EventService {
         new Otp(eventId: eventId, password: generatePassword())
     }
 
+
+    private Closure filterByEventType(EventType eventType, EventSubType eventSubType) {
+
+        return { Event event ->
+            def eventTypeFilter = eventType ? event.eventType == eventType : true
+            def eventSubTypeFilter = eventSubType ? event.eventSubType == eventSubType : true
+            eventTypeFilter && eventSubTypeFilter
+        }
+    }
 }

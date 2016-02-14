@@ -25,6 +25,21 @@ var DefaultEvents = {
             endTime: nextMonday(21, 0),
             regStart: nextFriday(8, 30),
             regEnd: nextMonday(21, 0),
+            eventSubType: 'Training',
+            creator: 'CM'
+        };
+    },
+    footballMatch: function () {
+        return {
+            subject: 'Kamp X. laget',
+            description: 'Oppmøte ....!\nKamp mot ... . Husk leggskinner og svart drakt! \nAnkomst: \nT-bane #4 til Manglerud - ca. 10-15 minutter å gå.',
+            location: 'Manglerudhallen',
+            maxNumber: 8,
+            startTime: nextMonday(20, 0),
+            endTime: nextMonday(21, 0),
+            regStart: Date.today(),
+            regEnd: nextMonday(21, 0),
+            eventSubType: 'Match',
             creator: 'CM'
         };
     }

@@ -39,3 +39,10 @@ a:hover {
 .eventList a:hover {
 	text-decoration: none;
 }
+.checkbox {
+	margin: 0;
+}
+
+.form-group.lol {
+	margin: 0;
+}

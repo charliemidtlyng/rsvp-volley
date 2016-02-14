@@ -36,15 +36,17 @@ class EventResourceTest extends Specification {
     def "should create event"() {
         when:
             Map valueMap = [
-                    "subject"    : "Trening",
-                    "startTime"  : "2015-01-01T20:00:00",
-                    "endTime"    : "2015-01-01T21:00:00Z",
-                    "regStart"   : "2014-12-29T14:03:00Z",
-                    "regEnd"     : "2015-01-01T20:00:00Z",
-                    "creator"    : "Charlie",
-                    "location"   : "Vallhall",
-                    "description": "Vanlig trening",
-                    "maxNumber"  : 15
+                    "subject"     : "Trening",
+                    "startTime"   : "2015-01-01T20:00:00",
+                    "endTime"     : "2015-01-01T21:00:00Z",
+                    "regStart"    : "2014-12-29T14:03:00Z",
+                    "regEnd"      : "2015-01-01T20:00:00Z",
+                    "creator"     : "Charlie",
+                    "location"    : "Vallhall",
+                    "description" : "Vanlig trening",
+                    "eventType"   : "Football",
+                    "eventSubType": "Match",
+                    "maxNumber"   : 15
             ]
             Response response = resource.createEvent(valueMap)
         then:

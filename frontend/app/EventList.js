@@ -5,35 +5,65 @@ var Router = require('react-router');
 var Link = Router.Link;
 var Utils = require('./Utils');
 
+var ShowHide = React.createClass({
+    render: function(){
+        var cx = React.addons.classSet;
+        var btnClasses = cx({
+            'btn': true,
+            'btn-default': !this.props.visibleHistory,
+            'btn-danger': this.props.visibleHistory
+        });
+        var text = this.props.visibleHistory ? 'Skjul historikk' : 'Vis historikk';
+        return <div className="margin-bottom-10"> <button className={btnClasses} onClick={this.props.toggleShowHide}>{text}</button> </div>
+    }
+});
+
+
 var EventList = React.createClass({
     mixins: [Router.Navigation, Router.State],
     getInitialState: function () {
         return {
-            events: [],
-            loading: true
+            upcomingEvents: [],
+            oldEvents: [],
+            loading: true,
+            visibleHistory: false
         };
     },
     componentDidMount: function () {
         EventStore.getEvents()
                 .then(function (events) {
-                    events.sort(Utils.sortByTimestampDesc);
+                    var oldEvents = events.filter(this.filterOldEvents);
+                    var upcomingEvents = events.filter(this.filterUpcomingEvents);
+                    oldEvents.sort(Utils.sortByTimestampDesc);
+                    upcomingEvents.sort(Utils.sortByTimestampAsc);
                     this.setState({
-                        events: events,
+                        upcomingEvents: upcomingEvents,
+                        oldEvents: oldEvents,
                         loading: false
                     });
                 }.bind(this));
     },
-
-    render: function () {
+    toggleShowHide: function() {
+        this.setState({
+            visibleHistory: !this.state.visibleHistory
+        });
+    },
+    filterOldEvents: function(event) {
+        return Utils.isOldEvent(event);
+    },
+    filterUpcomingEvents: function(event) {
+        return !Utils.isOldEvent(event);
+    },
+    mapEvents: function(events) {
         var cx = React.addons.classSet;
-        var events = this.state.events.map(function (event) {
-              var classes = cx({
+        return events.map(function (event) {
+            var classes = cx({
                 'old-event': Utils.isOldEvent(event),
                 'event': true,
-                  'col-xs-12': true,
-                  'col-md-9': true,
-                  'clearfix': true
-              });
+                'col-xs-12': true,
+                'col-md-9': true,
+                'clearfix': true
+            });
             return <Link to="event" className={classes} params={event} key={event.id}>
                 <div >
                     <h6 className="margin-bottom-0">{event.subject}</h6>
@@ -43,9 +73,16 @@ var EventList = React.createClass({
                 </div>
             </Link>;
         }.bind(this));
+    },
+    render: function () {
+
+        var oldEvents = this.state.visibleHistory ? this.mapEvents(this.state.oldEvents) : [];
+        var upcomingEvents = this.mapEvents(this.state.upcomingEvents);
         return (
                 <div className="eventList row margin-bottom-30 margin-top-50 ">
-                    {events}
+                    <ShowHide visibleHistory={this.state.visibleHistory} toggleShowHide={this.toggleShowHide} />
+                    {upcomingEvents}
+                    {oldEvents}
                 </div>
         );
     }

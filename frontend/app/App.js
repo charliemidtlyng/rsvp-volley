@@ -17,7 +17,7 @@ var App = React.createClass({
     render: function () {
         return (
             <div className="App">
-                <Navbar id="main-nav" brand={<a href="#">RSVP-app</a>} toggleNavKey={1} fixedTop={true} >
+                <Navbar id="main-nav" brand={<a href="#"><img src="/css/fotball_logo.png" /></a>} toggleNavKey={1} fixedTop={true} >
                     <Nav eventKey={1}>
                       <NavItem key={1} href="/#">Hendelser</NavItem>
                       <NavItem key={2} href="#/event/new">Ny hendelse</NavItem>

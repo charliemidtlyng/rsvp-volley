@@ -136,13 +136,13 @@ var Event = React.createClass({
                 <div>
                     <div className="clearfix margin-bottom-30 margin-top-50 event event-with-padding">
                         <h6 className="margin-bottom-0">{event.subject}</h6>
-                        <h2 className='margin-top-10 text-nowrap'><span>{event.location}</span> <span className="gray">({Utils.timeStampToDate(event.startTime)} {Utils.formatDateTime(event.startTime, 'dd. MMMM')})</span></h2>
+                        <h2 className='margin-top-10'><span>{event.location}</span> <span className="gray">({Utils.timeStampToDate(event.startTime)} {Utils.formatDateTime(event.startTime, 'dd. MMMM')})</span></h2>
                         <div><strong>Tid:</strong> {Utils.formatDateTime(event.startTime, 'HH:mm')} - {Utils.formatDateTime(event.endTime, 'HH:mm')}</div>
                         <div><strong>Påmelding åpner:</strong> {Utils.formatDateTime(event.regStart, 'dd. MMMM (HH:mm)')}</div>
                         <div><strong>Påmeldt:</strong> {event.participants.length} / {event.maxNumber}</div>
                     </div>
                     <div className="event event-with-padding">
-                        <p className="pre">{event.description}</p>
+                        <p className="pre-wrap">{event.description}</p>
                     </div>
                     <div>
                     <form className="margin-top-30 margin-bottom-30">

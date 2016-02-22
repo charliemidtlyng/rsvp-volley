@@ -92,7 +92,7 @@ var Event = React.createClass({
                     <div><strong>Påmelding åpner:</strong> {Utils.formatDateTime(event.regStart)}</div>
                     <div><strong>Maks antall:</strong> {event.maxNumber}</div>
                     <div><strong>Antall påmeldt:</strong> {event.participants.length}</div>
-                    <p className="pre">{event.description}</p>
+                    <p className="pre-wrap">{event.description}</p>
                     <div className="col-xs-12 col-sm-5">
                         <h3>Påmeldte</h3>
                         <div className="row">{participants}</div>

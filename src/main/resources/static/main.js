@@ -55,7 +55,7 @@ var App = React.createClass({displayName: "App",
     render: function () {
         return (
             React.createElement("div", {className: "App"}, 
-                React.createElement(Navbar, {id: "main-nav", brand: React.createElement("a", {href: "#"}, "RSVP-app"), toggleNavKey: 1, fixedTop: true}, 
+                React.createElement(Navbar, {id: "main-nav", brand: React.createElement("a", {href: "#"}, React.createElement("img", {src: "/css/fotball_logo.png"})), toggleNavKey: 1, fixedTop: true}, 
                     React.createElement(Nav, {eventKey: 1}, 
                       React.createElement(NavItem, {key: 1, href: "/#"}, "Hendelser"), 
                       React.createElement(NavItem, {key: 2, href: "#/event/new"}, "Ny hendelse")
@@ -257,13 +257,13 @@ var Event = React.createClass({displayName: "Event",
                 React.createElement("div", null, 
                     React.createElement("div", {className: "clearfix margin-bottom-30 margin-top-50 event event-with-padding"}, 
                         React.createElement("h6", {className: "margin-bottom-0"}, event.subject), 
-                        React.createElement("h2", {className: "margin-top-10 text-nowrap"}, React.createElement("span", null, event.location), " ", React.createElement("span", {className: "gray"}, "(", Utils.timeStampToDate(event.startTime), " ", Utils.formatDateTime(event.startTime, 'dd. MMMM'), ")")), 
+                        React.createElement("h2", {className: "margin-top-10"}, React.createElement("span", null, event.location), " ", React.createElement("span", {className: "gray"}, "(", Utils.timeStampToDate(event.startTime), " ", Utils.formatDateTime(event.startTime, 'dd. MMMM'), ")")), 
                         React.createElement("div", null, React.createElement("strong", null, "Tid:"), " ", Utils.formatDateTime(event.startTime, 'HH:mm'), " - ", Utils.formatDateTime(event.endTime, 'HH:mm')), 
                         React.createElement("div", null, React.createElement("strong", null, "Påmelding åpner:"), " ", Utils.formatDateTime(event.regStart, 'dd. MMMM (HH:mm)')), 
                         React.createElement("div", null, React.createElement("strong", null, "Påmeldt:"), " ", event.participants.length, " / ", event.maxNumber)
                     ), 
                     React.createElement("div", {className: "event event-with-padding"}, 
-                        React.createElement("p", {className: "pre"}, event.description)
+                        React.createElement("p", {className: "pre-wrap"}, event.description)
                     ), 
                     React.createElement("div", null, 
                     React.createElement("form", {className: "margin-top-30 margin-bottom-30"}, 
@@ -406,7 +406,7 @@ var Event = React.createClass({displayName: "Event",
                     React.createElement("div", null, React.createElement("strong", null, "Påmelding åpner:"), " ", Utils.formatDateTime(event.regStart)), 
                     React.createElement("div", null, React.createElement("strong", null, "Maks antall:"), " ", event.maxNumber), 
                     React.createElement("div", null, React.createElement("strong", null, "Antall påmeldt:"), " ", event.participants.length), 
-                    React.createElement("p", {className: "pre"}, event.description), 
+                    React.createElement("p", {className: "pre-wrap"}, event.description), 
                     React.createElement("div", {className: "col-xs-12 col-sm-5"}, 
                         React.createElement("h3", null, "Påmeldte"), 
                         React.createElement("div", {className: "row"}, participants)
@@ -429,35 +429,65 @@ var Router = require('react-router');
 var Link = Router.Link;
 var Utils = require('./Utils');
 
+var ShowHide = React.createClass({displayName: "ShowHide",
+    render: function(){
+        var cx = React.addons.classSet;
+        var btnClasses = cx({
+            'btn': true,
+            'btn-default': !this.props.visibleHistory,
+            'btn-danger': this.props.visibleHistory
+        });
+        var text = this.props.visibleHistory ? 'Skjul historikk' : 'Vis historikk';
+        return React.createElement("div", {className: "margin-bottom-10"}, " ", React.createElement("button", {className: btnClasses, onClick: this.props.toggleShowHide}, text), " ")
+    }
+});
+
+
 var EventList = React.createClass({displayName: "EventList",
     mixins: [Router.Navigation, Router.State],
     getInitialState: function () {
         return {
-            events: [],
-            loading: true
+            upcomingEvents: [],
+            oldEvents: [],
+            loading: true,
+            visibleHistory: false
         };
     },
     componentDidMount: function () {
         EventStore.getEvents()
                 .then(function (events) {
-                    events.sort(Utils.sortByTimestampDesc);
+                    var oldEvents = events.filter(this.filterOldEvents);
+                    var upcomingEvents = events.filter(this.filterUpcomingEvents);
+                    oldEvents.sort(Utils.sortByTimestampDesc);
+                    upcomingEvents.sort(Utils.sortByTimestampAsc);
                     this.setState({
-                        events: events,
+                        upcomingEvents: upcomingEvents,
+                        oldEvents: oldEvents,
                         loading: false
                     });
                 }.bind(this));
     },
-
-    render: function () {
+    toggleShowHide: function() {
+        this.setState({
+            visibleHistory: !this.state.visibleHistory
+        });
+    },
+    filterOldEvents: function(event) {
+        return Utils.isOldEvent(event);
+    },
+    filterUpcomingEvents: function(event) {
+        return !Utils.isOldEvent(event);
+    },
+    mapEvents: function(events) {
         var cx = React.addons.classSet;
-        var events = this.state.events.map(function (event) {
-              var classes = cx({
+        return events.map(function (event) {
+            var classes = cx({
                 'old-event': Utils.isOldEvent(event),
                 'event': true,
-                  'col-xs-12': true,
-                  'col-md-9': true,
-                  'clearfix': true
-              });
+                'col-xs-12': true,
+                'col-md-9': true,
+                'clearfix': true
+            });
             return React.createElement(Link, {to: "event", className: classes, params: event, key: event.id}, 
                 React.createElement("div", null, 
                     React.createElement("h6", {className: "margin-bottom-0"}, event.subject), 
@@ -467,9 +497,16 @@ var EventList = React.createClass({displayName: "EventList",
                 )
             );
         }.bind(this));
+    },
+    render: function () {
+
+        var oldEvents = this.state.visibleHistory ? this.mapEvents(this.state.oldEvents) : [];
+        var upcomingEvents = this.mapEvents(this.state.upcomingEvents);
         return (
                 React.createElement("div", {className: "eventList row margin-bottom-30 margin-top-50 "}, 
-                    events
+                    React.createElement(ShowHide, {visibleHistory: this.state.visibleHistory, toggleShowHide: this.toggleShowHide}), 
+                    upcomingEvents, 
+                    oldEvents
                 )
         );
     }
@@ -847,6 +884,9 @@ var Utils = {
     },
     sortByTimestampDesc: function(eventA, eventB){
         return eventB.startTime - eventA.startTime;
+    },
+    sortByTimestampAsc: function(eventA, eventB){
+        return eventA.startTime - eventB.startTime;
     },
     isOldEvent: function(event) {
     	return Date.today().isAfter(new Date(event.startTime));

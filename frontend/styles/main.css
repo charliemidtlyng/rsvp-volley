@@ -65,6 +65,7 @@ a:hover, a:focus {
 body {
 	background-color: #141414;
 	overflow-y: scroll;
+	margin-bottom: 40px;
 }
 
 .navbar-default, .event {

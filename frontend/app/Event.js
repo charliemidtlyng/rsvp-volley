@@ -8,9 +8,10 @@ var Combobox = ReactWidgets.Combobox;
 var ReactBootstrap = require('react-bootstrap');
 var Recaptcha = require('./Recaptcha');
 var Panel = ReactBootstrap.Panel;
+var LocalStorageMixin = require('react-localstorage');
 
-var Participant= React.createClass({
-    render: function(){
+var Participant = React.createClass({
+    render: function () {
         return <div key={this.props.participant.id}>
             <span className="col-xs-8">{this.props.participant.name}</span>
             <span className="col-xs-4"><button data-id={this.props.participant.id} data-name={this.props.participant.name} className="btn btn-danger btn-xs" onClick={this.props.unregister}>[Avmeld]</button>
@@ -20,20 +21,20 @@ var Participant= React.createClass({
 });
 
 var ErrorPanel = React.createClass({
-   render: function(){
-       var errorMessage = this.props.error;
-       if(!errorMessage) {
-           return <span />;
-       }
-       return <Panel header="Feilmelding" bsStyle="danger">
-        {errorMessage}
-       </Panel>
-   }
+    render: function () {
+        var errorMessage = this.props.error;
+        if (!errorMessage) {
+            return <span />;
+        }
+        return <Panel header="Feilmelding" bsStyle="danger">
+            {errorMessage}
+        </Panel>
+    }
 });
 
 var Event = React.createClass({
 
-    mixins: [ Router.Navigation, Router.State ],
+    mixins: [Router.Navigation, Router.State, LocalStorageMixin],
     getInitialState: function () {
         return {
             currentEvent: {
@@ -42,94 +43,114 @@ var Event = React.createClass({
             error: ""
         };
     },
-    getDefaultProps: function(){
-      return {listOfCandidates: [
-          'Charlie Midtlyng',
-          'Thor K. Valderhaug',
-          'Simen Lomås Johannessen',
-          'Aleksander Hindenes',
-          'Ole-Martin Mørk',
-          'Rune Nergård',
-          'Erlend Opdahl',
-          'Esben Aarseth',
-          'Christoffer Marcussen',
-          'Tore Myklebust',
-          'Jørn Hunskaar',
-          'Erlend Heimark',
-          'Rasmus Bauck',
-          'Marius Løkketangen',
-          'Vegard Gamnes',
-          'Jøran Lillesand',
-          'Torstein Nicolaysen',
-          'Harald Kjølner',
-          'Magne Davidsen',
-          'Kristoffer Liabø',
-          'Jonatan Austigard',
-          'Pål Moen Møst',
-          'Sindre Nordbø',
-          'Ole Hjalmar Herje',
-          'Emil Lunde',
-          'Morten Øvrebø',
-          'Andreas Moe',
-          'Stian Surén',
-          'Simen Støa',
-          'Hannes Waller',
-          'Fredrik Einarsson',
-          'Emil Staurset',
-          'Nikolai Norman Andersen',
-          'Severin Sverdvik',
-          'Helen Le',
-          'Hallvard Braaten',
-          'Anne Berit Bjering',
-          'Silje Kandal',
-          'Kjersti Barstad Strand',
-          'Morten Utengen'
-      ]}
+    getDefaultProps: function () {
+        return {
+            stateFilterKeys: ['name', 'phoneNumber', 'email'],
+            listOfCandidates: [
+                'Charlie Midtlyng',
+                'Thor K. Valderhaug',
+                'Simen Lomås Johannessen',
+                'Aleksander Hindenes',
+                'Ole-Martin Mørk',
+                'Rune Nergård',
+                'Erlend Opdahl',
+                'Esben Aarseth',
+                'Christoffer Marcussen',
+                'Tore Myklebust',
+                'Jørn Hunskaar',
+                'Erlend Heimark',
+                'Rasmus Bauck',
+                'Marius Løkketangen',
+                'Vegard Gamnes',
+                'Jøran Lillesand',
+                'Torstein Nicolaysen',
+                'Harald Kjølner',
+                'Magne Davidsen',
+                'Kristoffer Liabø',
+                'Jonatan Austigard',
+                'Pål Moen Møst',
+                'Sindre Nordbø',
+                'Ole Hjalmar Herje',
+                'Emil Lunde',
+                'Morten Øvrebø',
+                'Andreas Moe',
+                'Stian Surén',
+                'Simen Støa',
+                'Hannes Waller',
+                'Fredrik Einarsson',
+                'Emil Staurset',
+                'Nikolai Norman Andersen',
+                'Severin Sverdvik',
+                'Helen Le',
+                'Hallvard Braaten',
+                'Anne Berit Bjering',
+                'Silje Kandal',
+                'Kjersti Barstad Strand',
+                'Morten Utengen'
+            ]
+        }
     },
     componentDidMount: function () {
         this.updateEvent();
     },
-    attend: function(x) {
-        var name = this.refs.name.state.value;
-        var email = this.refs.email.getDOMNode().value.trim();
-        var phoneNumber = this.refs.phoneNumber.getDOMNode().value.trim();
+    attend: function () {
+        var name = this.state.name;
+        var email = this.state.email;
+        var phoneNumber = this.state.phoneNumber;
         var captcha = grecaptcha.getResponse();
-        if(name === '') {
+        if (name === '') {
             return;
         }
         EventStore.registerForEvent(this.getParams().id, {name: name, phoneNumber: phoneNumber, email: email, 'g-recaptcha-response': captcha})
                 .then(this.updateEvent, this.updateError);
         grecaptcha.reset();
     },
-    unregister: function(event){
+    unregister: function (event) {
         var participantId = event.target.dataset.id, eventId = this.state.currentEvent.id;
-		var participantName = event.target.dataset.name;
+        var participantName = event.target.dataset.name;
         if (confirm("Vil du melde av " + participantName + "?")) {
             EventStore.unregisterForEvent(eventId, participantId).then(this.updateEvent, this.updateError);
         }
     },
-    updateEvent: function(){
+    updateEvent: function () {
         EventStore.getEvent(this.getParams().id)
-                .then(function(event){
+                .then(function (event) {
                     this.setState({currentEvent: event, error: ''});
                 }.bind(this));
     },
-    updateError: function(error){
+    deleteEvent: function () {
+        var luckyNumber = prompt("Er du helt sikker på at du vil slette denne hendelsen? \n I så fall - hvilket draktnummer har Charlie")
+        if (luckyNumber && parseInt(luckyNumber) === 7) {
+            EventStore.removeEvent(this.state.currentEvent.id);
+            this.transitionTo('home');
+        }
+    },
+    updateError: function (error) {
         this.setState({error: error.message});
+    },
+    nameChange: function (value) {
+        console.log(value)
+        this.setState({name: value});
+    },
+    emailChange: function (event) {
+        this.setState({email: event.target.value});
+    },
+    phoneNumberChange: function (event) {
+        this.setState({phoneNumber: event.target.value});
     },
     render: function () {
         var event = this.state.currentEvent;
 
-        var participants = event.participants.filter(function(participant){
+        var participants = event.participants.filter(function (participant) {
             return participant.reserve === false;
-        }).map(function(participant){
-            return <Participant key={participant.id} participant={participant} unregister={this.unregister} />
+        }).map(function (participant) {
+            return <Participant key={participant.id} participant={participant} unregister={this.unregister}/>
         }.bind(this));
 
-        var reserves = event.participants.filter(function(participant){
+        var reserves = event.participants.filter(function (participant) {
             return participant.reserve === true;
-        }).map(function(participant){
-            return <Participant key={participant.id} participant={participant} unregister={this.unregister} />
+        }).map(function (participant) {
+            return <Participant key={participant.id} participant={participant} unregister={this.unregister}/>
         }.bind(this));
 
         return (
@@ -140,50 +161,60 @@ var Event = React.createClass({
                         <div><strong>Tid:</strong> {Utils.formatDateTime(event.startTime, 'HH:mm')} - {Utils.formatDateTime(event.endTime, 'HH:mm')}</div>
                         <div><strong>Påmelding åpner:</strong> {Utils.formatDateTime(event.regStart, 'dd. MMMM (HH:mm)')}</div>
                         <div><strong>Påmeldt:</strong> {event.participants.length} / {event.maxNumber}</div>
+                        <div><button className="btn btn-danger btn-xs" onClick={this.deleteEvent}>Slett hendelse</button></div>
                     </div>
                     <div className="event event-with-padding">
                         <p className="pre-wrap">{event.description}</p>
                     </div>
                     <div>
-                    <form className="margin-top-30 margin-bottom-30">
-                        <fieldset>
-                            <legend>Påmelding:</legend>
-                            <ErrorPanel error={this.state.error} />
-                            <div className="form-group col-xs-12 col-sm-4 col-md-4">
-                                <label htmlFor="name">Navn*</label>
-                                <Combobox
-                                        data={this.props.listOfCandidates}
-                                        ref='name'
-                                        filter={'contains'}
-                                        messages={emptyFilter= {}}
-                                />
+                        <form className="margin-top-30 margin-bottom-30">
+                            <fieldset>
+                                <legend>Påmelding:</legend>
+                                <ErrorPanel error={this.state.error}/>
+                                <div className="form-group col-xs-12 col-sm-4 col-md-4">
+                                    <label htmlFor="name">Navn*</label>
+                                    <Combobox
+                                            data={this.props.listOfCandidates}
+                                            filter={'contains'}
+                                            messages={emptyFilter= {}}
+                                            value={this.state.name}
+                                            onChange={this.nameChange}
+                                    />
+                                </div>
+                                <div className="form-group col-xs-12 col-sm-4 col-md-4">
+                                    <label htmlFor="phoneNumber">Mobil</label>
+                                    <input type="tel" className="form-control col-xs-8 col-md-4" placeholder="mobilnr"
+                                           value={this.state.phoneNumber}
+                                           onChange={this.phoneNumberChange}
+                                    />
+                                </div>
+                                <div className="form-group col-xs-12 col-sm-4 col-md-4">
+                                    <label htmlFor="email">Epost</label>
+                                    <input type="email" className="form-control col-xs-8 col-md-4" placeholder="epost"
+                                           value={this.state.email}
+                                           onChange={this.emailChange}
+                                    />
+                                </div>
+                            </fieldset>
+                            <br/>
+                            <Recaptcha
+                                    sitekey="6LfB7QATAAAAAMjr-w95hNK54bNkWAYXKOzJvzt-"
+                                    theme="dark"
+                                    render="explicit"/>
+                            <br/>
+                            <div className="col-xs-12">
+                                <button type="button" className="btn btn-primary" onClick={this.attend}>Meld på</button>
                             </div>
-                            <div className="form-group col-xs-12 col-sm-4 col-md-4">
-                                <label htmlFor="phoneNumber">Mobil</label>
-                                <input type="tel" className="form-control col-xs-8 col-md-4" placeholder="mobilnr" ref="phoneNumber" />
-                            </div>
-                            <div className="form-group col-xs-12 col-sm-4 col-md-4">
-                                <label htmlFor="email">Epost</label>
-                                <input type="email" className="form-control col-xs-8 col-md-4" placeholder="epost" ref="email" />
-                            </div>
-                        </fieldset>
-                        <br/>
-                        <Recaptcha
-                                sitekey="6LfB7QATAAAAAMjr-w95hNK54bNkWAYXKOzJvzt-"
-                                theme="dark"
-                                render="explicit" />
-                        <br/>
-                        <div className="col-xs-12"><button type="button" className="btn btn-primary" onClick={this.attend}>Meld på</button></div>
-                    </form>
-                    <div className="col-xs-12 col-sm-5">
-                        <h3>Påmeldte</h3>
-                        <div className="row">{participants}</div>
+                        </form>
+                        <div className="col-xs-12 col-sm-5">
+                            <h3>Påmeldte</h3>
+                            <div className="row">{participants}</div>
+                        </div>
+                        <div className="col-xs-12 col-sm-5">
+                            <h3>Reserveliste</h3>
+                            <div className="row">{reserves}</div>
+                        </div>
                     </div>
-                    <div className="col-xs-12 col-sm-5">
-                        <h3>Reserveliste</h3>
-                        <div className="row">{reserves}</div>
-                    </div>
-                </div>
                 </div>
         );
     }

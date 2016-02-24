@@ -79,7 +79,7 @@ var EventList = React.createClass({
         var oldEvents = this.state.visibleHistory ? this.mapEvents(this.state.oldEvents) : [];
         var upcomingEvents = this.mapEvents(this.state.upcomingEvents);
         return (
-                <div className="eventList row margin-bottom-30 margin-top-50 ">
+                <div className="eventList row margin-top-50 ">
                     <ShowHide visibleHistory={this.state.visibleHistory} toggleShowHide={this.toggleShowHide} />
                     {upcomingEvents}
                     {oldEvents}

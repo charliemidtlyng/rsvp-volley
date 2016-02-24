@@ -23,7 +23,7 @@ var NotFound = React.createClass({
 
 var routes = (
         <Route handler={App}>
-            <DefaultRoute handler={EventList}/>
+            <DefaultRoute name="home" handler={EventList}/>
             <Route name="new" path="event/new" handler={NewEvent}/>
             <Route name="event" path="event/:id" handler={Event}/>
             <Route name="lineup" path="event/:id/lineup" handler={EventLineup}/>

@@ -3,6 +3,7 @@ package no.charlie.rsvp.service
 import no.charlie.rsvp.domain.Event
 import no.charlie.rsvp.domain.Event.EventSubType
 import no.charlie.rsvp.domain.Event.EventType
+import no.charlie.rsvp.domain.Otp
 import no.charlie.rsvp.domain.Participant
 
 /**
@@ -25,4 +26,5 @@ interface EventService {
     void deleteEvent(Long eventId)
 
     Event confirmLineup(Long eventId, Map longBooleanMap)
+
 }

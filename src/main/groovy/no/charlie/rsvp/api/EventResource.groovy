@@ -4,7 +4,6 @@ import no.charlie.rsvp.domain.*
 import no.charlie.rsvp.domain.Event.EventSubType
 import no.charlie.rsvp.domain.Event.EventType
 import no.charlie.rsvp.exception.RsvpBadRequestException
-import no.charlie.rsvp.repository.OtpRepository
 import no.charlie.rsvp.service.*
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,7 +22,7 @@ class EventResource {
 
     @Autowired EventService eventService
     @Autowired SmsService smsService
-    @Autowired OtpRepository otpRepository
+    @Autowired OtpService otpService
     @Autowired CaptchaService captchaService
 
 
@@ -65,7 +64,7 @@ class EventResource {
     Response register(@PathParam('id') Long eventId, Map valueMap) {
         String otp = valueMap.otp
         if (otp) {
-            validateOtp(eventId, otp)
+            otpService.validateOtp(eventId, otp)
         } else {
             validateCaptcha(valueMap)
         }
@@ -82,7 +81,7 @@ class EventResource {
             throw new RsvpBadRequestException('Må fylle ut mobilnummer for å få engangskode på SMS')
         }
         validatePhoneNumber(valueMap)
-        Otp otp = otpRepository.findByEventId(eventId)
+        Otp otp = otpService.resolveOtpForEventId(eventId)
         return Response.accepted().entity(smsService.sendOtpSms(otp.password, phoneNumber)).build()
     }
 
@@ -96,11 +95,9 @@ class EventResource {
     @POST
     @Path("/{eventId}/confirmLineup")
     Response confirmLineup(@PathParam('eventId') Long eventId, Map lineupMap) {
-        println lineupMap
-        if(!lineupMap) {
+        if (!lineupMap) {
             throw new RsvpBadRequestException('Må legge ved uttakslista')
         }
-        println 'got past this...'
         Response.accepted().entity(eventService.confirmLineup(eventId, lineupMap)).build()
     }
 
@@ -116,7 +113,7 @@ class EventResource {
                 location: map.location,
                 subject: map.subject,
                 description: map.description,
-                eventType: map.eventType ? map.eventType as EventType: EventType.Football,
+                eventType: map.eventType ? map.eventType as EventType : EventType.Football,
                 eventSubType: map.eventSubType ? map.eventSubType as EventSubType : EventSubType.Training,
                 maxNumber: map.maxNumber ? map.maxNumber : Integer.MAX_VALUE)
     }
@@ -162,13 +159,6 @@ class EventResource {
         }
 
         return ip
-    }
-
-    private void validateOtp(long eventId, String password) {
-        Otp otp = otpRepository.findByEventId(eventId)
-        if (!otp || !otp.password.equals(password)) {
-            throw new RsvpBadRequestException("Engangspassord validerte ikke. ")
-        }
     }
 
     private void validateCaptcha(Map valueMap) {

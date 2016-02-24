@@ -5,7 +5,6 @@ import no.charlie.rsvp.domain.Event.EventSubType
 import no.charlie.rsvp.domain.Event.EventType
 import no.charlie.rsvp.exception.RsvpBadRequestException
 import no.charlie.rsvp.repository.EventRepository
-import no.charlie.rsvp.repository.OtpRepository
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Async
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service
 import static no.charlie.rsvp.domain.History.Change
 import static no.charlie.rsvp.domain.History.Change.Register
 import static no.charlie.rsvp.domain.History.Change.Unregister
-import static no.charlie.rsvp.domain.Otp.generatePassword
 import static org.joda.time.DateTime.now
 
 /**
@@ -24,16 +22,13 @@ import static org.joda.time.DateTime.now
 class EventServiceImpl implements EventService {
 
     @Autowired EventRepository eventRepository
-    @Autowired OtpRepository otpRepository
     @Autowired MailService mailService
     @Autowired SmsService smsService
 
     Event createEvent(Event event) {
         Event savedEvent = eventRepository.save(event)
-        otpRepository.save(createOtp(savedEvent.id))
         return savedEvent
     }
-
 
     Event addParticipantToEvent(Long eventId, Participant p) {
         Event event = eventRepository.findWithPreFetch(eventId)
@@ -93,7 +88,7 @@ class EventServiceImpl implements EventService {
     Event confirmLineup(Long eventId, Map lineupMap) {
         Event event = eventRepository.findWithPreFetch(eventId)
         if (!event.hasManualLineUp()) {
-            throw new RsvpBadRequestException('Må legge ved uttakslista')
+            throw new RsvpBadRequestException('Ikke lov å endre på uttak for denne hendelsen')
         }
         event.participants.each {
             it.reserve = lineupMap.get(it.id.toString())
@@ -126,12 +121,7 @@ class EventServiceImpl implements EventService {
         )
     }
 
-    private static Otp createOtp(Long eventId) {
-        new Otp(eventId: eventId, password: generatePassword())
-    }
-
-
-    private Closure filterByEventType(EventType eventType, EventSubType eventSubType) {
+    private static Closure filterByEventType(EventType eventType, EventSubType eventSubType) {
 
         return { Event event ->
             def eventTypeFilter = eventType ? event.eventType == eventType : true

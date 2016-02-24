@@ -8,5 +8,5 @@ import org.springframework.data.repository.CrudRepository
  */
 interface OtpRepository extends CrudRepository<Otp, Long> {
 
-    Otp findByEventId(Long eventId)
+    List<Otp> findByEventId(Long eventId)
 }

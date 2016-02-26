@@ -1,7 +1,8 @@
-/** @jsx React.DOM */
-var React = require('react/addons');
+
+var React = require('react');
 var EventStore = require('./EventStore');
-var Router = require('react-router');
+var ReactRouter = require('react-router');
+var Router = ReactRouter.Router;
 var ReactWidgets = require('react-widgets');
 var DefaultEvents = require('./DefaultEvents');
 var DateTimePicker = ReactWidgets.DateTimePicker;
@@ -9,7 +10,7 @@ var Combobox = ReactWidgets.Combobox;
 var Link = Router.Link;
 var NewEvent = React.createClass({
 
-    mixins: [Router.Navigation],
+    mixins: [],
     getInitialState: function () {
         return {
             subject: '',
@@ -28,7 +29,10 @@ var NewEvent = React.createClass({
     getDefaultProps: function(){
       return {
           listOfEventTypes: ['Football'],
-          listOfEventSubTypes: ['Match', 'Training']
+          listOfEventSubTypes: ['Match', 'Training'],
+          messages: {
+              emptyFilter: {}
+          }
       }
     },
     createEvent: function (event) {
@@ -131,25 +135,25 @@ var NewEvent = React.createClass({
                         <div className="form-group">
                             <label htmlFor="startTime" className="col-sm-2 control-label">Start</label>
                             <div className="col-sm-5">
-                                <DateTimePicker css="btn-default" format="yyyy-MM-dd HH:mm" ref="startTime" value={this.state.startTime} onChange={this.startTimeChange} />
+                                <DateTimePicker css="btn-default" format="YYYY-MM-DD HH:mm" ref="startTime" value={this.state.startTime} onChange={this.startTimeChange} />
                             </div>
                         </div>
                         <div className="form-group">
                             <label htmlFor="endTime" className="col-sm-2 control-label">Slutt</label>
                             <div className="col-sm-5">
-                                <DateTimePicker css="btn-default" format="yyyy-MM-dd HH:mm"  ref="endTime" value={this.state.endTime} onChange={this.endTimeChange} />
+                                <DateTimePicker css="btn-default" format="YYYY-MM-DD HH:mm"  ref="endTime" value={this.state.endTime} onChange={this.endTimeChange} />
                             </div>
                         </div>
                         <div className="form-group">
                             <label htmlFor="regStart" className="col-sm-2 control-label">Registrering åpner</label>
                             <div className="col-sm-5">
-                                <DateTimePicker css="btn-default" format="yyyy-MM-dd HH:mm"  ref="regStart" value={this.state.regStart} onChange={this.regStartChange} />
+                                <DateTimePicker css="btn-default" format="YYYY-MM-DD HH:mm"  ref="regStart" value={this.state.regStart} onChange={this.regStartChange} />
                             </div>
                         </div>
                         <div className="form-group">
                             <label htmlFor="regEnd" className="col-sm-2 control-label">Registrering stenger</label>
                             <div className="col-sm-5">
-                                <DateTimePicker css="btn-default" format="yyyy-MM-dd HH:mm"  ref="regEnd" value={this.state.regEnd} onChange={this.regEndChange} />
+                                <DateTimePicker css="btn-default" format="YYYY-MM-DD HH:mm"  ref="regEnd" value={this.state.regEnd} onChange={this.regEndChange} />
                             </div>
                         </div>
                         <div className="form-group">
@@ -159,9 +163,12 @@ var NewEvent = React.createClass({
                                         data={this.props.listOfEventTypes}
                                         ref='name'
                                         filter={'contains'}
-                                        messages={emptyFilter= {}}
                                         value={this.state.eventType}
                                         onChange={this.regEventType}
+                                        messages={{
+                                                emptyList: 'Ingen treff',
+                                                emptyFilter: 'Ingen treff'
+                                            }}
                                 />
                             </div>
                         </div>
@@ -172,9 +179,12 @@ var NewEvent = React.createClass({
                                         data={this.props.listOfEventSubTypes}
                                         ref='name'
                                         filter={'contains'}
-                                        messages={emptyFilter= {}}
                                         value={this.state.eventSubType}
                                         onChange={this.regEventSubType}
+                                        messages={{
+                                                emptyList: 'Ingen treff',
+                                                emptyFilter: 'Ingen treff'
+                                            }}
                                 />
                             </div>
                         </div>

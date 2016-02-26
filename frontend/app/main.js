@@ -1,19 +1,26 @@
-/** @jsx React.DOM */
-var React = require('react/addons');
+var React = require('react');
+var ReactDOM = require('react-dom');
 var EventStore = require('./EventStore');
 var NewEvent = require('./NewEvent');
 var Event = require('./Event');
 var EventLineup = require('./EventLineup');
 var App = require('./App')
-var Router = require('react-router');
+var ReactRouter = require('react-router');
+var Router = ReactRouter.Router;
 var Bootstrap = require('react-bootstrap');
 var EventList = require('./EventList');
+var createHashHistory = require('react-router/node_modules/history').createHashHistory;
 
-var Route = Router.Route,
-        DefaultRoute = Router.DefaultRoute,
-        NotFoundRoute = Router.NotFoundRoute,
-        RouteHandler = Router.RouteHandler,
-        Link = Router.Link;
+var Moment = require('moment');
+var nb = require('moment/locale/nb');
+var momentLocalizer = require('react-widgets/lib/localizers/moment');
+momentLocalizer(Moment);
+
+var Route = ReactRouter.Route,
+        IndexRoute = ReactRouter.IndexRoute,
+        useRouterHistory = ReactRouter.useRouterHistory;
+
+var appHistory = useRouterHistory(createHashHistory)({queryKey: false});
 
 var NotFound = React.createClass({
     render: function () {
@@ -22,15 +29,13 @@ var NotFound = React.createClass({
 });
 
 var routes = (
-        <Route handler={App}>
-            <DefaultRoute name="home" handler={EventList}/>
-            <Route name="new" path="event/new" handler={NewEvent}/>
-            <Route name="event" path="event/:id" handler={Event}/>
-            <Route name="lineup" path="event/:id/lineup" handler={EventLineup}/>
-            <NotFoundRoute handler={NotFound}/>
+        <Route path="/" component={App}>
+            <IndexRoute name="home" component={EventList}/>
+            <Route path="event/new" component={NewEvent}/>
+            <Route path="event/:id" component={Event}/>
+            <Route path="event/:id/lineup" component={EventLineup}/>
+            <Route path="*" component={NotFound}/>
         </Route>
 );
 
-Router.run(routes, function (Handler) {
-    React.render(<Handler/>, document.getElementById('react-content'));
-});
+ReactDOM.render(<Router history={appHistory}>{routes}</Router>, document.getElementById('react-content'));

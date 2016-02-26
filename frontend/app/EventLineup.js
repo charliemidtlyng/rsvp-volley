@@ -1,7 +1,7 @@
-/** @jsx React.DOM */
-var React = require('react/addons');
+
+var React = require('react');
 var EventStore = require('./EventStore');
-var Router = require('react-router');
+var ReactRouter = require('react-router');
 var Utils = require('./Utils');
 var ReactBootstrap = require('react-bootstrap');
 var Input = ReactBootstrap.Input;
@@ -34,7 +34,7 @@ var ErrorPanel = React.createClass({
 
 var Event = React.createClass({
 
-    mixins: [Router.Navigation, Router.State],
+    mixins: [],
     getInitialState: function () {
         return {
             currentEvent: {
@@ -68,7 +68,7 @@ var Event = React.createClass({
         });
     },
     updateEvent: function () {
-        EventStore.getEvent(this.getParams().id)
+        EventStore.getEvent(this.props.params.id)
                 .then(function (event) {
                     this.setState({currentEvent: event, error: ''});
                 }.bind(this));

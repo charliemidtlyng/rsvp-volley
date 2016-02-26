@@ -1,14 +1,14 @@
-/** @jsx React.DOM */
-var React = require('react/addons');
+
+var React = require('react');
 var EventStore = require('./EventStore');
-var Router = require('react-router');
-var Link = Router.Link;
+var ReactRouter = require('react-router');
+var Link = ReactRouter.Link;
 var Utils = require('./Utils');
+var classNames = require('classnames');
 
 var ShowHide = React.createClass({
     render: function(){
-        var cx = React.addons.classSet;
-        var btnClasses = cx({
+        var btnClasses = classNames({
             'btn': true,
             'btn-default': !this.props.visibleHistory,
             'btn-danger': this.props.visibleHistory
@@ -20,7 +20,6 @@ var ShowHide = React.createClass({
 
 
 var EventList = React.createClass({
-    mixins: [Router.Navigation, Router.State],
     getInitialState: function () {
         return {
             upcomingEvents: [],
@@ -55,16 +54,15 @@ var EventList = React.createClass({
         return !Utils.isOldEvent(event);
     },
     mapEvents: function(events) {
-        var cx = React.addons.classSet;
         return events.map(function (event) {
-            var classes = cx({
+            var classes = classNames({
                 'old-event': Utils.isOldEvent(event),
                 'event': true,
                 'col-xs-12': true,
                 'col-md-9': true,
                 'clearfix': true
             });
-            return <Link to="event" className={classes} params={event} key={event.id}>
+            return <Link to={`/event/${event.id}`} className={classes} key={event.id}>
                 <div >
                     <h6 className="margin-bottom-0">{event.subject}</h6>
                     <h2 className='margin-top-10'><span>{event.location}</span> <span className="gray">({Utils.timeStampToDate(event.startTime)} {Utils.formatDateTime(event.startTime, 'dd. MMMM')})</span></h2>

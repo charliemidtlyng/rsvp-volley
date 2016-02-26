@@ -1,7 +1,6 @@
-/** @jsx React.DOM */
-var React = require('react/addons');
+var React = require('react');
 var EventStore = require('./EventStore');
-var Router = require('react-router');
+var ReactRouter = require('react-router');
 var Utils = require('./Utils');
 var ReactWidgets = require('react-widgets');
 var Combobox = ReactWidgets.Combobox;
@@ -34,7 +33,7 @@ var ErrorPanel = React.createClass({
 
 var Event = React.createClass({
 
-    mixins: [Router.Navigation, Router.State, LocalStorageMixin],
+    mixins: [LocalStorageMixin],
     getInitialState: function () {
         return {
             currentEvent: {
@@ -46,6 +45,9 @@ var Event = React.createClass({
     getDefaultProps: function () {
         return {
             stateFilterKeys: ['name', 'phoneNumber', 'email'],
+            messages: {
+                emptyFilter: {}
+            },
             listOfCandidates: [
                 'Charlie Midtlyng',
                 'Thor K. Valderhaug',
@@ -101,7 +103,7 @@ var Event = React.createClass({
         if (name === '') {
             return;
         }
-        EventStore.registerForEvent(this.getParams().id, {name: name, phoneNumber: phoneNumber, email: email, 'g-recaptcha-response': captcha})
+        EventStore.registerForEvent(this.props.params.id, {name: name, phoneNumber: phoneNumber, email: email, 'g-recaptcha-response': captcha})
                 .then(this.updateEvent, this.updateError);
         grecaptcha.reset();
     },
@@ -113,7 +115,7 @@ var Event = React.createClass({
         }
     },
     updateEvent: function () {
-        EventStore.getEvent(this.getParams().id)
+        EventStore.getEvent(this.props.params.id)
                 .then(function (event) {
                     this.setState({currentEvent: event, error: ''});
                 }.bind(this));
@@ -129,7 +131,6 @@ var Event = React.createClass({
         this.setState({error: error.message});
     },
     nameChange: function (value) {
-        console.log(value)
         this.setState({name: value});
     },
     emailChange: function (event) {
@@ -176,9 +177,12 @@ var Event = React.createClass({
                                     <Combobox
                                             data={this.props.listOfCandidates}
                                             filter={'contains'}
-                                            messages={emptyFilter= {}}
                                             value={this.state.name}
                                             onChange={this.nameChange}
+                                            messages={{
+                                                emptyList: 'Ingen treff',
+                                                emptyFilter: 'Skriv inn navnet ditt'
+                                            }}
                                     />
                                 </div>
                                 <div className="form-group col-xs-12 col-sm-4 col-md-4">

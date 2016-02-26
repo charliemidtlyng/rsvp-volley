@@ -1,30 +1,31 @@
-/** @jsx React.DOM */
-var React = require('react/addons');
+var React = require('react');
 var EventStore = require('./EventStore');
-var Router = require('react-router');
 var ReactBootstrap = require('react-bootstrap');
 var Navbar = ReactBootstrap.Navbar;
 var Nav = ReactBootstrap.Nav;
 var NavItem = ReactBootstrap.NavItem;
 
-var Route = Router.Route,
-        DefaultRoute = Router.DefaultRoute,
-        NotFoundRoute = Router.NotFoundRoute,
-        RouteHandler = Router.RouteHandler,
-        Link = Router.Link;
-
 var App = React.createClass({
     render: function () {
         return (
             <div className="App">
-                <Navbar id="main-nav" brand={<a href="#"><img src="/css/fotball_logo.png" /></a>} toggleNavKey={1} fixedTop={true} >
-                    <Nav eventKey={1}>
-                      <NavItem key={1} href="/#">Hendelser</NavItem>
-                      <NavItem key={2} href="#/event/new">Ny hendelse</NavItem>
-                    </Nav>
+                <Navbar fixedTop={true} >
+                    <Navbar.Header>
+                        <Navbar.Brand>
+                            <a href="#"><img src="/css/fotball_logo.png" /></a>
+                        </Navbar.Brand>
+                    </Navbar.Header>
+                    <Navbar.Collapse>
+                        <Nav>
+                            <Nav eventKey={1}>
+                                <NavItem key={1} href="/#">Hendelser</NavItem>
+                                <NavItem key={2} href="#/event/new">Ny hendelse</NavItem>
+                            </Nav>
+                        </Nav>
+                    </Navbar.Collapse>
                 </Navbar>
                 <div className="container">
-                    <RouteHandler/>
+                    {this.props.children}
                 </div>
             </div>
         );

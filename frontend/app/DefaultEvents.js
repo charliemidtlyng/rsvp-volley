@@ -1,4 +1,4 @@
-/** @jsx React.DOM */
+
 
 function nextMonday(hour, minute) {
     var isMonday = Date.today().is().monday();

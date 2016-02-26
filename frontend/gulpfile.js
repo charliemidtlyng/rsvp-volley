@@ -3,6 +3,7 @@ var source = require('vinyl-source-stream'); // Used to stream bundle for furthe
 var browserify = require('browserify');
 var watchify = require('watchify');
 var reactify = require('reactify');
+var babelify = require('babelify')
 var gulpif = require('gulp-if');
 var uglify = require('gulp-uglify');
 var streamify = require('gulp-streamify');
@@ -18,8 +19,7 @@ var jasminePhantomJs = require('gulp-jasmine2-phantomjs');
 // External dependencies you do not want to rebundle while developing,
 // but include in your application deployment
 var dependencies = [
-    'react',
-    'react-addons'
+    'react'
 ];
 
 var browserifyTask = function (options) {
@@ -27,7 +27,7 @@ var browserifyTask = function (options) {
     // Our app bundler
     var appBundler = browserify({
         entries: [options.src], // Only need initial file, browserify finds the rest
-        transform: [reactify], // We want to convert JSX to normal javascript
+        transform: [[babelify, { presets: ['es2015', 'react'] }]], // We want to convert JSX to normal javascript
         debug: options.development, // Gives us sourcemapping
         cache: {}, packageCache: {}, fullPaths: options.development // Requirement of watchify
     });
@@ -94,12 +94,6 @@ var browserifyTask = function (options) {
         testBundler = watchify(testBundler);
         testBundler.on('update', rebundleTests);
         rebundleTests();
-
-        // Remove react-addons when deploying, as it is only for
-        // testing
-        if (!options.development) {
-            dependencies.splice(dependencies.indexOf('react-addons'), 1);
-        }
 
         var vendorsBundler = browserify({
             debug: true,

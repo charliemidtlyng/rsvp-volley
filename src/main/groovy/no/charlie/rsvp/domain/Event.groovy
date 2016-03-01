@@ -2,6 +2,8 @@ package no.charlie.rsvp.domain
 
 import no.charlie.rsvp.domain.Annotations.*
 import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
+import org.joda.time.format.DateTimeFormatter
 
 import javax.persistence.Column
 
@@ -50,6 +52,22 @@ class Event {
 
     boolean hasManualLineUp() {
         eventSubType && eventSubType == Match
+    }
+
+    String asICalendarEvent() {
+        DateTimeFormatter dt = DateTimeFormat.forPattern("yyyyMMdd'T'HHmmss")
+        return "BEGIN:VCALENDAR\n" +
+                "VERSION:2.0\n" +
+                "PRODID:-//BEKK//BEKK Fotball//NO\n" +
+                "BEGIN:VEVENT\n" +
+                "UID:$id@rsvp-app\n" +
+                "DTSTAMP;TZID=Europe/Oslo:${dt.print(DateTime.now())}\n" +
+                "DTSTART;TZID=Europe/Oslo:${dt.print(startTime)}\n" +
+                "DTEND;TZID=Europe/Oslo:${dt.print(endTime)}\n" +
+                "SUMMARY:$subject\n" +
+                "LOCATION:$location\n" +
+                "END:VEVENT\n" +
+                "END:VCALENDAR"
     }
 
     public static enum EventType {

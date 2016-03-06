@@ -45,6 +45,18 @@ class EventResource {
         return Response.ok().entity(eventService.findEventById(eventId)).build()
     }
 
+    @GET
+    @Path('/{eventId}/icalendar')
+    Response eventAsIcalendar(@PathParam('eventId') Long eventId) {
+        Event event = eventService.findEventById(eventId)
+        if (event == null) {
+            throw new NotFoundException()
+        }
+        return Response.ok(event.asICalendarEvent())
+                .header('Content-Disposition', "attachment; filename=event-${event.id}.ics")
+                .build()
+    }
+
     @POST
     Response createEvent(Map valueMap) {
         Event event = parseEvent(valueMap)

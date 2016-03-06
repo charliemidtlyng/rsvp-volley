@@ -127,6 +127,9 @@ var Event = React.createClass({
             this.transitionTo('home');
         }
     },
+    downloadICalendar: function () {
+        window.location.replace(`api/events/${this.state.currentEvent.id}/icalendar`);
+    },
     updateError: function (error) {
         this.setState({error: error.message});
     },
@@ -162,6 +165,7 @@ var Event = React.createClass({
                         <div><strong>Tid:</strong> {Utils.formatDateTime(event.startTime, 'HH:mm')} - {Utils.formatDateTime(event.endTime, 'HH:mm')}</div>
                         <div><strong>Påmelding åpner:</strong> {Utils.formatDateTime(event.regStart, 'dd. MMMM (HH:mm)')}</div>
                         <div><strong>Påmeldt:</strong> {event.participants.length} / {event.maxNumber}</div>
+                        <div><button className="btn btn-default btn-xs " onClick={this.downloadICalendar}>Lagre i kalender</button></div>
                         <div><button className="btn btn-danger btn-xs" onClick={this.deleteEvent}>Slett hendelse</button></div>
                     </div>
                     <div className="event event-with-padding">

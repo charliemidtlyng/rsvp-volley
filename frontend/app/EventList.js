@@ -1,6 +1,7 @@
 
 var React = require('react');
 var EventStore = require('./EventStore');
+var EventImage = require('./EventImage');
 var ReactRouter = require('react-router');
 var Link = ReactRouter.Link;
 var Utils = require('./Utils');
@@ -17,7 +18,6 @@ var ShowHide = React.createClass({
         return <div className="margin-bottom-10"> <button className={btnClasses} onClick={this.props.toggleShowHide}>{text}</button> </div>
     }
 });
-
 
 var EventList = React.createClass({
     getInitialState: function () {
@@ -64,7 +64,7 @@ var EventList = React.createClass({
             });
             return <Link to={`/event/${event.id}`} className={classes} key={event.id}>
                 <div >
-                    <h6 className="margin-bottom-0">{event.subject}</h6>
+                    <h6 className="margin-bottom-0"><EventImage event={event} />{event.subject}</h6>
                     <h2 className='margin-top-10'><span>{event.location}</span> <span className="gray">({Utils.timeStampToDate(event.startTime)} {Utils.formatDateTime(event.startTime, 'dd. MMMM')})</span></h2>
                     <div><strong>Start:</strong> {Utils.formatDateTime(event.startTime, 'HH:mm')}</div>
                     <div><strong>Påmelding åpner:</strong> {Utils.formatDateTime(event.regStart, 'dd. MMMM (HH:mm)')}</div>

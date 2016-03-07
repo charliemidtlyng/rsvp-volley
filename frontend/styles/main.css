@@ -1,6 +1,9 @@
 a:hover {
 	background-color: #3f3f3f;
 }
+.margin-right-5 {
+	margin-right: 5px;
+}
 .margin-top-30 {
 	margin-top: 30px;
 }

@@ -1,6 +1,7 @@
 var React = require('react');
 var EventStore = require('./EventStore');
 var ReactRouter = require('react-router');
+var EventImage = require('./EventImage');
 var Utils = require('./Utils');
 var ReactWidgets = require('react-widgets');
 var Combobox = ReactWidgets.Combobox;
@@ -160,7 +161,7 @@ var Event = React.createClass({
         return (
                 <div>
                     <div className="clearfix margin-bottom-30 margin-top-50 event event-with-padding">
-                        <h6 className="margin-bottom-0">{event.subject}</h6>
+                        <h6 className="margin-bottom-0"><EventImage event={event} />{event.subject}</h6>
                         <h2 className='margin-top-10'><span>{event.location}</span> <span className="gray">({Utils.timeStampToDate(event.startTime)} {Utils.formatDateTime(event.startTime, 'dd. MMMM')})</span></h2>
                         <div><strong>Tid:</strong> {Utils.formatDateTime(event.startTime, 'HH:mm')} - {Utils.formatDateTime(event.endTime, 'HH:mm')}</div>
                         <div><strong>Påmelding åpner:</strong> {Utils.formatDateTime(event.regStart, 'dd. MMMM (HH:mm)')}</div>

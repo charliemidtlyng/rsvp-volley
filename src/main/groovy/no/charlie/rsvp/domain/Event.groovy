@@ -56,18 +56,19 @@ class Event {
 
     String asICalendarEvent() {
         DateTimeFormatter dt = DateTimeFormat.forPattern("yyyyMMdd'T'HHmmss")
-        return "BEGIN:VCALENDAR\n" +
-                "VERSION:2.0\n" +
-                "PRODID:-//BEKK//BEKK Fotball//NO\n" +
-                "BEGIN:VEVENT\n" +
-                "UID:$id@rsvp-app\n" +
-                "DTSTAMP;TZID=Europe/Oslo:${dt.print(DateTime.now())}\n" +
-                "DTSTART;TZID=Europe/Oslo:${dt.print(startTime)}\n" +
-                "DTEND;TZID=Europe/Oslo:${dt.print(endTime)}\n" +
-                "SUMMARY:$subject\n" +
-                "LOCATION:$location\n" +
-                "END:VEVENT\n" +
-                "END:VCALENDAR"
+        return """\
+               BEGIN:VCALENDAR
+               VERSION:2.0
+               PRODID:-//BEKK//BEKK Fotball//NO
+               BEGIN:VEVENT
+               UID:$id@rsvp-app
+               DTSTAMP;TZID=Europe/Oslo:${dt.print(DateTime.now())}
+               DTSTART;TZID=Europe/Oslo:${dt.print(startTime)}
+               DTEND;TZID=Europe/Oslo:${dt.print(endTime)}
+               SUMMARY:$subject
+               LOCATION:$location
+               END:VEVENT
+               END:VCALENDAR""".stripIndent()
     }
 
     public static enum EventType {

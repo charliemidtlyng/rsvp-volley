@@ -35,7 +35,7 @@ class EventServiceImpl implements EventService {
         validateEventIsOpen(event)
         p.setEvent(event)
         event.participants.add(p)
-        event.updateParticipants()
+        event.updateParticipants(p)
         History history = createHistory(event, p, Register)
         event.history.add(history)
         return eventRepository.save(event)

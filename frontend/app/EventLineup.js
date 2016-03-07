@@ -51,7 +51,6 @@ var Event = React.createClass({
         this.state.currentEvent.participants.forEach(function(participant){
             participantMap[participant.id] = Boolean(participant.reserve)
         });
-        console.log(participantMap);
         EventStore.confirmLineup(this.state.currentEvent.id, participantMap).then(this.updateEvent, this.updateError);
     },
     updateParticipant: function (event) {

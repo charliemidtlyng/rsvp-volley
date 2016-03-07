@@ -476,7 +476,6 @@ var EventImage = React.createClass({
             general: '/css/people.png',
             trophy: '/css/sport.png'
         };
-        console.log(this.props);
         var imageSrc = this.props.event.eventSubType === 'Match' ? images.trophy : images.general;
         return React.createElement('img', { className: 'margin-right-5 pull-left', src: imageSrc });
     }
@@ -554,7 +553,6 @@ var Event = React.createClass({
         this.state.currentEvent.participants.forEach(function (participant) {
             participantMap[participant.id] = Boolean(participant.reserve);
         });
-        console.log(participantMap);
         EventStore.confirmLineup(this.state.currentEvent.id, participantMap).then(this.updateEvent, this.updateError);
     },
     updateParticipant: function updateParticipant(event) {

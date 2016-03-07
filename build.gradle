@@ -61,8 +61,7 @@ idea {
         excludeDirs += file('frontend/bower_components')
         excludeDirs += file('frontend/dist')
         excludeDirs += file('frontend/build')
-        excludeDirs += file('src/main/resources/app/static/main.js')
-        excludeDirs += file('src/main/resources/app/static/main.css')
+        excludeDirs += file('src/main/resources/static')
     }
 }
 

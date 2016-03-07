@@ -40,12 +40,13 @@ class Event {
         this
     }
 
-    Event updateParticipants() {
+    Event updateParticipants(Participant participant = null) {
         if (hasManualLineUp()) {
-            return this
-        }
-        participants.eachWithIndex { Participant entry, int index ->
-            entry.reserve = index >= maxNumber
+            participant?.reserve = true
+        } else {
+            participants.eachWithIndex { Participant entry, int index ->
+                entry.reserve = index >= maxNumber
+            }
         }
         this
     }

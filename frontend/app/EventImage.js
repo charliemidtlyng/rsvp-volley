@@ -6,7 +6,6 @@ var EventImage = React.createClass({
             general: '/css/people.png',
             trophy: '/css/sport.png'
         };
-        console.log(this.props)
         var imageSrc = this.props.event.eventSubType === 'Match' ? images.trophy : images.general;
         return <img className="margin-right-5 pull-left" src={imageSrc} />
     }

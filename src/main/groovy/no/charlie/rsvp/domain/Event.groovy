@@ -2,6 +2,7 @@ package no.charlie.rsvp.domain
 
 import no.charlie.rsvp.domain.Annotations.*
 import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
 
@@ -10,7 +11,6 @@ import javax.persistence.Column
 import static no.charlie.rsvp.domain.Event.EventSubType.Match
 import static no.charlie.rsvp.domain.Event.EventSubType.Training
 import static no.charlie.rsvp.domain.Event.EventType.Football
-
 /**
  * @author Charlie Midtlyng (charlie.midtlyng@BEKK.no)
  */
@@ -57,15 +57,16 @@ class Event {
 
     String asICalendarEvent() {
         DateTimeFormatter dt = DateTimeFormat.forPattern("yyyyMMdd'T'HHmmss")
+        DateTimeZone tz = DateTimeZone.forID("Europe/Oslo")
         return """\
                BEGIN:VCALENDAR
                VERSION:2.0
                PRODID:-//BEKK//BEKK Fotball//NO
                BEGIN:VEVENT
                UID:$id@rsvp-app
-               DTSTAMP;TZID=Europe/Oslo:${dt.print(DateTime.now())}
-               DTSTART;TZID=Europe/Oslo:${dt.print(startTime)}
-               DTEND;TZID=Europe/Oslo:${dt.print(endTime)}
+               DTSTAMP;TZID=Europe/Oslo:${dt.print(DateTime.now().withZone(tz))}
+               DTSTART;TZID=Europe/Oslo:${dt.print(startTime.withZone(tz))}
+               DTEND;TZID=Europe/Oslo:${dt.print(endTime.withZone(tz))}
                SUMMARY:$subject
                LOCATION:$location
                END:VEVENT

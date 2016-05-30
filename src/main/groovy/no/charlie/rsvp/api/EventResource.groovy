@@ -1,5 +1,12 @@
 package no.charlie.rsvp.api
 
+import net.fortuna.ical4j.model.TimeZoneRegistry
+import net.fortuna.ical4j.model.TimeZoneRegistryFactory
+import net.fortuna.ical4j.model.component.VEvent
+import net.fortuna.ical4j.model.component.VTimeZone
+import net.fortuna.ical4j.model.property.*
+import net.fortuna.ical4j.util.TimeZones
+import net.fortuna.ical4j.util.UidGenerator
 import no.charlie.rsvp.domain.*
 import no.charlie.rsvp.domain.Event.EventSubType
 import no.charlie.rsvp.domain.Event.EventType
@@ -11,6 +18,8 @@ import org.springframework.stereotype.Component
 
 import javax.ws.rs.*
 import javax.ws.rs.core.*
+
+import static no.charlie.rsvp.service.ICalGenerator.generateCalendarForEvents
 
 /**
  * @author Charlie Midtlyng (charlie.midtlyng@BEKK.no)
@@ -37,6 +46,26 @@ class EventResource {
     Response upcomingEvents(@QueryParam('eventType') EventType eventType,
                             @QueryParam('eventSubType') EventSubType eventSubType) {
         return Response.ok().entity(eventService.findUpcomingEvents(eventType, eventSubType)).build()
+    }
+
+    @GET
+    @Path("/feed")
+    Response feed(@QueryParam('eventType') EventType eventType,
+                  @QueryParam('eventSubType') EventSubType eventSubType) {
+
+
+        List<Event> events = eventService.findAllEvents(eventType, eventSubType)
+        return Response.ok().entity(generateCalendarForEvents(events)).build()
+    }
+
+    @GET
+    @Path("/feed/iCal")
+    Response feedAsICal(@QueryParam('eventType') EventType eventType,
+                  @QueryParam('eventSubType') EventSubType eventSubType) {
+
+
+        List<Event> events = eventService.findAllEvents(eventType, eventSubType)
+        return Response.ok().entity(generateCalendarForEvents(events).toString()).build()
     }
 
     @GET

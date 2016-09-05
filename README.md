@@ -31,3 +31,4 @@ Deploye -
 - git commit ...
 - git push
 - git push heroku master
+- (evt. git push prod master)

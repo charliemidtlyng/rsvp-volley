@@ -22,7 +22,7 @@ class SmsServiceImpl implements SmsService {
         def http = new HTTPBuilder('https://telenormobil.no')
         http.ignoreSSLIssues()
         http.get(
-                path: '/ums/smapi/input',
+                path: '/smapi/3/sms',
                 query: [
                         sender             : FROM_NUMBER,
                         password           : password,
@@ -43,7 +43,7 @@ class SmsServiceImpl implements SmsService {
         def http = new HTTPBuilder('https://telenormobil.no')
         String message = "${otp} - [BEKK-Fotball] Engangspassord"
         http.get(
-                path: '/ums/smapi/input',
+                path: '/smapi/3/sms',
                 query: [
                         sender             : FROM_NUMBER,
                         password           : password,

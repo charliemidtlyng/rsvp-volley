@@ -89,7 +89,7 @@ class EventResource {
     @POST
     Response createEvent(Map valueMap) {
         Event event = parseEvent(valueMap)
-        return Response.accepted().entity(eventService.createEvent(event)).build()
+        return Response.ok().entity(eventService.createEvent(event)).build()
     }
 
 
@@ -97,7 +97,7 @@ class EventResource {
     @Path("/{eventId}")
     Response deleteEvent(@PathParam('eventId') Long eventId) {
         eventService.deleteEvent(eventId)
-        return Response.accepted().build()
+        return Response.ok().build()
     }
 
     @POST
@@ -111,7 +111,7 @@ class EventResource {
         }
 
         Participant p = parseParticipant(valueMap)
-        return Response.accepted().entity(eventService.addParticipantToEvent(eventId, p)).build()
+        return Response.ok().entity(eventService.addParticipantToEvent(eventId, p)).build()
     }
 
     @POST
@@ -123,14 +123,14 @@ class EventResource {
         }
         validatePhoneNumber(valueMap)
         Otp otp = otpService.resolveOtpForEventId(eventId)
-        return Response.accepted().entity(smsService.sendOtpSms(otp.password, phoneNumber)).build()
+        return Response.ok().entity(smsService.sendOtpSms(otp.password, phoneNumber)).build()
     }
 
 
     @DELETE
     @Path("/{eventId}/register/{participantId}")
     Response unregister(@PathParam('eventId') Long eventId, @PathParam('participantId') Long participantId) {
-        return Response.accepted().entity(eventService.removeParticipantFromEvent(eventId, participantId)).build()
+        return Response.ok().entity(eventService.removeParticipantFromEvent(eventId, participantId)).build()
     }
 
     @POST
@@ -139,7 +139,7 @@ class EventResource {
         if (!lineupMap) {
             throw new RsvpBadRequestException('Må legge ved uttakslista')
         }
-        Response.accepted().entity(eventService.confirmLineup(eventId, lineupMap)).build()
+        Response.ok().entity(eventService.confirmLineup(eventId, lineupMap)).build()
     }
 
 

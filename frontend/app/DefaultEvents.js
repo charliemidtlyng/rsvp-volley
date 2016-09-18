@@ -18,7 +18,7 @@ var DefaultEvents = {
     football: function () {
         return {
             subject: 'Trening i Vallhall',
-            description: 'Oppmøte 19:45!\nFotballtrening i Vallhall. Banen ligger i \nmidten - lengst unna inngangsdøra. \nAnkomst: \nBuss #21 stopper på Valle. Gå derfra igjennom Vallefaret. \nT-bane #1, #2, #3 og #4 stopper på Helsfyr. Gå av mot Valle Hovin. \n\nRing 99402316 (Charlie) hvis du er i tvil. \n\n¡Avmelding!\nHvis det viser seg at du allikevel ikke \nkan komme, meld deg av så snart \ndu vet dette - og si ifra til nestemann \npå lista (evt. Socialcast). \n\nLegger du ved epost/mobilnr får du \nmail/sms så snart du forflytte...',
+            description: 'Oppmøte 19:45!\nFotballtrening i Vallhall. Banen ligger i \nmidten - lengst unna inngangsdøra. \nAnkomst: \nBuss #21 stopper på Valle. Gå derfra igjennom Vallefaret. \nT-bane #1, #2, #3 og #4 stopper på Helsfyr. Gå av mot Valle Hovin. \n\nRing 99402316 (Charlie) hvis du er i tvil. \n\n¡Avmelding!\nHvis det viser seg at du allikevel ikke \nkan komme, meld deg av så snart \ndu vet dette - og si ifra til nestemann \npå lista (evt. Socialcast). \n\nLegger du ved epost/mobilnr får du \nmail/sms så snart du forflytter deg \nfra reservelista til påmeldtlista!',
             location: 'Vallhall',
             maxNumber: 15,
             startTime: nextMonday(20, 0),
@@ -35,6 +35,20 @@ var DefaultEvents = {
             description: 'Oppmøte ....!\nKamp mot ... . Husk leggskinner og svart drakt! \nAnkomst: \nT-bane #4 til Manglerud - ca. 10-15 minutter å gå.',
             location: 'Manglerudhallen',
             maxNumber: 8,
+            startTime: nextMonday(20, 0),
+            endTime: nextMonday(21, 0),
+            regStart: Date.today(),
+            regEnd: nextMonday(21, 0),
+            eventSubType: 'Match',
+            creator: 'CM'
+        };
+    },
+    footballMatchOutdoor: function () {
+        return {
+            subject: 'Kamp X. laget',
+            description: 'Oppmøte ....!\nKamp mot ... . Husk leggskinner og svart drakt!',
+            location: 'Manglerudhallen',
+            maxNumber: 12,
             startTime: nextMonday(20, 0),
             endTime: nextMonday(21, 0),
             regStart: Date.today(),

@@ -3,6 +3,7 @@ var EventStore = require('./EventStore');
 var ReactRouter = require('react-router');
 var EventImage = require('./EventImage');
 var Utils = require('./Utils');
+var Loader = require('./Loader');
 var ReactWidgets = require('react-widgets');
 var Combobox = ReactWidgets.Combobox;
 var ReactBootstrap = require('react-bootstrap');
@@ -40,7 +41,8 @@ var Event = React.createClass({
             currentEvent: {
                 participants: []
             },
-            error: ""
+            error: "",
+            loading: true
         };
     },
     getDefaultProps: function () {
@@ -89,7 +91,16 @@ var Event = React.createClass({
                 'Anne Berit Bjering',
                 'Silje Kandal',
                 'Kjersti Barstad Strand',
-                'Morten Utengen'
+                'Morten Utengen',
+                'Erlend Gjesdal',
+                'Nemanja Aksic',
+                'Petter Samuelsen',
+                'Svein Petter Gjøby',
+                'Johan Rusvik',
+                'Ingar Kvalheim',
+                'Endre Skogen',
+                'Hallvard Braaten'
+
             ]
         }
     },
@@ -118,14 +129,14 @@ var Event = React.createClass({
     updateEvent: function () {
         EventStore.getEvent(this.props.params.id)
                 .then(function (event) {
-                    this.setState({currentEvent: event, error: ''});
+                    this.setState({currentEvent: event, error: '', loading: false});
                 }.bind(this));
     },
     deleteEvent: function () {
         var luckyNumber = prompt("Er du helt sikker på at du vil slette denne hendelsen? \n I så fall - hvilket draktnummer har Charlie")
         if (luckyNumber && parseInt(luckyNumber) === 7) {
             EventStore.removeEvent(this.state.currentEvent.id);
-            this.transitionTo('home');
+            window.location.hash = '';
         }
     },
     downloadICalendar: function () {
@@ -160,6 +171,7 @@ var Event = React.createClass({
 
         return (
                 <div>
+                    <Loader isLoading={this.state.loading}>
                     <div className="clearfix margin-bottom-30 margin-top-50 event event-with-padding">
                         <h6 className="margin-bottom-0"><EventImage event={event} />{event.subject}</h6>
                         <h2 className='margin-top-10'><span>{event.location}</span> <span className="gray">({Utils.timeStampToDate(event.startTime)} {Utils.formatDateTime(event.startTime, 'dd. MMMM')})</span></h2>
@@ -224,6 +236,7 @@ var Event = React.createClass({
                             <div className="row">{reserves}</div>
                         </div>
                     </div>
+                </Loader>
                 </div>
         );
     }

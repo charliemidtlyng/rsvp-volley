@@ -8,6 +8,7 @@ var DefaultEvents = require('./DefaultEvents');
 var DateTimePicker = ReactWidgets.DateTimePicker;
 var Combobox = ReactWidgets.Combobox;
 var Link = Router.Link;
+var browserHistory = ReactRouter.browserHistory;
 var NewEvent = React.createClass({
 
     mixins: [],
@@ -38,7 +39,7 @@ var NewEvent = React.createClass({
     createEvent: function (event) {
         event.preventDefault();
         EventStore.addEvent(this.state).then(function (event) {
-            this.transitionTo('event', {id: event.id});
+            window.location.hash = '/event/' + event.id;
         }.bind(this));
     },
     onValueChange: function (event) {
@@ -89,6 +90,10 @@ var NewEvent = React.createClass({
         var defaultValue = DefaultEvents.footballMatch();
         this.updateWithDefaultValue(defaultValue)
     },
+    defaultFootballMatchOutdoor: function() {
+        var defaultValue = DefaultEvents.footballMatchOutdoor();
+        this.updateWithDefaultValue(defaultValue)
+    },
     render: function () {
         return (
                 <div>
@@ -99,7 +104,10 @@ var NewEvent = React.createClass({
                                 <button type="button" className="btn btn-default" onClick={this.defaultFootball}>Ferdigutfyll fotballtrening</button>
                             </span>
                             <span className="col-sm-3">
-                                <button type="button" className="btn btn-default" onClick={this.defaultFootballMatch}>Ferdigutfyll fotballkamp</button>
+                                <button type="button" className="btn btn-default" onClick={this.defaultFootballMatch}>Ferdigutfyll fotballkamp (inne)</button>
+                            </span>
+                            <span className="col-sm-3">
+                                <button type="button" className="btn btn-default" onClick={this.defaultFootballMatch}>Ferdigutfyll fotballkamp (ute)</button>
                             </span>
                         </div>
                         <div className="form-group">

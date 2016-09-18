@@ -14,13 +14,12 @@ var App = React.createClass({
                         <Navbar.Brand>
                             <a href="#"><img src="/css/fotball_logo.png" /></a>
                         </Navbar.Brand>
+                        <Navbar.Toggle />
                     </Navbar.Header>
                     <Navbar.Collapse>
-                        <Nav>
-                            <Nav eventKey={1}>
-                                <NavItem key={1} href="/#">Hendelser</NavItem>
-                                <NavItem key={2} href="#/event/new">Ny hendelse</NavItem>
-                            </Nav>
+                        <Nav eventKey={1}>
+                            <NavItem key={1} href="/#">Hendelser</NavItem>
+                            <NavItem key={2} href="#/event/new">Ny hendelse</NavItem>
                         </Nav>
                     </Navbar.Collapse>
                 </Navbar>

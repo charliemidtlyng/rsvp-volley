@@ -5,6 +5,7 @@ var EventImage = require('./EventImage');
 var ReactRouter = require('react-router');
 var Link = ReactRouter.Link;
 var Utils = require('./Utils');
+var Loader = require('./Loader');
 var classNames = require('classnames');
 
 var ShowHide = React.createClass({
@@ -77,11 +78,13 @@ var EventList = React.createClass({
         var oldEvents = this.state.visibleHistory ? this.mapEvents(this.state.oldEvents) : [];
         var upcomingEvents = this.mapEvents(this.state.upcomingEvents);
         return (
-                <div className="eventList row margin-top-50 ">
-                    <ShowHide visibleHistory={this.state.visibleHistory} toggleShowHide={this.toggleShowHide} />
-                    {upcomingEvents}
-                    {oldEvents}
-                </div>
+                <Loader isLoading={this.state.loading}>
+                    <div className="eventList row margin-top-50 ">
+                        <ShowHide visibleHistory={this.state.visibleHistory} toggleShowHide={this.toggleShowHide} />
+                        {upcomingEvents}
+                        {oldEvents}
+                    </div>
+                </Loader>
         );
     }
 });

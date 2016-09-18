@@ -6,6 +6,7 @@ import no.charlie.rsvp.domain.Event.EventType
 import no.charlie.rsvp.exception.RsvpBadRequestException
 import no.charlie.rsvp.repository.EventRepository
 import org.joda.time.DateTime
+import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
@@ -14,6 +15,7 @@ import static no.charlie.rsvp.domain.History.Change
 import static no.charlie.rsvp.domain.History.Change.Register
 import static no.charlie.rsvp.domain.History.Change.Unregister
 import static org.joda.time.DateTime.now
+import static org.slf4j.LoggerFactory.getLogger
 
 /**
  * @author Charlie Midtlyng (charlie.midtlyng@BEKK.no)
@@ -24,6 +26,7 @@ class EventServiceImpl implements EventService {
     @Autowired EventRepository eventRepository
     @Autowired MailService mailService
     @Autowired SmsService smsService
+    private final Logger LOGGER = getLogger(EventServiceImpl)
 
     Event createEvent(Event event) {
         Event savedEvent = eventRepository.save(event)
@@ -101,8 +104,12 @@ class EventServiceImpl implements EventService {
         Participant newAttender = event.participants.findAll {
             !it.reserve
         }.last()
-        mailService.sendMail(newAttender, event)
-        smsService.sendSms(newAttender, '[BEKK-Fotball] Du er flyttet fra reservelisten til paameldtlisten! PS:meld deg av dersom du ikke kan stille. -Charlie')
+        try {
+            mailService.sendMail(newAttender, event)
+            smsService.sendSms(newAttender, '[BEKK-Fotball] Du er flyttet fra reservelisten til paameldtlisten! PS:meld deg av dersom du ikke kan stille. -Charlie')
+        } catch (Exception e) {
+            LOGGER.error("Kunne ikke sende mail/SMS", e)
+        }
     }
 
 

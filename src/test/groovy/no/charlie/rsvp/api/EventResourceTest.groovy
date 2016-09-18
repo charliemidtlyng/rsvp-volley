@@ -7,6 +7,7 @@ import spock.lang.Specification
 import javax.ws.rs.core.Response
 
 import static javax.ws.rs.core.Response.Status.ACCEPTED
+import static javax.ws.rs.core.Response.Status.OK
 
 /**
  * @author Charlie Midtlyng (charlie.midtlyng@BEKK.no)
@@ -50,7 +51,7 @@ class EventResourceTest extends Specification {
             ]
             Response response = resource.createEvent(valueMap)
         then:
-            response.status == ACCEPTED.statusCode
+            response.status == OK.statusCode
     }
 
     def "should add participant to event"() {
@@ -62,7 +63,7 @@ class EventResourceTest extends Specification {
             Response response = resource.register(1L, valueMap)
         then:
             recaptchaService.isHuman(_, _) >> true
-            response.status == ACCEPTED.statusCode
+            response.status == OK.statusCode
 
     }
 
@@ -78,7 +79,7 @@ class EventResourceTest extends Specification {
         when:
             Response response = resource.unregister(1L, 1L)
         then:
-            response.status == ACCEPTED.statusCode
+            response.status == OK.statusCode
 
     }
 }

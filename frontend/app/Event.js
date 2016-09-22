@@ -2,6 +2,7 @@ var React = require('react');
 var EventStore = require('./EventStore');
 var ReactRouter = require('react-router');
 var EventImage = require('./EventImage');
+var Timer = require('./Timer');
 var Utils = require('./Utils');
 var Loader = require('./Loader');
 var ReactWidgets = require('react-widgets');
@@ -224,6 +225,7 @@ var Event = React.createClass({
                                     render="explicit"/>
                             <br/>
                             <div className="col-xs-12">
+                                <Timer remainingTime={event.timeToRegistration}/>
                                 <button type="button" className="btn btn-primary" onClick={this.attend}>Meld på</button>
                             </div>
                         </form>

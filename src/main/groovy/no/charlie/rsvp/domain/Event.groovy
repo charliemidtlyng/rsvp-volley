@@ -1,12 +1,16 @@
 package no.charlie.rsvp.domain
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import no.charlie.rsvp.domain.Annotations.*
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
+import org.joda.time.Days
+import org.joda.time.Seconds
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
 
 import javax.persistence.Column
+import javax.persistence.Transient
 
 import static no.charlie.rsvp.domain.Event.EventSubType.Match
 import static no.charlie.rsvp.domain.Event.EventSubType.Training
@@ -33,6 +37,13 @@ class Event {
 
     @OneToManySubselect Set<Participant> participants = []
     @OneToManySubselect Set<History> history = []
+
+    @Transient
+    @JsonSerialize
+    Long timeToRegistration() {
+        regStart && DateTime.now().isBefore(regStart) ? regStart.getMillis()-DateTime.now().getMillis() : null
+    }
+
 
     Event fetchMainCollections() {
         participants.size()

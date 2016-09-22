@@ -80,3 +80,6 @@ body {
 .event-with-padding {
 	padding: 10px
 }
+h3.no-margin {
+	margin: 0px;
+}

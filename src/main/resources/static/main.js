@@ -1423,7 +1423,6 @@ var Timer = React.createClass({
     },
     secondsToTime: function secondsToTime(remainingSeconds) {
         var returnString = '';
-        debugger;
         var days = Math.floor(remainingSeconds / 3600 / 24);
         var hours = Math.floor(remainingSeconds / 3600 % 24);
         var minutes = Math.floor(remainingSeconds / 60 % 60);

@@ -27,9 +27,9 @@ var Timer = React.createClass({
     },
     secondsToTime: function (remainingSeconds) {
         var returnString = '';
-        var days = (remainingSeconds / 3600 / 24).toFixed(0);
-        var hours = (( remainingSeconds / 3600 ) % 24).toFixed(0);
-        var minutes = (( remainingSeconds / 60 ) % 60).toFixed(0);
+        var days = Math.floor(remainingSeconds / 3600 / 24);
+        var hours = Math.floor(( remainingSeconds / 3600 ) % 24);
+        var minutes = Math.floor(( remainingSeconds / 60 ) % 60);
         var seconds = (remainingSeconds % 60).toFixed(0);
 
         if (days > 0) {
@@ -44,7 +44,7 @@ var Timer = React.createClass({
             var minuteString = minutes > 1 ? ' minutter ' : ' minutt ';
             returnString += minutes + minuteString;
         }
-        returnString += seconds + ' sekunder'
+        returnString += seconds + ' sekunder';
 
         return returnString;
 

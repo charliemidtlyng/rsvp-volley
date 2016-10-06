@@ -3,6 +3,7 @@ package no.charlie.rsvp.service
 import com.sendgrid.SendGrid
 import no.charlie.rsvp.domain.Event
 import no.charlie.rsvp.domain.Participant
+import org.joda.time.DateTimeZone
 import org.springframework.stereotype.Service
 
 import static java.util.Locale.GERMANY
@@ -21,7 +22,8 @@ class MailServiceImpl implements MailService {
             email.addTo(participant.email)
             email.setFrom("charlie.midtlyng@gmail.com")
             email.setSubject("[BEKK-Fotball] - ${event.subject}")
-            email.setText("Noen har meldt seg av og du har dermed fått plass på ${event.subject} som starter ${event.startTime?.toString('yyyy-MM-dd HH:mm', GERMANY)}. \n -Charlie")
+            def startTimeString  = event.startTime?.withZone(DateTimeZone.forID('Europe/Oslo'))?.toLocalDateTime()?.toString('yyyy-MM-dd HH:mm')
+            email.setText("Noen har meldt seg av og du har dermed fått plass på ${event.subject} som starter ${startTimeString}. \n -Charlie")
 
             try {
                 SendGrid.Response response = sendgrid.send(email)

@@ -5,6 +5,8 @@ import no.charlie.rsvp.domain.Event
 import no.charlie.rsvp.domain.Participant
 import org.springframework.stereotype.Service
 
+import static java.util.Locale.GERMANY
+
 /**
  * @author Charlie Midtlyng (charlie.midtlyng@BEKK.no)
  */
@@ -19,7 +21,7 @@ class MailServiceImpl implements MailService {
             email.addTo(participant.email)
             email.setFrom("charlie.midtlyng@gmail.com")
             email.setSubject("[BEKK-Fotball] - ${event.subject}")
-            email.setText("Noen har meldt seg av og du har dermed fått plass på ${event.subject} som starter ${event.startTime?.toString('yyyy-MM-dd HH:mm')}. \n -Charlie")
+            email.setText("Noen har meldt seg av og du har dermed fått plass på ${event.subject} som starter ${event.startTime?.toString('yyyy-MM-dd HH:mm', GERMANY)}. \n -Charlie")
 
             try {
                 SendGrid.Response response = sendgrid.send(email)

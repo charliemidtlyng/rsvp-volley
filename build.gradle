@@ -31,6 +31,7 @@ dependencies {
     compile "org.codehaus.groovy:groovy-all:${groovyVersion}",
             'org.springframework.boot:spring-boot-starter-web',
             'org.springframework.boot:spring-boot-starter-jersey',
+            'org.springframework.boot:spring-boot-starter-security',
             'org.springframework:spring-web',
             'org.slf4j:log4j-over-slf4j:1.7.7',
             'com.fasterxml.jackson.core:jackson-core:2.4.3',

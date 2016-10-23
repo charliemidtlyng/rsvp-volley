@@ -6,12 +6,8 @@ import no.charlie.rsvp.domain.Participant
 /**
  * @author Charlie Midtlyng (charlie.midtlyng@BEKK.no)
  */
-interface MailService {
-
-    void sendMail(Participant participant, Event event)
+interface SlackService {
 
     void sendEventNotification(Event event)
-
-
 
 }

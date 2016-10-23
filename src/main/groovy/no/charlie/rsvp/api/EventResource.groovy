@@ -1,12 +1,5 @@
 package no.charlie.rsvp.api
 
-import net.fortuna.ical4j.model.TimeZoneRegistry
-import net.fortuna.ical4j.model.TimeZoneRegistryFactory
-import net.fortuna.ical4j.model.component.VEvent
-import net.fortuna.ical4j.model.component.VTimeZone
-import net.fortuna.ical4j.model.property.*
-import net.fortuna.ical4j.util.TimeZones
-import net.fortuna.ical4j.util.UidGenerator
 import no.charlie.rsvp.domain.*
 import no.charlie.rsvp.domain.Event.EventSubType
 import no.charlie.rsvp.domain.Event.EventType
@@ -61,7 +54,7 @@ class EventResource {
     @GET
     @Path("/feed/iCal")
     Response feedAsICal(@QueryParam('eventType') EventType eventType,
-                  @QueryParam('eventSubType') EventSubType eventSubType) {
+                        @QueryParam('eventSubType') EventSubType eventSubType) {
 
 
         List<Event> events = eventService.findAllEvents(eventType, eventSubType)

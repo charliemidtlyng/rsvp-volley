@@ -56,9 +56,7 @@ var Event = React.createClass({
                 'Charlie Midtlyng',
                 'Thor K. Valderhaug',
                 'Simen Lomås Johannessen',
-                'Aleksander Hindenes',
                 'Ole-Martin Mørk',
-                'Rune Nergård',
                 'Erlend Opdahl',
                 'Esben Aarseth',
                 'Christoffer Marcussen',
@@ -71,7 +69,6 @@ var Event = React.createClass({
                 'Jøran Lillesand',
                 'Torstein Nicolaysen',
                 'Harald Kjølner',
-                'Magne Davidsen',
                 'Kristoffer Liabø',
                 'Jonatan Austigard',
                 'Pål Moen Møst',
@@ -83,7 +80,6 @@ var Event = React.createClass({
                 'Stian Surén',
                 'Simen Støa',
                 'Hannes Waller',
-                'Fredrik Einarsson',
                 'Emil Staurset',
                 'Nikolai Norman Andersen',
                 'Severin Sverdvik',
@@ -140,6 +136,11 @@ var Event = React.createClass({
             window.location.hash = '';
         }
     },
+    sendNotification: function() {
+        var user = prompt("Brukernavn?");
+        var pass = prompt("Passord?");
+        EventStore.sendNotification(this.state.currentEvent.id, {user: user, pass: pass});
+    },
     downloadICalendar: function () {
         window.location.replace(`api/events/${this.state.currentEvent.id}/icalendar`);
     },
@@ -181,6 +182,7 @@ var Event = React.createClass({
                         <div><strong>Påmeldt:</strong> {event.participants.length} / {event.maxNumber}</div>
                         <div><button className="btn btn-default btn-xs " onClick={this.downloadICalendar}>Lagre i kalender</button></div>
                         <div><button className="btn btn-danger btn-xs" onClick={this.deleteEvent}>Slett hendelse</button></div>
+                        <div><button className="btn btn-danger btn-xs" onClick={this.sendNotification}>Send notification</button></div>
                     </div>
                     <div className="event event-with-padding">
                         <p className="pre-wrap">{event.description}</p>

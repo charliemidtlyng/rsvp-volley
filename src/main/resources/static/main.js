@@ -203,7 +203,7 @@ var Event = React.createClass({
             messages: {
                 emptyFilter: {}
             },
-            listOfCandidates: ['Charlie Midtlyng', 'Thor K. Valderhaug', 'Simen Lomås Johannessen', 'Aleksander Hindenes', 'Ole-Martin Mørk', 'Rune Nergård', 'Erlend Opdahl', 'Esben Aarseth', 'Christoffer Marcussen', 'Tore Myklebust', 'Jørn Hunskaar', 'Erlend Heimark', 'Rasmus Bauck', 'Marius Løkketangen', 'Vegard Gamnes', 'Jøran Lillesand', 'Torstein Nicolaysen', 'Harald Kjølner', 'Magne Davidsen', 'Kristoffer Liabø', 'Jonatan Austigard', 'Pål Moen Møst', 'Sindre Nordbø', 'Ole Hjalmar Herje', 'Emil Lunde', 'Morten Øvrebø', 'Andreas Moe', 'Stian Surén', 'Simen Støa', 'Hannes Waller', 'Fredrik Einarsson', 'Emil Staurset', 'Nikolai Norman Andersen', 'Severin Sverdvik', 'Helen Le', 'Hallvard Braaten', 'Anne Berit Bjering', 'Silje Kandal', 'Kjersti Barstad Strand', 'Morten Utengen', 'Erlend Gjesdal', 'Nemanja Aksic', 'Petter Samuelsen', 'Svein Petter Gjøby', 'Johan Rusvik', 'Ingar Kvalheim', 'Endre Skogen', 'Hallvard Braaten']
+            listOfCandidates: ['Charlie Midtlyng', 'Thor K. Valderhaug', 'Simen Lomås Johannessen', 'Ole-Martin Mørk', 'Erlend Opdahl', 'Esben Aarseth', 'Christoffer Marcussen', 'Tore Myklebust', 'Jørn Hunskaar', 'Erlend Heimark', 'Rasmus Bauck', 'Marius Løkketangen', 'Vegard Gamnes', 'Jøran Lillesand', 'Torstein Nicolaysen', 'Harald Kjølner', 'Kristoffer Liabø', 'Jonatan Austigard', 'Pål Moen Møst', 'Sindre Nordbø', 'Ole Hjalmar Herje', 'Emil Lunde', 'Morten Øvrebø', 'Andreas Moe', 'Stian Surén', 'Simen Støa', 'Hannes Waller', 'Emil Staurset', 'Nikolai Norman Andersen', 'Severin Sverdvik', 'Helen Le', 'Hallvard Braaten', 'Anne Berit Bjering', 'Silje Kandal', 'Kjersti Barstad Strand', 'Morten Utengen', 'Erlend Gjesdal', 'Nemanja Aksic', 'Petter Samuelsen', 'Svein Petter Gjøby', 'Johan Rusvik', 'Ingar Kvalheim', 'Endre Skogen', 'Hallvard Braaten']
         };
     },
     componentDidMount: function componentDidMount() {
@@ -239,6 +239,11 @@ var Event = React.createClass({
             EventStore.removeEvent(this.state.currentEvent.id);
             window.location.hash = '';
         }
+    },
+    sendNotification: function sendNotification() {
+        var user = prompt("Brukernavn?");
+        var pass = prompt("Passord?");
+        EventStore.sendNotification(this.state.currentEvent.id, { user: user, pass: pass });
     },
     downloadICalendar: function downloadICalendar() {
         window.location.replace('api/events/' + this.state.currentEvent.id + '/icalendar');
@@ -357,6 +362,15 @@ var Event = React.createClass({
                             'button',
                             { className: 'btn btn-danger btn-xs', onClick: this.deleteEvent },
                             'Slett hendelse'
+                        )
+                    ),
+                    React.createElement(
+                        'div',
+                        null,
+                        React.createElement(
+                            'button',
+                            { className: 'btn btn-danger btn-xs', onClick: this.sendNotification },
+                            'Send notification'
                         )
                     )
                 ),
@@ -874,6 +888,7 @@ module.exports = EventList;
 
 var Promise = require('promise-js');
 var API = '/api/events';
+var AdminAPI = '/api/admin/events';
 var EventStore = module.exports = {
 
     addEvent: function addEvent(event) {
@@ -899,6 +914,9 @@ var EventStore = module.exports = {
     registerForEvent: function registerForEvent(id, participant) {
         return postJSON(API + '/' + id + '/register', participant);
     },
+    sendNotification: function sendNotification(id, basicAuth) {
+        return getJSON(AdminAPI + '/' + id + '/sendNotification', basicAuth);
+    },
     unregisterForEvent: function unregisterForEvent(id, participantId) {
         return deleteJSON(API + '/' + id + '/register/' + participantId);
     },
@@ -907,7 +925,7 @@ var EventStore = module.exports = {
     }
 };
 
-function getJSON(url) {
+function getJSON(url, basicAuth) {
     return new Promise(function (resolve, reject) {
         // Do the usual XHR stuff
         var req = new XMLHttpRequest();
@@ -925,6 +943,9 @@ function getJSON(url) {
         req.onerror = function () {
             reject(Error("Network Error"));
         };
+        if (basicAuth) {
+            req.setRequestHeader("Authorization", "Basic " + btoa(basicAuth.user + ":" + basicAuth.pass));
+        }
         // Make the request
         req.send();
     });

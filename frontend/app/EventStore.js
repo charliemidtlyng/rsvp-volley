@@ -1,5 +1,6 @@
 var Promise = require('promise-js');
 var API = '/api/events';
+var AdminAPI = '/api/admin/events';
 var EventStore = module.exports = {
 
     addEvent: function (event) {
@@ -25,6 +26,9 @@ var EventStore = module.exports = {
     registerForEvent: function(id, participant) {
         return postJSON(API + '/' + id + '/register', participant);
     },
+    sendNotification: function(id, basicAuth) {
+        return getJSON(AdminAPI + '/' + id + '/sendNotification', basicAuth);
+    },
     unregisterForEvent: function(id, participantId) {
         return deleteJSON(API + '/' + id + '/register/' + participantId);
     },
@@ -33,7 +37,7 @@ var EventStore = module.exports = {
     }
 };
 
-function getJSON(url) {
+function getJSON(url, basicAuth) {
     return new Promise(function(resolve, reject) {
         // Do the usual XHR stuff
         var req = new XMLHttpRequest();
@@ -52,6 +56,9 @@ function getJSON(url) {
         req.onerror = function() {
             reject(Error("Network Error"));
         };
+        if (basicAuth) {
+            req.setRequestHeader("Authorization", "Basic " + btoa(basicAuth.user + ":" + basicAuth.pass));
+        }
         // Make the request
         req.send();
     });

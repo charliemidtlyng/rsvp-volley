@@ -60,7 +60,7 @@ class MailServiceImpl implements MailService {
         email.addTo("charlie.midtlyng@gmail.com")
         email.setFrom("charlie.midtlyng@gmail.com")
         email.setSubject(generateSubject(event))
-        email.setText(mailText)
+        email.setHtml(mailText)
         try {
             sendgrid.send(email)
         } catch (Exception e) {

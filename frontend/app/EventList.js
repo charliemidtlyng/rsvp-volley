@@ -16,7 +16,7 @@ var ShowHide = React.createClass({
             'btn-danger': this.props.visibleHistory
         });
         var text = this.props.visibleHistory ? 'Skjul historikk' : 'Vis historikk';
-        return <div className="margin-bottom-10"> <button className={btnClasses} onClick={this.props.toggleShowHide}>{text}</button> </div>
+        return <div className="row"><div className="margin-bottom-10 col-xs-12"> <button className={btnClasses} onClick={this.props.toggleShowHide}>{text}</button> </div></div>
     }
 });
 
@@ -80,6 +80,8 @@ var EventList = React.createClass({
         return (
                 <Loader isLoading={this.state.loading}>
                     <div className="eventList row margin-top-50 ">
+                        <div className="alert alert-info col-xs-12 col-md-9" role="alert">
+                        <p>Få BEKK-Fotball inn i kalenderen din? <br/>Abboner på <a href="http://paamelding.herokuapp.com/api/events/feed/iCal">denne urlen</a></p></div>
                         <ShowHide visibleHistory={this.state.visibleHistory} toggleShowHide={this.toggleShowHide} />
                         {upcomingEvents}
                         {oldEvents}

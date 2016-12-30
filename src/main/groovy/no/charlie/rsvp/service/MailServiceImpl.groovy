@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service
 
 import static no.charlie.rsvp.domain.Event.EventSubType.Match
 import static no.charlie.rsvp.domain.Event.EventSubType.Training
+import static no.charlie.rsvp.utils.DateUtils.*
 import static org.slf4j.LoggerFactory.getLogger
 
 /**
@@ -26,7 +27,7 @@ class MailServiceImpl implements MailService {
             email.addTo(participant.email)
             email.setFrom("charlie.midtlyng@gmail.com")
             email.setSubject("[BEKK-Fotball] - ${event.subject}")
-            def startTimeString  = event.startTime?.
+            def startTimeString = event.startTime?.
                     withZone(DateTimeZone.forID('Europe/Oslo'))?.
                     toLocalDateTime()?.toString('yyyy-MM-dd HH:mm')
             email.setText("Noen har meldt seg av og du har dermed fått " +
@@ -52,16 +53,61 @@ class MailServiceImpl implements MailService {
     @Override
     void sendEventNotification(Event event) {
         String mailText = generateNotificationMailText(event)
-        LOGGER.info("Sending notification on mail is not implemented")
-        //TODO: Implement email notification!
+
+        SendGrid sendgrid = new SendGrid(System.getenv("SENDGRID_USERNAME"), System.getenv("SENDGRID_PASSWORD"))
+        SendGrid.Email email = new SendGrid.Email()
+        //email.addTo("fotball@bekk.no")
+        email.addTo("charlie.midtlyng@gmail.com")
+        email.setFrom("charlie.midtlyng@gmail.com")
+        email.setSubject(generateSubject(event))
+        email.setText(mailText)
+        try {
+            sendgrid.send(email)
+        } catch (Exception e) {
+            println(e)
+        }
+
     }
-    
+
+    String generateSubject(Event event) {
+        "[BEKK-Fotball] ${event.subject} på ${toDayOfWeek(event.startTime)}"
+    }
+
     private String generateNotificationMailText(Event event) {
         String mailText = ''
-        if(event.eventSubType == Training) {
-            mailText = ''
-        } else if(event.eventSubType == Match) {
-            mailText = ''
+
+        def startDay = toDayOfWeek(event.startTime)
+        def startTime = toTime(event.startTime)
+        def endTime = toTime(event.endTime)
+        def url = "http://paamelding.herokuapp.com/#/event/${event.id}"
+        def regStartDay = toDayOfWeek(event.regStart)
+        def regStartTime = toTime(event.regStart)
+        if (event.eventSubType == Training) {
+            mailText = """
+            <p>Hei!</p>
+            <p>Ny trening på ${startDay}. Påmelding åpner ${regStartDay} kl. ${regStartTime}!</p>
+            <ul>
+            <li>Tid: <b>${startDay} ${startTime}-${endTime}</b> (oppmøte ${toTime(event.startTime.minusMinutes(15))}!)</li>
+            <li>Sted: ${event.location}</li>
+            <li>Påmelding åpner: ${toDate(event.regStart)} kl. ${regStartTime}</li>
+            </ul>
+            <p>Info og påmelding: <a href='${url}'>${url}</a></p>
+
+            <p>NB: Det er mange avmeldinger i siste liten. Tenk på dine kollegaer og meld deg av senest 12:00 på ${startDay}!</p>
+            <p><b>CHARLIE</b></p>
+            <p><b>99402316</b></p>"""
+        } else if (event.eventSubType == Match) {
+            mailText = """<p>Hei!</p>
+            <p>Ny kamp på ${startDay}. Påmelding er åpen!</p>
+            <ul>
+            <li>Tid: <b>${startDay} ${startTime}-${endTime}</b> (oppmøte ${toTime(event.startTime.minusMinutes(30))}!)</li>
+            <li>Sted: ${event.location}</li>
+            </ul>
+            <p>Info og påmelding: <a href='${url}'>${url}</a></p>
+
+            <p>NB: Uttak skjer innen rimelig tid!</p>
+            <p><b>CHARLIE</b></p>
+            <p><b>99402316</b></p>"""
         }
 
         mailText

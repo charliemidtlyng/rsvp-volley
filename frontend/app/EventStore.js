@@ -26,8 +26,11 @@ var EventStore = module.exports = {
     registerForEvent: function(id, participant) {
         return postJSON(API + '/' + id + '/register', participant);
     },
-    sendNotification: function(id, basicAuth) {
-        return getJSON(AdminAPI + '/' + id + '/sendNotification', basicAuth);
+    sendSlackNotification: function(id, basicAuth) {
+        return getJSON(AdminAPI + '/' + id + '/sendNotification/slack', basicAuth);
+    },
+    sendMailNotification: function(id, basicAuth) {
+        return getJSON(AdminAPI + '/' + id + '/sendNotification/mail', basicAuth);
     },
     unregisterForEvent: function(id, participantId) {
         return deleteJSON(API + '/' + id + '/register/' + participantId);

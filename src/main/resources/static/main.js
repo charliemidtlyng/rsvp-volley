@@ -240,10 +240,15 @@ var Event = React.createClass({
             window.location.hash = '';
         }
     },
-    sendNotification: function sendNotification() {
+    sendSlackNotification: function sendSlackNotification() {
         var user = prompt("Brukernavn?");
         var pass = prompt("Passord?");
-        EventStore.sendNotification(this.state.currentEvent.id, { user: user, pass: pass });
+        EventStore.sendSlackNotification(this.state.currentEvent.id, { user: user, pass: pass });
+    },
+    sendMailNotification: function sendMailNotification() {
+        var user = prompt("Brukernavn?");
+        var pass = prompt("Passord?");
+        EventStore.sendMailNotification(this.state.currentEvent.id, { user: user, pass: pass });
     },
     downloadICalendar: function downloadICalendar() {
         window.location.replace('api/events/' + this.state.currentEvent.id + '/icalendar');
@@ -362,15 +367,18 @@ var Event = React.createClass({
                             'button',
                             { className: 'btn btn-danger btn-xs', onClick: this.deleteEvent },
                             'Slett hendelse'
-                        )
-                    ),
-                    React.createElement(
-                        'div',
-                        null,
+                        ),
+                        ' || ',
                         React.createElement(
                             'button',
-                            { className: 'btn btn-danger btn-xs', onClick: this.sendNotification },
-                            'Send notification'
+                            { className: 'btn btn-warning btn-xs', onClick: this.sendSlackNotification },
+                            'Send slack-melding'
+                        ),
+                        ' || ',
+                        React.createElement(
+                            'button',
+                            { className: 'btn btn-warning btn-xs', onClick: this.sendMailNotification },
+                            'Send epost'
                         )
                     )
                 ),
@@ -750,14 +758,18 @@ var ShowHide = React.createClass({
         var text = this.props.visibleHistory ? 'Skjul historikk' : 'Vis historikk';
         return React.createElement(
             'div',
-            { className: 'margin-bottom-10' },
-            ' ',
+            { className: 'row' },
             React.createElement(
-                'button',
-                { className: btnClasses, onClick: this.props.toggleShowHide },
-                text
-            ),
-            ' '
+                'div',
+                { className: 'margin-bottom-10 col-xs-12' },
+                ' ',
+                React.createElement(
+                    'button',
+                    { className: btnClasses, onClick: this.props.toggleShowHide },
+                    text
+                ),
+                ' '
+            )
         );
     }
 });
@@ -873,6 +885,22 @@ var EventList = React.createClass({
             React.createElement(
                 'div',
                 { className: 'eventList row margin-top-50 ' },
+                React.createElement(
+                    'div',
+                    { className: 'alert alert-info col-xs-12 col-md-9', role: 'alert' },
+                    React.createElement(
+                        'p',
+                        null,
+                        'Få BEKK-Fotball inn i kalenderen din? ',
+                        React.createElement('br', null),
+                        'Abboner på ',
+                        React.createElement(
+                            'a',
+                            { href: 'http://paamelding.herokuapp.com/api/events/feed/iCal' },
+                            'denne urlen'
+                        )
+                    )
+                ),
                 React.createElement(ShowHide, { visibleHistory: this.state.visibleHistory, toggleShowHide: this.toggleShowHide }),
                 upcomingEvents,
                 oldEvents
@@ -914,8 +942,11 @@ var EventStore = module.exports = {
     registerForEvent: function registerForEvent(id, participant) {
         return postJSON(API + '/' + id + '/register', participant);
     },
-    sendNotification: function sendNotification(id, basicAuth) {
-        return getJSON(AdminAPI + '/' + id + '/sendNotification', basicAuth);
+    sendSlackNotification: function sendSlackNotification(id, basicAuth) {
+        return getJSON(AdminAPI + '/' + id + '/sendNotification/slack', basicAuth);
+    },
+    sendMailNotification: function sendMailNotification(id, basicAuth) {
+        return getJSON(AdminAPI + '/' + id + '/sendNotification/mail', basicAuth);
     },
     unregisterForEvent: function unregisterForEvent(id, participantId) {
         return deleteJSON(API + '/' + id + '/register/' + participantId);

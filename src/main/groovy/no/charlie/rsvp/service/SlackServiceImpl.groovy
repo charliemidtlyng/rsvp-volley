@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service
 import static groovyx.net.http.ContentType.JSON
 import static no.charlie.rsvp.domain.Event.EventSubType.Match
 import static no.charlie.rsvp.domain.Event.EventSubType.Training
+import static no.charlie.rsvp.utils.DateUtils.toDateWithNameOfDayTimeStamp
 import static no.charlie.rsvp.utils.DateUtils.toDateWithTimeStamp
 import static org.slf4j.LoggerFactory.getLogger
 
@@ -50,13 +51,13 @@ class SlackServiceImpl implements SlackService {
 
     }
 
-    private static String generateNotificationText(Event event) {
+    public static String generateNotificationText(Event event) {
         String notificationText = ''
         if (event.eventSubType == Training) {
-            notificationText = "${event.subject} ${toDateWithTimeStamp(event.startTime)}. \n " +
-                    "Påmelding åpner ${toDateWithTimeStamp(event.regStart)} \n ${eventUrl(event)}"
+            notificationText = "${event.subject} ${toDateWithNameOfDayTimeStamp(event.startTime)}. \n " +
+                    "Påmelding åpner ${toDateWithNameOfDayTimeStamp(event.regStart)} \n ${eventUrl(event)}"
         } else if (event.eventSubType == Match) {
-            notificationText = "${event.subject} - ${event.location} - ${toDateWithTimeStamp(event.startTime)}. \n Påmelding åpen " +
+            notificationText = "${event.subject} - ${event.location} - ${toDateWithNameOfDayTimeStamp(event.startTime)}. \n Påmelding åpen " +
                     "og uttak skjer innen rimelig tid \n ${eventUrl(event)}"
         }
 

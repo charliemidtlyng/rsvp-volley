@@ -25,17 +25,21 @@ class AdminResource {
     @Autowired SlackService slackService
 
     @GET
-    @Path('/events/{eventId}/sendNotification')
-    Response events(@PathParam('eventId') Long eventId) {
+    @Path('/events/{eventId}/sendNotification/slack')
+    Response sendSlackNotification(@PathParam('eventId') Long eventId) {
 
         Event event = findAndValidateEvent(eventId)
-        sendNotifications(event)
+        slackService.sendEventNotification(event)
         return Response.ok(event).build()
     }
 
-    private void sendNotifications(Event event) {
+    @GET
+    @Path('/events/{eventId}/sendNotification/mail')
+    Response sendMailNotification(@PathParam('eventId') Long eventId) {
+
+        Event event = findAndValidateEvent(eventId)
         mailService.sendEventNotification(event)
-        slackService.sendEventNotification(event)
+        return Response.ok(event).build()
     }
 
     private Event findAndValidateEvent(long eventId) {

@@ -136,10 +136,15 @@ var Event = React.createClass({
             window.location.hash = '';
         }
     },
-    sendNotification: function() {
+    sendSlackNotification: function() {
         var user = prompt("Brukernavn?");
         var pass = prompt("Passord?");
-        EventStore.sendNotification(this.state.currentEvent.id, {user: user, pass: pass});
+        EventStore.sendSlackNotification(this.state.currentEvent.id, {user: user, pass: pass});
+    },
+    sendMailNotification: function() {
+        var user = prompt("Brukernavn?");
+        var pass = prompt("Passord?");
+        EventStore.sendMailNotification(this.state.currentEvent.id, {user: user, pass: pass});
     },
     downloadICalendar: function () {
         window.location.replace(`api/events/${this.state.currentEvent.id}/icalendar`);
@@ -181,8 +186,9 @@ var Event = React.createClass({
                         <div><strong>Påmelding åpner:</strong> {Utils.formatDateTime(event.regStart, 'dd. MMMM (HH:mm)')}</div>
                         <div><strong>Påmeldt:</strong> {event.participants.length} / {event.maxNumber}</div>
                         <div><button className="btn btn-default btn-xs " onClick={this.downloadICalendar}>Lagre i kalender</button></div>
-                        <div><button className="btn btn-danger btn-xs" onClick={this.deleteEvent}>Slett hendelse</button></div>
-                        <div><button className="btn btn-danger btn-xs" onClick={this.sendNotification}>Send notification</button></div>
+                        <div>
+                            <button className="btn btn-danger btn-xs" onClick={this.deleteEvent}>Slett hendelse</button> || <button className="btn btn-warning btn-xs" onClick={this.sendSlackNotification}>Send slack-melding</button> || <button className="btn btn-warning btn-xs" onClick={this.sendMailNotification}>Send epost</button>
+                        </div>
                     </div>
                     <div className="event event-with-padding">
                         <p className="pre-wrap">{event.description}</p>

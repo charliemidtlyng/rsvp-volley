@@ -56,8 +56,7 @@ class MailServiceImpl implements MailService {
 
         SendGrid sendgrid = new SendGrid(System.getenv("SENDGRID_USERNAME"), System.getenv("SENDGRID_PASSWORD"))
         SendGrid.Email email = new SendGrid.Email()
-        //email.addTo("fotball@bekk.no")
-        email.addTo("charlie.midtlyng@gmail.com")
+        email.addTo("fotball@bekk.no")
         email.setFrom("charlie.midtlyng@gmail.com")
         email.setSubject(generateSubject(event))
         email.setHtml(mailText)

@@ -37,6 +37,9 @@ var EventStore = module.exports = {
     },
     confirmLineup: function(id, lineupMap) {
         return postJSON(API + '/' + id + '/confirmLineup', lineupMap);
+    },
+    importEvents: function(eventDetails) {
+        return postJSON(AdminAPI + '/generateForImport', eventDetails);
     }
 };
 

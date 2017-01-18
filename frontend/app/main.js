@@ -2,6 +2,7 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var EventStore = require('./EventStore');
 var NewEvent = require('./NewEvent');
+var ImportEvents = require('./ImportEvents');
 var Event = require('./Event');
 var EventLineup = require('./EventLineup');
 var App = require('./App')
@@ -32,6 +33,7 @@ var routes = (
         <Route path="/" component={App}>
             <IndexRoute name="home" component={EventList}/>
             <Route path="event/new" component={NewEvent}/>
+            <Route path="event/import" component={ImportEvents}/>
             <Route path="event/:id" component={Event}/>
             <Route path="event/:id/lineup" component={EventLineup}/>
             <Route path="*" component={NotFound}/>

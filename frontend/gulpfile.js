@@ -27,7 +27,7 @@ var browserifyTask = function (options) {
     // Our app bundler
     var appBundler = browserify({
         entries: [options.src], // Only need initial file, browserify finds the rest
-        transform: [[babelify, { presets: ['es2015', 'react'] }]], // We want to convert JSX to normal javascript
+        transform: [[babelify, { presets: ['es2015', 'react', 'stage-2'], plugins: ['transform-regenerator'] }]], // We want to convert JSX to normal javascript
         debug: options.development, // Gives us sourcemapping
         cache: {}, packageCache: {}, fullPaths: options.development // Requirement of watchify
     });

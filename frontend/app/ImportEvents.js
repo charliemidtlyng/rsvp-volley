@@ -12,7 +12,6 @@ function updateEvent(events, savedEvent) {
 }
 
 function parseDates(event) {
-    debugger;
     var convertedEvent = Object.assign({}, event);
     convertedEvent.startTime = moment(event.startTime).format();
     convertedEvent.endTime = moment(event.endTime).format();

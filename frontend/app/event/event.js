@@ -99,9 +99,7 @@ var Event = React.createClass({
         this.updateEvent();
     },
     attend: function () {
-        var name = this.state.name;
-        var email = this.state.email;
-        var phoneNumber = this.state.phoneNumber;
+        const {name, email, phoneNumber} = this.state;
         var captcha = grecaptcha.getResponse();
         if (name === '') {
             return;
@@ -110,38 +108,35 @@ var Event = React.createClass({
         grecaptcha.reset();
     },
     unregister: function (event) {
-        var participantId = event.target.dataset.id, eventId = this.state.currentEvent.id;
-        var participantName = event.target.dataset.name;
+        const participantId = event.target.dataset.id,
+         eventId = this.props.event.currentEvent.id,
+        participantName = event.target.dataset.name;
         if (confirm("Vil du melde av " + participantName + "?")) {
-            EventStore.unregisterForEvent(eventId, participantId).then(this.updateEvent, this.updateError);
+            this.props.unregisterForEvent(eventId, participantId);
         }
     },
     updateEvent: function () {
-        console.log("update event")
         this.props.fetchEventById(this.props.params.id);
     },
     deleteEvent: function () {
         var luckyNumber = prompt("Er du helt sikker på at du vil slette denne hendelsen? \n I så fall - hvilket draktnummer har Charlie")
         if (luckyNumber && parseInt(luckyNumber) === 7) {
-            EventStore.removeEvent(this.state.currentEvent.id);
+            EventStore.removeEvent(this.props.event.currentEvent.id);
             window.location.hash = '';
         }
     },
     sendSlackNotification: function() {
         var user = prompt("Brukernavn?");
         var pass = prompt("Passord?");
-        EventStore.sendSlackNotification(this.state.currentEvent.id, {user: user, pass: pass});
+        EventStore.sendSlackNotification(this.props.event.currentEvent.id, {user: user, pass: pass});
     },
     sendMailNotification: function() {
         var user = prompt("Brukernavn?");
         var pass = prompt("Passord?");
-        EventStore.sendMailNotification(this.state.currentEvent.id, {user: user, pass: pass});
+        EventStore.sendMailNotification(this.props.event.currentEvent.id, {user: user, pass: pass});
     },
     downloadICalendar: function () {
-        window.location.replace(`api/events/${this.state.currentEvent.id}/icalendar`);
-    },
-    updateError: function (error) {
-        this.setState({error: error.message});
+        window.location.replace(`api/events/${this.props.event.currentEvent.id}/icalendar`);
     },
     nameChange: function (value) {
         this.setState({name: value});
@@ -153,20 +148,15 @@ var Event = React.createClass({
         this.setState({phoneNumber: event.target.value});
     },
     render: function () {
-        console.log()
         var event = this.props.event.currentEvent;
         var registerProps = this.props.register;
-        var participants = event.participants.filter(function (participant) {
-            return participant.reserve === false;
-        }).map(function (participant) {
-            return <Participant key={participant.id} participant={participant} unregister={this.unregister}/>
-        }.bind(this));
-
-        var reserves = event.participants.filter(function (participant) {
-            return participant.reserve === true;
-        }).map(function (participant) {
-            return <Participant key={participant.id} participant={participant} unregister={this.unregister}/>
-        }.bind(this));
+        var participants = event.participants
+            .filter( participant => participant.reserve === false)
+            .map(participant => <Participant key={participant.id} participant={participant} unregister={this.unregister}/>)
+        
+        var reserves = event.participants
+            .filter(participant => participant.reserve === true)
+            .map(participant => <Participant key={participant.id} participant={participant} unregister={this.unregister}/>);
 
         return (
                 <div>

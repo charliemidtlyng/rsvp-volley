@@ -1290,13 +1290,20 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.selectEvent = selectEvent;
 exports.requestEvent = requestEvent;
+exports.requestUnregisterForEvent = requestUnregisterForEvent;
+exports.receiveUnregisterForEvent = receiveUnregisterForEvent;
 exports.requestRegisterForEvent = requestRegisterForEvent;
 exports.receiveRegisterForEvent = receiveRegisterForEvent;
 exports.receiveEvent = receiveEvent;
 var REQUEST_EVENT = exports.REQUEST_EVENT = 'REQUEST_EVENT';
 var RECEIVE_EVENT = exports.RECEIVE_EVENT = 'RECEIVE_EVENT';
+
+var REQUEST_UNREGISTER_FOR_EVENT = exports.REQUEST_UNREGISTER_FOR_EVENT = 'REQUEST_UNREGISTER_FOR_EVENT';
+var RECEIVE_UNREGISTER_FOR_EVENT = exports.RECEIVE_UNREGISTER_FOR_EVENT = 'RECEIVE_UNREGISTER_FOR_EVENT';
+
 var REQUEST_REGISTER_FOR_EVENT = exports.REQUEST_REGISTER_FOR_EVENT = 'REQUEST_REGISTER_FOR_EVENT';
 var RECEIVE_REGISTER_FOR_EVENT = exports.RECEIVE_REGISTER_FOR_EVENT = 'RECEIVE_REGISTER_FOR_EVENT';
+
 var SELECT_EVENT = exports.SELECT_EVENT = 'SELECT_EVENT';
 
 function selectEvent(eventId) {
@@ -1310,6 +1317,23 @@ function requestEvent(eventId) {
   return {
     type: REQUEST_EVENT,
     eventId: eventId
+  };
+}
+
+function requestUnregisterForEvent(eventId, participantId) {
+  return {
+    type: REQUEST_UNREGISTER_FOR_EVENT,
+    eventId: eventId,
+    participantId: participantId
+  };
+}
+
+function receiveUnregisterForEvent(eventId, event, status) {
+  return {
+    type: RECEIVE_UNREGISTER_FOR_EVENT,
+    eventId: eventId,
+    event: event,
+    status: status
   };
 }
 
@@ -1417,9 +1441,11 @@ var Event = React.createClass({
         this.updateEvent();
     },
     attend: function attend() {
-        var name = this.state.name;
-        var email = this.state.email;
-        var phoneNumber = this.state.phoneNumber;
+        var _state = this.state,
+            name = _state.name,
+            email = _state.email,
+            phoneNumber = _state.phoneNumber;
+
         var captcha = grecaptcha.getResponse();
         if (name === '') {
             return;
@@ -1429,38 +1455,34 @@ var Event = React.createClass({
     },
     unregister: function unregister(event) {
         var participantId = event.target.dataset.id,
-            eventId = this.state.currentEvent.id;
-        var participantName = event.target.dataset.name;
+            eventId = this.props.event.currentEvent.id,
+            participantName = event.target.dataset.name;
         if (confirm("Vil du melde av " + participantName + "?")) {
-            EventStore.unregisterForEvent(eventId, participantId).then(this.updateEvent, this.updateError);
+            this.props.unregisterForEvent(eventId, participantId);
         }
     },
     updateEvent: function updateEvent() {
-        console.log("update event");
         this.props.fetchEventById(this.props.params.id);
     },
     deleteEvent: function deleteEvent() {
         var luckyNumber = prompt("Er du helt sikker på at du vil slette denne hendelsen? \n I så fall - hvilket draktnummer har Charlie");
         if (luckyNumber && parseInt(luckyNumber) === 7) {
-            EventStore.removeEvent(this.state.currentEvent.id);
+            EventStore.removeEvent(this.props.event.currentEvent.id);
             window.location.hash = '';
         }
     },
     sendSlackNotification: function sendSlackNotification() {
         var user = prompt("Brukernavn?");
         var pass = prompt("Passord?");
-        EventStore.sendSlackNotification(this.state.currentEvent.id, { user: user, pass: pass });
+        EventStore.sendSlackNotification(this.props.event.currentEvent.id, { user: user, pass: pass });
     },
     sendMailNotification: function sendMailNotification() {
         var user = prompt("Brukernavn?");
         var pass = prompt("Passord?");
-        EventStore.sendMailNotification(this.state.currentEvent.id, { user: user, pass: pass });
+        EventStore.sendMailNotification(this.props.event.currentEvent.id, { user: user, pass: pass });
     },
     downloadICalendar: function downloadICalendar() {
-        window.location.replace('api/events/' + this.state.currentEvent.id + '/icalendar');
-    },
-    updateError: function updateError(error) {
-        this.setState({ error: error.message });
+        window.location.replace('api/events/' + this.props.event.currentEvent.id + '/icalendar');
     },
     nameChange: function nameChange(value) {
         this.setState({ name: value });
@@ -1472,20 +1494,21 @@ var Event = React.createClass({
         this.setState({ phoneNumber: event.target.value });
     },
     render: function render() {
-        console.log();
+        var _this = this;
+
         var event = this.props.event.currentEvent;
         var registerProps = this.props.register;
         var participants = event.participants.filter(function (participant) {
             return participant.reserve === false;
         }).map(function (participant) {
-            return React.createElement(Participant, { key: participant.id, participant: participant, unregister: this.unregister });
-        }.bind(this));
+            return React.createElement(Participant, { key: participant.id, participant: participant, unregister: _this.unregister });
+        });
 
         var reserves = event.participants.filter(function (participant) {
             return participant.reserve === true;
         }).map(function (participant) {
-            return React.createElement(Participant, { key: participant.id, participant: participant, unregister: this.unregister });
-        }.bind(this));
+            return React.createElement(Participant, { key: participant.id, participant: participant, unregister: _this.unregister });
+        });
 
         return React.createElement(
             'div',
@@ -1770,11 +1793,10 @@ function registerForEvent() {
 
     switch (action.type) {
         case _actions.RECEIVE_REGISTER_FOR_EVENT:
-            debugger;
+        case _actions.RECEIVE_UNREGISTER_FOR_EVENT:
             if (action.event.error) {
                 return { error: action.event.error.message };
             }
-            // TODO: What action comes here?
             return {};
         default:
             return {};
@@ -1797,7 +1819,9 @@ Object.defineProperty(exports, "__esModule", {
 exports.fetchEventApi = fetchEventApi;
 exports.fetchEvent = fetchEvent;
 exports.registerForEventApi = registerForEventApi;
+exports.unregisterForEventApi = unregisterForEventApi;
 exports.registerForEvent = registerForEvent;
+exports.unregisterForEvent = unregisterForEvent;
 
 var _effects = require("redux-saga/effects");
 
@@ -1817,7 +1841,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _marked = [fetchEvent, registerForEvent, startup].map(_regeneratorRuntime2.default.mark);
+var _marked = [fetchEvent, registerForEvent, unregisterForEvent, startup].map(_regeneratorRuntime2.default.mark);
 
 window.regeneratorRuntime = _regeneratorRuntime2.default;
 
@@ -1857,6 +1881,16 @@ function fetchEvent(action) {
     }, _marked[0], this);
 }
 
+function handleResponse(response) {
+    if (response.status >= 200 && response.status <= 300) {
+        return response.json();
+    }
+    return response.text().then(function (errorText) {
+        var text = errorText || "En ukjent feil oppstod!";
+        throw new Error(errorText);
+    });
+}
+
 function registerForEventApi(action) {
     var options = {
         method: "POST",
@@ -1865,14 +1899,14 @@ function registerForEventApi(action) {
             "Content-Type": "application/json;charset=UTF-8"
         }
     };
-    return (0, _isomorphicFetch2.default)(API + action.eventId + "/register", options).then(function (response) {
-        if (response.status >= 200 && response.status <= 300) {
-            return response.json();
-        }
-        return response.text().then(function (errorText) {
-            throw new Error(errorText);
-        });
-    });
+    return (0, _isomorphicFetch2.default)(API + action.eventId + "/register", options).then(handleResponse);
+}
+
+function unregisterForEventApi(action) {
+    var options = {
+        method: "DELETE"
+    };
+    return (0, _isomorphicFetch2.default)(API + action.eventId + "/register/" + action.participantId, options).then(handleResponse);
 }
 function registerForEvent(action) {
     var response;
@@ -1909,24 +1943,63 @@ function registerForEvent(action) {
     }, _marked[1], this, [[0, 8]]);
 }
 
-function startup() {
-    return _regeneratorRuntime2.default.wrap(function startup$(_context3) {
+function unregisterForEvent(action) {
+    var response;
+    return _regeneratorRuntime2.default.wrap(function unregisterForEvent$(_context3) {
         while (1) {
             switch (_context3.prev = _context3.next) {
                 case 0:
-                    _context3.next = 2;
-                    return (0, _effects.takeEvery)(actions.SELECT_EVENT, fetchEvent);
+                    _context3.prev = 0;
+                    _context3.next = 3;
+                    return (0, _effects.call)(unregisterForEventApi, action);
 
-                case 2:
-                    _context3.next = 4;
-                    return (0, _effects.takeEvery)(actions.REQUEST_REGISTER_FOR_EVENT, registerForEvent);
+                case 3:
+                    response = _context3.sent;
+                    _context3.next = 6;
+                    return (0, _effects.put)(actions.selectEvent(action.eventId));
 
-                case 4:
+                case 6:
+                    _context3.next = 12;
+                    break;
+
+                case 8:
+                    _context3.prev = 8;
+                    _context3.t0 = _context3["catch"](0);
+                    _context3.next = 12;
+                    return _effects.put.resolve(actions.receiveUnregisterForEvent(action.eventId, {
+                        error: _context3.t0
+                    }));
+
+                case 12:
                 case "end":
                     return _context3.stop();
             }
         }
-    }, _marked[2], this);
+    }, _marked[2], this, [[0, 8]]);
+}
+
+function startup() {
+    return _regeneratorRuntime2.default.wrap(function startup$(_context4) {
+        while (1) {
+            switch (_context4.prev = _context4.next) {
+                case 0:
+                    _context4.next = 2;
+                    return (0, _effects.takeEvery)(actions.SELECT_EVENT, fetchEvent);
+
+                case 2:
+                    _context4.next = 4;
+                    return (0, _effects.takeEvery)(actions.REQUEST_REGISTER_FOR_EVENT, registerForEvent);
+
+                case 4:
+                    _context4.next = 6;
+                    return (0, _effects.takeEvery)(actions.REQUEST_UNREGISTER_FOR_EVENT, unregisterForEvent);
+
+                case 6:
+                case "end":
+                    return _context4.stop();
+            }
+        }
+    }, _marked[3], this);
 }
 
 exports.default = startup;
@@ -1965,6 +2038,9 @@ var mapFetchEventToProps = function mapFetchEventToProps(dispatch) {
         },
         registerForEvent: function registerForEvent(id, participant) {
             dispatch((0, _actions.requestRegisterForEvent)(id, participant));
+        },
+        unregisterForEvent: function unregisterForEvent(id, participantId) {
+            dispatch((0, _actions.requestUnregisterForEvent)(id, participantId));
         }
     };
 };

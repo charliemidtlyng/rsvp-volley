@@ -1,7 +1,12 @@
 export const REQUEST_EVENT = 'REQUEST_EVENT'
 export const RECEIVE_EVENT = 'RECEIVE_EVENT'
+
+export const REQUEST_UNREGISTER_FOR_EVENT = 'REQUEST_UNREGISTER_FOR_EVENT'
+export const RECEIVE_UNREGISTER_FOR_EVENT = 'RECEIVE_UNREGISTER_FOR_EVENT'
+
 export const REQUEST_REGISTER_FOR_EVENT = 'REQUEST_REGISTER_FOR_EVENT'
 export const RECEIVE_REGISTER_FOR_EVENT = 'RECEIVE_REGISTER_FOR_EVENT'
+
 export const SELECT_EVENT = 'SELECT_EVENT'
 
 export function selectEvent(eventId) {
@@ -17,6 +22,24 @@ export function requestEvent(eventId) {
     eventId
   }
 }
+
+export function requestUnregisterForEvent(eventId, participantId) {
+  return {
+    type: REQUEST_UNREGISTER_FOR_EVENT,
+    eventId,
+    participantId
+  }
+}
+
+export function receiveUnregisterForEvent(eventId, event, status) {
+  return {
+    type: RECEIVE_UNREGISTER_FOR_EVENT,
+    eventId,
+    event,
+    status
+  }
+}
+
 
 export function requestRegisterForEvent(eventId, participant) {
   return {

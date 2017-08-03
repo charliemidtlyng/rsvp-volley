@@ -5,8 +5,7 @@ import {
     fork,
     select,
     takeLatest,
-    takeEvery,
-    dispatch
+    takeEvery
 } from "redux-saga/effects";
 import fetch from "isomorphic-fetch";
 import * as actions from "./actions";
@@ -27,6 +26,16 @@ export function* fetchEvent(action) {
     yield put(actions.receiveEvent(action.eventId, event));
 }
 
+function handleResponse(response) {
+    if (response.status >= 200 && response.status <= 300) {
+        return response.json();
+    }
+    return response.text().then(errorText => {
+        const text = errorText || "En ukjent feil oppstod!";
+        throw new Error(errorText);
+    });
+}
+
 export function registerForEventApi(action) {
     var options = {
         method: "POST",
@@ -35,19 +44,24 @@ export function registerForEventApi(action) {
             "Content-Type": "application/json;charset=UTF-8"
         }
     };
-    return fetch(API + action.eventId + "/register", options).then(response => {
-        if (response.status >= 200 && response.status <= 300) {
-            return response.json();
-        }
-        return response.text().then(errorText => {
-            throw new Error(errorText);
-        });
-    });
+    return fetch(API + action.eventId + "/register", options).then(
+        handleResponse
+    );
+}
+
+export function unregisterForEventApi(action) {
+    var options = {
+        method: "DELETE"
+    };
+    return fetch(
+        API + action.eventId + "/register/" + action.participantId,
+        options
+    ).then(handleResponse);
 }
 export function* registerForEvent(action) {
     try {
         const response = yield call(registerForEventApi, action);
-        yield put(actions.selectEvent(action.eventId))
+        yield put(actions.selectEvent(action.eventId));
     } catch (errorText) {
         yield put.resolve(
             actions.receiveRegisterForEvent(action.eventId, {
@@ -57,9 +71,23 @@ export function* registerForEvent(action) {
     }
 }
 
+export function* unregisterForEvent(action) {
+    try {
+        const response = yield call(unregisterForEventApi, action);
+        yield put(actions.selectEvent(action.eventId));
+    } catch (errorText) {
+        yield put.resolve(
+            actions.receiveUnregisterForEvent(action.eventId, {
+                error: errorText
+            })
+        );
+    }
+}
+
 function* startup() {
     yield takeEvery(actions.SELECT_EVENT, fetchEvent);
     yield takeEvery(actions.REQUEST_REGISTER_FOR_EVENT, registerForEvent);
+    yield takeEvery(actions.REQUEST_UNREGISTER_FOR_EVENT, unregisterForEvent);
 }
 
 export default startup;

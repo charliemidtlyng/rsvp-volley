@@ -6,8 +6,8 @@ import {
 	REQUEST_EVENT,
 	RECEIVE_EVENT,
     SELECT_EVENT,
-    REQUEST_REGISTER_FOR_EVENT,
-    RECEIVE_REGISTER_FOR_EVENT
+    RECEIVE_REGISTER_FOR_EVENT,
+    RECEIVE_UNREGISTER_FOR_EVENT
 } from './actions'
 
 const initialState = {
@@ -45,11 +45,10 @@ function event(state = initialState, action) {
 function registerForEvent(state = {}, action) {
   switch (action.type) {
     case RECEIVE_REGISTER_FOR_EVENT:
-        debugger;
+    case RECEIVE_UNREGISTER_FOR_EVENT:
         if (action.event.error) {
             return {error: action.event.error.message};
         }
-        // TODO: What action comes here?
         return {};
     default:
         return {}

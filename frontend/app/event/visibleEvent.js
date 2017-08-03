@@ -1,5 +1,5 @@
 import Event from './event'
-import { selectEvent, requestRegisterForEvent } from './actions'
+import { selectEvent, requestRegisterForEvent, requestUnregisterForEvent } from './actions'
 import { connect } from 'react-redux';
 // maps redux store state to components
 const mapStateToEventProps = (state) => {
@@ -16,7 +16,10 @@ const mapFetchEventToProps = (dispatch) => {
         },
         registerForEvent: (id, participant) => {
             dispatch(requestRegisterForEvent(id, participant));
-        }
+        },
+        unregisterForEvent: (id, participantId) => {
+            dispatch(requestUnregisterForEvent(id, participantId));
+        },
     };
 };
 

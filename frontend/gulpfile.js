@@ -70,7 +70,7 @@ var browserifyTask = function (options) {
         var testBundler = browserify({
             entries: testFiles,
             debug: true, // Gives us sourcemapping
-            transform: [reactify],
+            transform: [[babelify, { presets: ['es2015', 'react', 'stage-2'], plugins: ['transform-regenerator'] }]], // We want to convert JSX to normal javascript
             cache: {}, packageCache: {}, fullPaths: true // Requirement of watchify
         });
 

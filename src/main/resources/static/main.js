@@ -1684,7 +1684,7 @@ var Event = React.createClass({
                         ),
                         React.createElement('br', null),
                         React.createElement(Recaptcha, {
-                            sitekey: '6LfB7QATAAAAAMjr-w95hNK54bNkWAYXKOzJvzt-',
+                            sitekey: '6LdhmgATAAAAADMLD50qGZ-DSaa3bVlrsQp6BTgA',
                             theme: 'dark',
                             render: 'explicit' }),
                         React.createElement('br', null),
@@ -2025,9 +2025,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 // maps redux store state to components
 var mapStateToEventProps = function mapStateToEventProps(state) {
-    debugger;
     return _extends({}, state.event);
-    //return {...state.events.allEvents, visibleHistory: state.events.toggleOldEvents.visibleHistory, event: state.event.event };
 };
 
 // // maps redux store dispatch to list of components
@@ -2055,13 +2053,20 @@ exports.default = VisibleEvent;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.refreshEvents = refreshEvents;
 exports.toggleOldEvents = toggleOldEvents;
 exports.requestEvents = requestEvents;
 exports.receiveEvents = receiveEvents;
+var REFRESH_EVENTS = exports.REFRESH_EVENTS = 'REFRESH_EVENTS';
 var REQUEST_EVENTS = exports.REQUEST_EVENTS = 'REQUEST_EVENTS';
 var RECEIVE_EVENTS = exports.RECEIVE_EVENTS = 'RECEIVE_EVENTS';
 var TOGGLE_OLD_EVENTS = exports.TOGGLE_OLD_EVENTS = 'TOGGLE_OLD_EVENTS';
 
+function refreshEvents() {
+  return {
+    type: REFRESH_EVENTS
+  };
+}
 function toggleOldEvents(event, events) {
   return {
     type: TOGGLE_OLD_EVENTS,
@@ -2194,6 +2199,9 @@ var EventList = React.createClass({
             );
         }.bind(this));
     },
+    componentDidMount: function componentDidMount() {
+        this.props.fetchEvents();
+    },
     render: function render() {
         var oldEvents = this.props.visibleHistory ? this.mapEvents(this.props.oldEvents || []) : [];
         var upcomingEvents = this.mapEvents(this.props.upcomingEvents || []);
@@ -2214,7 +2222,7 @@ var EventList = React.createClass({
                         'Abboner p\xE5 ',
                         React.createElement(
                             'a',
-                            { href: 'http://paamelding.herokuapp.com/api/events/feed/iCal' },
+                            { href: 'http://fotball.bekk.no/api/events/feed/iCal' },
                             'denne urlen'
                         )
                     )
@@ -2257,9 +2265,6 @@ var initialToggleState = {
 	visibleHistory: false
 };
 
-var initialEventState = {
-	event: {}
-};
 function toggleOldEvents() {
 	var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialToggleState;
 	var action = arguments[1];
@@ -2277,6 +2282,7 @@ function fetchEventList() {
 	var action = arguments[1];
 
 	switch (action.type) {
+		case _actions.REFRESH_EVENTS:
 		case _actions.REQUEST_EVENTS:
 			return _extends({}, state, { loading: true, items: [] });
 
@@ -2288,10 +2294,10 @@ function fetchEventList() {
 }
 
 function mapOld(events) {
-	return events.filter(_Utils.isOldEvent);
+	return events.filter(_Utils.isOldEvent).sort(_Utils.sortByTimestampDesc);
 }
 function mapUpComing(events) {
-	return events.filter(_Utils.isNewEvent);
+	return events.filter(_Utils.isNewEvent).sort(_Utils.sortByTimestampAsc);
 }
 
 function events() {
@@ -2301,6 +2307,7 @@ function events() {
 	switch (action.type) {
 		case _actions.REQUEST_EVENTS:
 		case _actions.RECEIVE_EVENTS:
+		case _actions.REFRESH_EVENTS:
 			var newState = fetchEventList(state["events"], action);
 			return _extends({}, state, newState, { oldEvents: mapOld(newState.items), upcomingEvents: mapUpComing(newState.items) });
 		default:
@@ -2323,7 +2330,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.fetchPostsApi = fetchPostsApi;
 exports.fetchPosts = fetchPosts;
-exports.startup = startup;
 exports.default = root;
 
 var _effects = require('redux-saga/effects');
@@ -2346,7 +2352,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _marked = [fetchPosts, startup, root].map(_regeneratorRuntime2.default.mark);
+var _marked = [fetchPosts, root].map(_regeneratorRuntime2.default.mark);
 
 window.regeneratorRuntime = _regeneratorRuntime2.default;
 
@@ -2386,42 +2392,20 @@ function fetchPosts(event) {
   }, _marked[0], this);
 }
 
-function startup() {
-  var selectedEvent;
-  return _regeneratorRuntime2.default.wrap(function startup$(_context2) {
+function root() {
+  return _regeneratorRuntime2.default.wrap(function root$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
           _context2.next = 2;
-          return (0, _effects.select)(_selectors.toggleOldEventsSelector);
+          return (0, _effects.takeEvery)(actions.REFRESH_EVENTS, fetchPosts);
 
         case 2:
-          selectedEvent = _context2.sent;
-          _context2.next = 5;
-          return (0, _effects.fork)(fetchPosts, selectedEvent);
-
-        case 5:
         case 'end':
           return _context2.stop();
       }
     }
   }, _marked[1], this);
-}
-
-function root() {
-  return _regeneratorRuntime2.default.wrap(function root$(_context3) {
-    while (1) {
-      switch (_context3.prev = _context3.next) {
-        case 0:
-          _context3.next = 2;
-          return (0, _effects.fork)(startup);
-
-        case 2:
-        case 'end':
-          return _context3.stop();
-      }
-    }
-  }, _marked[2], this);
 }
 
 },{"./actions":18,"./selectors":22,"isomorphic-fetch":151,"redux-saga/effects":634,"regenerator-runtime":653}],22:[function(require,module,exports){
@@ -2432,9 +2416,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 var allEventsSelector = exports.allEventsSelector = function allEventsSelector(state) {
   return state.allEvents;
-};
-var toggleOldEventsSelector = exports.toggleOldEventsSelector = function toggleOldEventsSelector(state) {
-  return state.toggleOldEvents;
 };
 
 },{}],23:[function(require,module,exports){
@@ -2466,6 +2447,9 @@ var mapToggleOldToProps = function mapToggleOldToProps(dispatch) {
 	return {
 		toggleOldEvents: function toggleOldEvents() {
 			dispatch((0, _actions.toggleOldEvents)());
+		},
+		fetchEvents: function fetchEvents() {
+			dispatch((0, _actions.refreshEvents)());
 		}
 	};
 };
@@ -2573,7 +2557,6 @@ var ReactDOM = require('react-dom');
 var EventStore = require('./EventStore');
 var NewEvent = require('./NewEvent');
 var ImportEvents = require('./ImportEvents');
-// var Event = require('./Event');
 
 var VisibleEvent = require('./event/visibleEvent');
 var EventLineup = require('./EventLineup');

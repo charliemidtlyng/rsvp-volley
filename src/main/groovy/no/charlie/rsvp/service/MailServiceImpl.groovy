@@ -78,7 +78,7 @@ class MailServiceImpl implements MailService {
         def startDay = toDayOfWeek(event.startTime)
         def startTime = toTime(event.startTime)
         def endTime = toTime(event.endTime)
-        def url = "http://paamelding.herokuapp.com/#/event/${event.id}"
+        def url = "http://fotball.bekk.no/#/event/${event.id}"
         def regStartDay = toDayOfWeek(event.regStart)
         def regStartTime = toTime(event.regStart)
         if (event.eventSubType == Training) {

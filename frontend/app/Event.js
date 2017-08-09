@@ -228,7 +228,7 @@ var Event = React.createClass({
                             </fieldset>
                             <br/>
                             <Recaptcha
-                                    sitekey="6LfB7QATAAAAAMjr-w95hNK54bNkWAYXKOzJvzt-"
+                                    sitekey="6LdhmgATAAAAADMLD50qGZ-DSaa3bVlrsQp6BTgA"
                                     theme="dark"
                                     render="explicit"/>
                             <br/>

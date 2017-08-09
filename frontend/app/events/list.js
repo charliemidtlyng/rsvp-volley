@@ -39,6 +39,9 @@ var EventList = React.createClass({
             </Link>;
         }.bind(this));
     },
+    componentDidMount: function () {
+        this.props.fetchEvents();
+    },
     render: function () {
         var oldEvents = this.props.visibleHistory ? this.mapEvents(this.props.oldEvents || []) : [];
         var upcomingEvents = this.mapEvents(this.props.upcomingEvents || []);
@@ -46,7 +49,7 @@ var EventList = React.createClass({
                 <Loader isLoading={this.props.loading}>
                     <div className="eventList row margin-top-50 ">
                         <div className="alert alert-info col-xs-12 col-md-9" role="alert">
-                        <p>Få BEKK-Fotball inn i kalenderen din? <br/>Abboner på <a href="http://paamelding.herokuapp.com/api/events/feed/iCal">denne urlen</a></p></div>
+                        <p>Få BEKK-Fotball inn i kalenderen din? <br/>Abboner på <a href="http://fotball.bekk.no/api/events/feed/iCal">denne urlen</a></p></div>
                         <ShowHide visibleHistory={this.props.visibleHistory} toggleShowHide={this.props.toggleOldEvents} />
                         {upcomingEvents}
                         {oldEvents}

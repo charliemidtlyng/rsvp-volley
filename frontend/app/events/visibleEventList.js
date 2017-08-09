@@ -1,5 +1,5 @@
 import EventList from './list'
-import { toggleOldEvents } from './actions'
+import { toggleOldEvents, refreshEvents } from './actions'
 import { connect } from 'react-redux';
 // maps redux store state to components
 const mapStateToEventListProps = (state) => {
@@ -12,6 +12,9 @@ const mapToggleOldToProps = (dispatch) => {
 		toggleOldEvents: () => {
 			dispatch(toggleOldEvents());
 		},
+        fetchEvents: () => {
+            dispatch(refreshEvents());
+        }
 	};
 };
 

@@ -5,7 +5,6 @@ var ReactDOM = require('react-dom');
 var EventStore = require('./EventStore');
 var NewEvent = require('./NewEvent');
 var ImportEvents = require('./ImportEvents');
-// var Event = require('./Event');
 
 var VisibleEvent = require('./event/visibleEvent');
 var EventLineup = require('./EventLineup');

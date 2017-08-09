@@ -65,6 +65,6 @@ class SlackServiceImpl implements SlackService {
     }
 
     private static String eventUrl(Event event) {
-        "<http://paamelding.herokuapp.com/#/event/${event.id}>"
+        "<http://fotball.bekk.no/#/event/${event.id}>"
     }
 }

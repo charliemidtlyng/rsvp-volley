@@ -4,6 +4,7 @@ import groovyx.net.http.HTTPBuilder
 import no.charlie.rsvp.domain.Event
 import no.charlie.rsvp.utils.DateUtils
 import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormat
 import org.springframework.stereotype.Service
 
@@ -17,6 +18,8 @@ import static no.charlie.rsvp.utils.DateUtils.toDateWithNameOfDayTimeStamp
 class ImportEventServiceImpl implements ImportEventService {
 
     def datePattern = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm")
+            .withLocale(new Locale('nb', 'no'))
+            .withZone(DateTimeZone.forID('Europe/Oslo'))
 
     @Override
     List<Event> createEventsByTournamentAndTeamId(Long tournamentId, Long teamId, String subject, int maxNumber) {

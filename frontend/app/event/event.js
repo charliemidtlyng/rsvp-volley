@@ -1,14 +1,14 @@
 var React = require('react');
-var EventStore = require('./EventStore');
+var EventStore = require('../EventStore');
 var ReactRouter = require('react-router');
-var EventImage = require('./EventImage');
-var Timer = require('./Timer');
-var Utils = require('./Utils');
-var Loader = require('./Loader');
+var EventImage = require('../EventImage');
+var Timer = require('../Timer');
+var Utils = require('../Utils');
+var Loader = require('../Loader');
 var ReactWidgets = require('react-widgets');
 var Combobox = ReactWidgets.Combobox;
 var ReactBootstrap = require('react-bootstrap');
-var Recaptcha = require('./Recaptcha');
+var Recaptcha = require('../Recaptcha');
 var Panel = ReactBootstrap.Panel;
 var LocalStorageMixin = require('react-localstorage');
 
@@ -35,15 +35,9 @@ var ErrorPanel = React.createClass({
 });
 
 var Event = React.createClass({
-
     mixins: [LocalStorageMixin],
-    getInitialState: function () {
+        getInitialState: function () {
         return {
-            currentEvent: {
-                participants: []
-            },
-            error: "",
-            loading: true
         };
     },
     getDefaultProps: function () {
@@ -105,52 +99,44 @@ var Event = React.createClass({
         this.updateEvent();
     },
     attend: function () {
-        var name = this.state.name;
-        var email = this.state.email;
-        var phoneNumber = this.state.phoneNumber;
+        const {name, email, phoneNumber} = this.state;
         var captcha = grecaptcha.getResponse();
         if (name === '') {
             return;
         }
-        EventStore.registerForEvent(this.props.params.id, {name: name, phoneNumber: phoneNumber, email: email, 'g-recaptcha-response': captcha})
-                .then(this.updateEvent, this.updateError);
+        this.props.registerForEvent(this.props.params.id, {name: name, phoneNumber: phoneNumber, email: email, 'g-recaptcha-response': captcha})
         grecaptcha.reset();
     },
     unregister: function (event) {
-        var participantId = event.target.dataset.id, eventId = this.state.currentEvent.id;
-        var participantName = event.target.dataset.name;
+        const participantId = event.target.dataset.id,
+         eventId = this.props.event.currentEvent.id,
+        participantName = event.target.dataset.name;
         if (confirm("Vil du melde av " + participantName + "?")) {
-            EventStore.unregisterForEvent(eventId, participantId).then(this.updateEvent, this.updateError);
+            this.props.unregisterForEvent(eventId, participantId);
         }
     },
     updateEvent: function () {
-        EventStore.getEvent(this.props.params.id)
-                .then(function (event) {
-                    this.setState({currentEvent: event, error: '', loading: false});
-                }.bind(this));
+        this.props.fetchEventById(this.props.params.id);
     },
     deleteEvent: function () {
         var luckyNumber = prompt("Er du helt sikker på at du vil slette denne hendelsen? \n I så fall - hvilket draktnummer har Charlie")
         if (luckyNumber && parseInt(luckyNumber) === 7) {
-            EventStore.removeEvent(this.state.currentEvent.id);
+            EventStore.removeEvent(this.props.event.currentEvent.id);
             window.location.hash = '';
         }
     },
     sendSlackNotification: function() {
         var user = prompt("Brukernavn?");
         var pass = prompt("Passord?");
-        EventStore.sendSlackNotification(this.state.currentEvent.id, {user: user, pass: pass});
+        EventStore.sendSlackNotification(this.props.event.currentEvent.id, {user: user, pass: pass});
     },
     sendMailNotification: function() {
         var user = prompt("Brukernavn?");
         var pass = prompt("Passord?");
-        EventStore.sendMailNotification(this.state.currentEvent.id, {user: user, pass: pass});
+        EventStore.sendMailNotification(this.props.event.currentEvent.id, {user: user, pass: pass});
     },
     downloadICalendar: function () {
-        window.location.replace(`api/events/${this.state.currentEvent.id}/icalendar`);
-    },
-    updateError: function (error) {
-        this.setState({error: error.message});
+        window.location.replace(`api/events/${this.props.event.currentEvent.id}/icalendar`);
     },
     nameChange: function (value) {
         this.setState({name: value});
@@ -162,23 +148,19 @@ var Event = React.createClass({
         this.setState({phoneNumber: event.target.value});
     },
     render: function () {
-        var event = this.state.currentEvent;
-
-        var participants = event.participants.filter(function (participant) {
-            return participant.reserve === false;
-        }).map(function (participant) {
-            return <Participant key={participant.id} participant={participant} unregister={this.unregister}/>
-        }.bind(this));
-
-        var reserves = event.participants.filter(function (participant) {
-            return participant.reserve === true;
-        }).map(function (participant) {
-            return <Participant key={participant.id} participant={participant} unregister={this.unregister}/>
-        }.bind(this));
+        var event = this.props.event.currentEvent;
+        var registerProps = this.props.register;
+        var participants = event.participants
+            .filter( participant => participant.reserve === false)
+            .map(participant => <Participant key={participant.id} participant={participant} unregister={this.unregister}/>)
+        
+        var reserves = event.participants
+            .filter(participant => participant.reserve === true)
+            .map(participant => <Participant key={participant.id} participant={participant} unregister={this.unregister}/>);
 
         return (
                 <div>
-                    <Loader isLoading={this.state.loading}>
+                    <Loader isLoading={this.props.event.loading}>
                     <div className="clearfix margin-bottom-30 margin-top-50 event event-with-padding">
                         <h6 className="margin-bottom-0"><EventImage event={event} />{event.subject}</h6>
                         <h2 className='margin-top-10'><span>{event.location}</span> <span className="gray">({Utils.timeStampToDate(event.startTime)} {Utils.formatDateTime(event.startTime, 'dd. MMMM')})</span></h2>
@@ -197,7 +179,7 @@ var Event = React.createClass({
                         <form className="margin-top-30 margin-bottom-30">
                             <fieldset>
                                 <legend>Påmelding:</legend>
-                                <ErrorPanel error={this.state.error}/>
+                                <ErrorPanel error={registerProps.error}/>
                                 <div className="form-group col-xs-12 col-sm-4 col-md-4">
                                     <label htmlFor="name">Navn*</label>
                                     <Combobox
@@ -234,7 +216,7 @@ var Event = React.createClass({
                             <br/>
                             <div className="col-xs-12">
                                 <Timer remainingTime={event.timeToRegistration}/>
-                                <button type="button" className="btn btn-primary" onClick={this.attend}>Meld på</button>
+                                <button type="button" className="btn btn-primary" onClick={this.attend}>Meld på nå</button>
                             </div>
                         </form>
                         <div className="col-xs-12 col-sm-5">

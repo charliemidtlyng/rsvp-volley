@@ -1,11 +1,10 @@
 
 var React = require('react');
-var EventStore = require('./EventStore');
-var EventImage = require('./EventImage');
+var EventImage = require('.././EventImage');
 var ReactRouter = require('react-router');
 var Link = ReactRouter.Link;
-var Utils = require('./Utils');
-var Loader = require('./Loader');
+var Utils = require('.././Utils');
+var Loader = require('.././Loader');
 var classNames = require('classnames');
 
 var ShowHide = React.createClass({
@@ -21,39 +20,6 @@ var ShowHide = React.createClass({
 });
 
 var EventList = React.createClass({
-    getInitialState: function () {
-        return {
-            upcomingEvents: [],
-            oldEvents: [],
-            loading: true,
-            visibleHistory: false
-        };
-    },
-    componentDidMount: function () {
-        EventStore.getEvents()
-                .then(function (events) {
-                    var oldEvents = events.filter(this.filterOldEvents);
-                    var upcomingEvents = events.filter(this.filterUpcomingEvents);
-                    oldEvents.sort(Utils.sortByTimestampDesc);
-                    upcomingEvents.sort(Utils.sortByTimestampAsc);
-                    this.setState({
-                        upcomingEvents: upcomingEvents,
-                        oldEvents: oldEvents,
-                        loading: false
-                    });
-                }.bind(this));
-    },
-    toggleShowHide: function() {
-        this.setState({
-            visibleHistory: !this.state.visibleHistory
-        });
-    },
-    filterOldEvents: function(event) {
-        return Utils.isOldEvent(event);
-    },
-    filterUpcomingEvents: function(event) {
-        return !Utils.isOldEvent(event);
-    },
     mapEvents: function(events) {
         return events.map(function (event) {
             var classes = classNames({
@@ -73,16 +39,18 @@ var EventList = React.createClass({
             </Link>;
         }.bind(this));
     },
+    componentDidMount: function () {
+        this.props.fetchEvents();
+    },
     render: function () {
-
-        var oldEvents = this.state.visibleHistory ? this.mapEvents(this.state.oldEvents) : [];
-        var upcomingEvents = this.mapEvents(this.state.upcomingEvents);
+        var oldEvents = this.props.visibleHistory ? this.mapEvents(this.props.oldEvents || []) : [];
+        var upcomingEvents = this.mapEvents(this.props.upcomingEvents || []);
         return (
-                <Loader isLoading={this.state.loading}>
+                <Loader isLoading={this.props.loading}>
                     <div className="eventList row margin-top-50 ">
                         <div className="alert alert-info col-xs-12 col-md-9" role="alert">
                         <p>Få BEKK-Fotball inn i kalenderen din? <br/>Abboner på <a href="http://fotball.bekk.no/api/events/feed/iCal">denne urlen</a></p></div>
-                        <ShowHide visibleHistory={this.state.visibleHistory} toggleShowHide={this.toggleShowHide} />
+                        <ShowHide visibleHistory={this.props.visibleHistory} toggleShowHide={this.props.toggleOldEvents} />
                         {upcomingEvents}
                         {oldEvents}
                     </div>

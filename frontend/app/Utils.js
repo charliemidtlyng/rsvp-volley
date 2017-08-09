@@ -18,6 +18,9 @@ var Utils = {
     isOldEvent: function (event) {
         return Date.today().isAfter(new Date(event.startTime));
     },
+    isNewEvent: function (event) {
+        return !Date.today().isAfter(new Date(event.startTime));
+    },
     timeStampToDate: function (timestamp) {
         if (timestamp) {
             var dayName = new Date(timestamp).toString('dddd');

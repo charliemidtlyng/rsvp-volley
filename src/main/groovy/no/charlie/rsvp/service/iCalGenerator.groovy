@@ -36,7 +36,7 @@ class ICalGenerator {
             net.fortuna.ical4j.model.DateTime end = new net.fortuna.ical4j.model.DateTime(new DateTime(it.endTime).getMillis())
             VEvent meeting = new VEvent(start, end, eventName)
             meeting.getProperties().add(tz.getTimeZoneId())
-            UidGenerator ug = new UidGenerator(new SimpleHostInfo('paamelding.herokuapp.com'),"BekkFotball${it.id}")
+            UidGenerator ug = new UidGenerator(new SimpleHostInfo('fotball.bekk.no'),"BekkFotball${it.id}")
             Uid uid = ug.generateUid()
             meeting.getProperties().add(uid)
             icsCalendar.getComponents().add(meeting)

@@ -67,70 +67,7 @@ var App = React.createClass({
 
 module.exports = App;
 
-},{"./EventStore":5,"react":633,"react-bootstrap":325}],2:[function(require,module,exports){
-'use strict';
-
-function nextMonday(hour, minute) {
-    var isMonday = Date.today().is().monday();
-    var monday = isMonday ? Date.today() : Date.today().next().monday();
-    monday.set({ hour: hour, minute: minute, second: 0 });
-    return monday;
-}
-
-function nextFriday(hour, minute) {
-    var isFriday = Date.today().is().friday();
-    var friday = isFriday ? Date.today() : Date.today().next().friday();
-    friday.set({ hour: hour, minute: minute, second: 0 });
-    return friday;
-}
-
-var DefaultEvents = {
-    football: function football() {
-        return {
-            subject: 'Trening i Vallhall',
-            description: 'Oppmøte 19:45!\nFotballtrening i Vallhall. Banen ligger i \nmidten - lengst unna inngangsdøra. \nAnkomst: \nBuss #21 stopper på Valle. Gå derfra igjennom Vallefaret. \nT-bane #1, #2, #3 og #4 stopper på Helsfyr. Gå av mot Valle Hovin. \n\nRing 99402316 (Charlie) hvis du er i tvil. \n\n¡Avmelding!\nHvis det viser seg at du allikevel ikke \nkan komme, meld deg av så snart \ndu vet dette - og si ifra til nestemann \npå lista (evt. Socialcast). \n\nLegger du ved epost/mobilnr får du \nmail/sms så snart du forflytter deg \nfra reservelista til påmeldtlista!',
-            location: 'Vallhall',
-            maxNumber: 15,
-            startTime: nextMonday(20, 0),
-            endTime: nextMonday(21, 0),
-            regStart: nextFriday(8, 30),
-            regEnd: nextMonday(21, 0),
-            eventSubType: 'Training',
-            creator: 'CM'
-        };
-    },
-    footballMatch: function footballMatch() {
-        return {
-            subject: 'Kamp X. laget',
-            description: 'Oppmøte ....!\nKamp mot ... . Husk leggskinner og svart drakt! \nAnkomst: \nT-bane #4 til Manglerud - ca. 10-15 minutter å gå.',
-            location: 'Manglerudhallen',
-            maxNumber: 8,
-            startTime: nextMonday(20, 0),
-            endTime: nextMonday(21, 0),
-            regStart: Date.today(),
-            regEnd: nextMonday(21, 0),
-            eventSubType: 'Match',
-            creator: 'CM'
-        };
-    },
-    footballMatchOutdoor: function footballMatchOutdoor() {
-        return {
-            subject: 'Kamp X. laget',
-            description: 'Oppmøte ....!\nKamp mot ... . Husk leggskinner og svart drakt!',
-            location: 'Manglerudhallen',
-            maxNumber: 12,
-            startTime: nextMonday(20, 0),
-            endTime: nextMonday(21, 0),
-            regStart: Date.today(),
-            regEnd: nextMonday(21, 0),
-            eventSubType: 'Match',
-            creator: 'CM'
-        };
-    }
-};
-module.exports = DefaultEvents;
-
-},{}],3:[function(require,module,exports){
+},{"./EventStore":4,"react":633,"react-bootstrap":325}],2:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -150,7 +87,7 @@ var EventImage = React.createClass({
 
 module.exports = EventImage;
 
-},{"react":633}],4:[function(require,module,exports){
+},{"react":633}],3:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -360,7 +297,7 @@ var Event = React.createClass({
 });
 module.exports = Event;
 
-},{"./EventStore":5,"./Recaptcha":10,"./Utils":12,"react":633,"react-bootstrap":325,"react-router":433}],5:[function(require,module,exports){
+},{"./EventStore":4,"./Recaptcha":9,"./Utils":11,"react":633,"react-bootstrap":325,"react-router":433}],4:[function(require,module,exports){
 'use strict';
 
 var Promise = require('promise-js');
@@ -465,7 +402,7 @@ function deleteJSON(url) {
     });
 }
 
-},{"promise-js":235}],6:[function(require,module,exports){
+},{"promise-js":235}],5:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -615,7 +552,7 @@ var ImportEvents = React.createClass({
 });
 module.exports = ImportEvents;
 
-},{"./EventStore":5,"./ImportEventsList":7,"moment":233,"react":633}],7:[function(require,module,exports){
+},{"./EventStore":4,"./ImportEventsList":6,"moment":233,"react":633}],6:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -733,7 +670,7 @@ var ImportEventsList = React.createClass({
 });
 module.exports = ImportEventsList;
 
-},{"./Utils":12,"react":633,"react-bootstrap":325}],8:[function(require,module,exports){
+},{"./Utils":11,"react":633,"react-bootstrap":325}],7:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -755,19 +692,22 @@ var Loader = React.createClass({
 });
 module.exports = Loader;
 
-},{"react":633}],9:[function(require,module,exports){
+},{"react":633}],8:[function(require,module,exports){
 'use strict';
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 var React = require('react');
 var EventStore = require('./EventStore');
 var ReactRouter = require('react-router');
 var Router = ReactRouter.Router;
 var ReactWidgets = require('react-widgets');
-var DefaultEvents = require('./DefaultEvents');
+var DefaultEvents = require('./utils/DefaultEvents');
 var DateTimePicker = ReactWidgets.DateTimePicker;
 var Combobox = ReactWidgets.Combobox;
 var Link = Router.Link;
 var browserHistory = ReactRouter.browserHistory;
+var moment = require('moment');
 var NewEvent = React.createClass({
     displayName: 'NewEvent',
 
@@ -785,7 +725,8 @@ var NewEvent = React.createClass({
             regEnd: null,
             eventType: 'Football',
             eventSubType: 'Training',
-            creator: ''
+            creator: '',
+            repeats: 1
         };
     },
     getDefaultProps: function getDefaultProps() {
@@ -803,11 +744,36 @@ var NewEvent = React.createClass({
             window.location.hash = '/event/' + event.id;
         }.bind(this));
     },
+    createMultipleEvent: function createMultipleEvent(event) {
+        var _this = this;
+
+        event.preventDefault();
+
+        [].concat(_toConsumableArray(Array(this.state.repeats))).forEach(function (_, i) {
+            var index = i + 1;
+            var current = {
+                subject: _this.state.subject,
+                description: _this.state.description,
+                location: _this.state.location,
+                maxNumber: _this.state.maxNumber,
+                startTime: _this.state.startTime.clone().addWeeks(index),
+                endTime: _this.state.endTime.clone().addWeeks(index),
+                regStart: _this.state.regStart.clone().addWeeks(index),
+                regEnd: _this.state.regEnd.clone().addWeeks(index),
+                eventType: _this.state.eventType,
+                eventSubType: _this.state.eventSubType,
+                creator: _this.state.creator
+            };
+            EventStore.addEvent(current);
+        });
+    },
     onValueChange: function onValueChange(event) {
         var inputName = event.target.name;
         var stateValue = {};
         var value = event.target.value;
-        value = inputName == 'maxNumber' && value && !isNaN(parseInt(value)) ? parseInt(value) : value;
+        if (inputName === 'maxNumber' || inputName === 'repeats') {
+            value = value && !isNaN(parseInt(value)) ? parseInt(value) : value;
+        }
         stateValue[inputName] = value;
         this.setState(stateValue);
     },
@@ -1077,12 +1043,31 @@ var NewEvent = React.createClass({
                     'div',
                     { className: 'form-group' },
                     React.createElement(
+                        'label',
+                        { htmlFor: 'repeats', className: 'col-sm-2 control-label' },
+                        'Gjentas'
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: 'col-sm-5' },
+                        React.createElement('input', { className: 'form-control', type: 'text', name: 'repeats', ref: 'repeats', placeholder: 'gjentas', value: this.state.repeats, onChange: this.onValueChange })
+                    )
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'form-group' },
+                    React.createElement(
                         'div',
                         { className: 'col-sm-offset-2 col-sm-5' },
                         React.createElement(
                             'button',
-                            { type: 'button', className: 'btn btn-default', onClick: this.createEvent },
+                            { type: 'button', className: 'btn btn-default margin-right-5', onClick: this.createEvent },
                             'Lagre'
+                        ),
+                        React.createElement(
+                            'button',
+                            { type: 'button', className: 'btn btn-default', onClick: this.createMultipleEvent },
+                            'Lag ukentlig'
                         )
                     )
                 )
@@ -1092,7 +1077,7 @@ var NewEvent = React.createClass({
 });
 module.exports = NewEvent;
 
-},{"./DefaultEvents":2,"./EventStore":5,"react":633,"react-router":433,"react-widgets":475}],10:[function(require,module,exports){
+},{"./EventStore":4,"./utils/DefaultEvents":26,"moment":233,"react":633,"react-router":433,"react-widgets":475}],9:[function(require,module,exports){
 // From https://github.com/appleboy/react-recaptcha
 // Changed to fulfill requirements of loading script in different ways
 'use strict';
@@ -1161,7 +1146,7 @@ var Recaptcha = React.createClass({
 
 module.exports = Recaptcha;
 
-},{"react":633}],11:[function(require,module,exports){
+},{"react":633}],10:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -1245,7 +1230,7 @@ var Timer = React.createClass({
 });
 module.exports = Timer;
 
-},{"react":633,"react-bootstrap":325}],12:[function(require,module,exports){
+},{"react":633,"react-bootstrap":325}],11:[function(require,module,exports){
 'use strict';
 
 require('datejs');
@@ -1282,7 +1267,7 @@ var Utils = {
 
 module.exports = Utils;
 
-},{"datejs":62,"datejs/src/i18n/nb-NO":75}],13:[function(require,module,exports){
+},{"datejs":62,"datejs/src/i18n/nb-NO":75}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1363,7 +1348,7 @@ function receiveEvent(eventId, event) {
   };
 }
 
-},{}],14:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -1434,7 +1419,7 @@ var Event = React.createClass({
             messages: {
                 emptyFilter: {}
             },
-            listOfCandidates: ['Charlie Midtlyng', 'Thor K. Valderhaug', 'Simen Lomås Johannessen', 'Ole-Martin Mørk', 'Erlend Opdahl', 'Esben Aarseth', 'Christoffer Marcussen', 'Tore Myklebust', 'Jørn Hunskaar', 'Erlend Heimark', 'Rasmus Bauck', 'Marius Løkketangen', 'Vegard Gamnes', 'Jøran Lillesand', 'Torstein Nicolaysen', 'Harald Kjølner', 'Kristoffer Liabø', 'Jonatan Austigard', 'Pål Moen Møst', 'Sindre Nordbø', 'Ole Hjalmar Herje', 'Emil Lunde', 'Morten Øvrebø', 'Andreas Moe', 'Stian Surén', 'Simen Støa', 'Hannes Waller', 'Emil Staurset', 'Nikolai Norman Andersen', 'Severin Sverdvik', 'Helen Le', 'Hallvard Braaten', 'Anne Berit Bjering', 'Silje Kandal', 'Kjersti Barstad Strand', 'Morten Utengen', 'Erlend Gjesdal', 'Nemanja Aksic', 'Petter Samuelsen', 'Svein Petter Gjøby', 'Johan Rusvik', 'Ingar Kvalheim', 'Endre Skogen', 'Hallvard Braaten']
+            listOfCandidates: ['Charlie Midtlyng', 'Thor K. Valderhaug', 'Ole-Martin Mørk', 'Erlend Opdahl', 'Esben Aarseth', 'Christoffer Marcussen', 'Jørn Hunskaar', 'Erlend Heimark', 'Rasmus Bauck', 'Marius Løkketangen', 'Jøran Lillesand', 'Torstein Nicolaysen', 'Harald Kjølner', 'Sindre Nordbø', 'Emil Lunde', 'Morten Øvrebø', 'Andreas Moe', 'Stian Surén', 'Simen Støa', 'Hannes Waller', 'Emil Staurset', 'Nikolai Norman Andersen', 'Severin Sverdvik', 'Helen Le', 'Anne Berit Bjering', 'Silje Kandal', 'Kjersti Barstad Strand', 'Morten Utengen', 'Erlend Gjesdal', 'Nemanja Aksic', 'Petter Samuelsen', 'Svein Petter Gjøby', 'Johan Rusvik', 'Ingar Kvalheim', 'Endre Skogen', 'Hallvard Braaten']
         };
     },
     componentDidMount: function componentDidMount() {
@@ -1734,7 +1719,7 @@ var Event = React.createClass({
 });
 module.exports = Event;
 
-},{"../EventImage":3,"../EventStore":5,"../Loader":8,"../Recaptcha":10,"../Timer":11,"../Utils":12,"react":633,"react-bootstrap":325,"react-localstorage":338,"react-router":433,"react-widgets":475}],15:[function(require,module,exports){
+},{"../EventImage":2,"../EventStore":4,"../Loader":7,"../Recaptcha":9,"../Timer":10,"../Utils":11,"react":633,"react-bootstrap":325,"react-localstorage":338,"react-router":433,"react-widgets":475}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1810,7 +1795,7 @@ var rootReducer = (0, _redux.combineReducers)({
 
 exports.default = rootReducer;
 
-},{".././Utils":12,"./actions":13,"redux":651}],16:[function(require,module,exports){
+},{".././Utils":11,"./actions":12,"redux":651}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2004,7 +1989,7 @@ function startup() {
 
 exports.default = startup;
 
-},{"./actions":13,"isomorphic-fetch":151,"redux-saga/effects":634,"regenerator-runtime":653}],17:[function(require,module,exports){
+},{"./actions":12,"isomorphic-fetch":151,"redux-saga/effects":634,"regenerator-runtime":653}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2047,7 +2032,7 @@ var VisibleEvent = (0, _reactRedux.connect)(mapStateToEventProps, mapFetchEventT
 
 exports.default = VisibleEvent;
 
-},{"./actions":13,"./event":14,"react-redux":398}],18:[function(require,module,exports){
+},{"./actions":12,"./event":13,"react-redux":398}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2091,7 +2076,7 @@ function receiveEvents(event, events) {
   };
 }
 
-},{}],19:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -2101,6 +2086,7 @@ var Link = ReactRouter.Link;
 var Utils = require('.././Utils');
 var Loader = require('.././Loader');
 var classNames = require('classnames');
+var moment = require('moment');
 
 var ShowHide = React.createClass({
     displayName: 'ShowHide',
@@ -2133,6 +2119,41 @@ var ShowHide = React.createClass({
 var EventList = React.createClass({
     displayName: 'EventList',
 
+    eventOpens: function eventOpens(event) {
+        if (moment().isAfter(event.regEnd)) {
+            return React.createElement(
+                'div',
+                null,
+                React.createElement(
+                    'strong',
+                    null,
+                    'P\xE5melding stengt'
+                )
+            );
+        }
+        if (moment().isBefore(event.regStart)) {
+            return React.createElement(
+                'div',
+                null,
+                React.createElement(
+                    'strong',
+                    null,
+                    'P\xE5melding \xE5pner:'
+                ),
+                ' ',
+                Utils.formatDateTime(event.regStart, 'dd. MMMM (HH:mm)')
+            );
+        }
+        return React.createElement(
+            'div',
+            null,
+            React.createElement(
+                'strong',
+                null,
+                'P\xE5melding \xE5pnet'
+            )
+        );
+    },
     mapEvents: function mapEvents(events) {
         return events.map(function (event) {
             var classes = classNames({
@@ -2184,17 +2205,7 @@ var EventList = React.createClass({
                         ' ',
                         Utils.formatDateTime(event.startTime, 'HH:mm')
                     ),
-                    React.createElement(
-                        'div',
-                        null,
-                        React.createElement(
-                            'strong',
-                            null,
-                            'P\xE5melding \xE5pner:'
-                        ),
-                        ' ',
-                        Utils.formatDateTime(event.regStart, 'dd. MMMM (HH:mm)')
-                    )
+                    this.eventOpens(event)
                 )
             );
         }.bind(this));
@@ -2237,7 +2248,7 @@ var EventList = React.createClass({
 
 module.exports = EventList;
 
-},{".././EventImage":3,".././Loader":8,".././Utils":12,"classnames":37,"react":633,"react-router":433}],20:[function(require,module,exports){
+},{".././EventImage":2,".././Loader":7,".././Utils":11,"classnames":37,"moment":233,"react":633,"react-router":433}],19:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2322,7 +2333,7 @@ var rootReducer = (0, _redux.combineReducers)({
 
 exports.default = rootReducer;
 
-},{".././Utils":12,"./actions":18,"redux":651}],21:[function(require,module,exports){
+},{".././Utils":11,"./actions":17,"redux":651}],20:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2408,7 +2419,7 @@ function root() {
   }, _marked[1], this);
 }
 
-},{"./actions":18,"./selectors":22,"isomorphic-fetch":151,"redux-saga/effects":634,"regenerator-runtime":653}],22:[function(require,module,exports){
+},{"./actions":17,"./selectors":21,"isomorphic-fetch":151,"redux-saga/effects":634,"regenerator-runtime":653}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2418,7 +2429,7 @@ var allEventsSelector = exports.allEventsSelector = function allEventsSelector(s
   return state.allEvents;
 };
 
-},{}],23:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2458,7 +2469,7 @@ var VisibleEventList = (0, _reactRedux.connect)(mapStateToEventListProps, mapTog
 
 exports.default = VisibleEventList;
 
-},{"./actions":18,"./list":19,"react-redux":398}],24:[function(require,module,exports){
+},{"./actions":17,"./list":18,"react-redux":398}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2484,7 +2495,7 @@ var IndexReducer = (0, _redux.combineReducers)({
 
 exports.default = IndexReducer;
 
-},{"./event/reducer":15,"./events/reducer":20,"redux":651}],25:[function(require,module,exports){
+},{"./event/reducer":14,"./events/reducer":19,"redux":651}],24:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2520,7 +2531,7 @@ function IndexSaga() {
   }, _marked[0], this);
 }
 
-},{"./event/sagas":16,"./events/sagas":21}],26:[function(require,module,exports){
+},{"./event/sagas":15,"./events/sagas":20}],25:[function(require,module,exports){
 'use strict';
 
 var _regeneratorRuntime = require('regenerator-runtime');
@@ -2609,7 +2620,70 @@ var routes = React.createElement(
 
 ReactDOM.render(routes, document.getElementById('react-content'));
 
-},{"./App":1,"./EventLineup":4,"./EventStore":5,"./ImportEvents":6,"./NewEvent":9,"./event/visibleEvent":17,"./events/visibleEventList":23,"./index-reducer":24,"./index-sagas":25,"moment":233,"moment/locale/nb":232,"react":633,"react-bootstrap":325,"react-dom":336,"react-redux":398,"react-router":433,"react-widgets/lib/localizers/moment":476,"redux":651,"redux-saga":635,"regenerator-runtime":653}],27:[function(require,module,exports){
+},{"./App":1,"./EventLineup":3,"./EventStore":4,"./ImportEvents":5,"./NewEvent":8,"./event/visibleEvent":16,"./events/visibleEventList":22,"./index-reducer":23,"./index-sagas":24,"moment":233,"moment/locale/nb":232,"react":633,"react-bootstrap":325,"react-dom":336,"react-redux":398,"react-router":433,"react-widgets/lib/localizers/moment":476,"redux":651,"redux-saga":635,"regenerator-runtime":653}],26:[function(require,module,exports){
+'use strict';
+
+function nextMonday(hour, minute) {
+    var isMonday = Date.today().is().monday();
+    var monday = isMonday ? Date.today() : Date.today().next().monday();
+    monday.set({ hour: hour, minute: minute, second: 0 });
+    return monday;
+}
+
+function nextFriday(hour, minute) {
+    var isFriday = Date.today().is().friday();
+    var friday = isFriday ? Date.today() : Date.today().next().friday();
+    friday.set({ hour: hour, minute: minute, second: 0 });
+    return friday;
+}
+
+var DefaultEvents = {
+    football: function football() {
+        return {
+            subject: 'Trening i Vallhall',
+            description: 'Oppmøte 19:45!\nFotballtrening i Vallhall. Banen ligger i \nmidten - lengst unna inngangsdøra. \nAnkomst: \nBuss #21 stopper på Valle. Gå derfra igjennom Vallefaret. \nT-bane #1, #2, #3 og #4 stopper på Helsfyr. Gå av mot Valle Hovin. \n\nRing 99402316 (Charlie) hvis du er i tvil. \n\n¡Avmelding!\nHvis det viser seg at du allikevel ikke \nkan komme, meld deg av så snart \ndu vet dette - og si ifra til nestemann \npå lista (evt. Socialcast). \n\nLegger du ved epost/mobilnr får du \nmail/sms så snart du forflytter deg \nfra reservelista til påmeldtlista!',
+            location: 'Vallhall',
+            maxNumber: 15,
+            startTime: nextMonday(20, 0),
+            endTime: nextMonday(21, 0),
+            regStart: nextFriday(8, 30),
+            regEnd: nextMonday(21, 0),
+            eventSubType: 'Training',
+            creator: 'CM'
+        };
+    },
+    footballMatch: function footballMatch() {
+        return {
+            subject: 'Kamp X. laget',
+            description: 'Oppmøte ....!\nKamp mot ... . Husk leggskinner og svart drakt! \nAnkomst: \nT-bane #4 til Manglerud - ca. 10-15 minutter å gå.',
+            location: 'Manglerudhallen',
+            maxNumber: 8,
+            startTime: nextMonday(20, 0),
+            endTime: nextMonday(21, 0),
+            regStart: Date.today(),
+            regEnd: nextMonday(21, 0),
+            eventSubType: 'Match',
+            creator: 'CM'
+        };
+    },
+    footballMatchOutdoor: function footballMatchOutdoor() {
+        return {
+            subject: 'Kamp X. laget',
+            description: 'Oppmøte ....!\nKamp mot ... . Husk leggskinner og svart drakt!',
+            location: 'Manglerudhallen',
+            maxNumber: 12,
+            startTime: nextMonday(20, 0),
+            endTime: nextMonday(21, 0),
+            regStart: Date.today(),
+            regEnd: nextMonday(21, 0),
+            eventSubType: 'Match',
+            creator: 'CM'
+        };
+    }
+};
+module.exports = DefaultEvents;
+
+},{}],27:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/assign"), __esModule: true };
 },{"core-js/library/fn/object/assign":38}],28:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/create"), __esModule: true };
@@ -70107,4 +70181,4 @@ arguments[4][382][0].apply(exports,arguments)
   self.fetch.polyfill = true
 })(typeof self !== 'undefined' ? self : this);
 
-},{}]},{},[26]);
+},{}]},{},[25]);

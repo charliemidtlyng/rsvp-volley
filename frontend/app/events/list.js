@@ -6,6 +6,7 @@ var Link = ReactRouter.Link;
 var Utils = require('.././Utils');
 var Loader = require('.././Loader');
 var classNames = require('classnames');
+var moment = require('moment');
 
 var ShowHide = React.createClass({
     render: function(){
@@ -20,6 +21,15 @@ var ShowHide = React.createClass({
 });
 
 var EventList = React.createClass({
+    eventOpens: function (event) {
+        if (moment().isAfter(event.regEnd)) {
+            return <div><strong>Påmelding stengt</strong></div>;
+        }
+        if (moment().isBefore(event.regStart)) {
+            return <div><strong>Påmelding åpner:</strong> {Utils.formatDateTime(event.regStart, 'dd. MMMM (HH:mm)')}</div>;
+        }
+        return <div><strong>Påmelding åpnet</strong></div>;
+    },
     mapEvents: function(events) {
         return events.map(function (event) {
             var classes = classNames({
@@ -34,7 +44,7 @@ var EventList = React.createClass({
                     <h6 className="margin-bottom-0"><EventImage event={event} />{event.subject}</h6>
                     <h2 className='margin-top-10'><span>{event.location}</span> <span className="gray">({Utils.timeStampToDate(event.startTime)} {Utils.formatDateTime(event.startTime, 'dd. MMMM')})</span></h2>
                     <div><strong>Start:</strong> {Utils.formatDateTime(event.startTime, 'HH:mm')}</div>
-                    <div><strong>Påmelding åpner:</strong> {Utils.formatDateTime(event.regStart, 'dd. MMMM (HH:mm)')}</div>
+                    {this.eventOpens(event)}
                 </div>
             </Link>;
         }.bind(this));

@@ -1,14 +1,14 @@
-
 var React = require('react');
 var EventStore = require('./EventStore');
 var ReactRouter = require('react-router');
 var Router = ReactRouter.Router;
 var ReactWidgets = require('react-widgets');
-var DefaultEvents = require('./DefaultEvents');
+var DefaultEvents = require('./utils/DefaultEvents');
 var DateTimePicker = ReactWidgets.DateTimePicker;
 var Combobox = ReactWidgets.Combobox;
 var Link = Router.Link;
 var browserHistory = ReactRouter.browserHistory;
+var moment = require('moment');
 var NewEvent = React.createClass({
 
     mixins: [],
@@ -24,7 +24,8 @@ var NewEvent = React.createClass({
             regEnd: null,
             eventType: 'Football',
             eventSubType: 'Training',
-            creator: ''
+            creator: '',
+            repeats: 1
         }
     },
     getDefaultProps: function(){
@@ -42,11 +43,34 @@ var NewEvent = React.createClass({
             window.location.hash = '/event/' + event.id;
         }.bind(this));
     },
+    createMultipleEvent: function (event) {
+        event.preventDefault();
+        
+        [...Array(this.state.repeats)].forEach((_, i) => {
+            const index = i + 1;
+            const current = {
+                subject: this.state.subject,
+                description: this.state.description,
+                location: this.state.location,
+                maxNumber: this.state.maxNumber,
+                startTime: this.state.startTime.clone().addWeeks(index),
+                endTime: this.state.endTime.clone().addWeeks(index),
+                regStart: this.state.regStart.clone().addWeeks(index),
+                regEnd: this.state.regEnd.clone().addWeeks(index),
+                eventType: this.state.eventType,
+                eventSubType: this.state.eventSubType,
+                creator: this.state.creator
+            };
+            EventStore.addEvent(current);
+        });
+    },
     onValueChange: function (event) {
         var inputName = event.target.name;
         var stateValue = {};
-        var value = event.target.value
-        value = inputName == 'maxNumber' && value && !isNaN(parseInt(value)) ? parseInt(value) : value;
+        var value = event.target.value;
+        if(inputName === 'maxNumber' || inputName === 'repeats') {
+            value = value && !isNaN(parseInt(value)) ? parseInt(value) : value;
+        }
         stateValue[inputName] = value;
         this.setState(stateValue);
     },
@@ -197,8 +221,15 @@ var NewEvent = React.createClass({
                             </div>
                         </div>
                         <div className="form-group">
+                            <label htmlFor="repeats" className="col-sm-2 control-label">Gjentas</label>
+                            <div className="col-sm-5">
+                                <input className="form-control" type="text" name="repeats" ref="repeats" placeholder="gjentas" value={this.state.repeats} onChange={this.onValueChange}/>
+                            </div>
+                        </div>
+                        <div className="form-group">
                             <div className="col-sm-offset-2 col-sm-5">
-                                <button type="button" className="btn btn-default" onClick={this.createEvent}>Lagre</button>
+                                <button type="button" className="btn btn-default margin-right-5" onClick={this.createEvent}>Lagre</button>
+                                <button type="button" className="btn btn-default" onClick={this.createMultipleEvent}>Lag ukentlig</button>
                             </div>
                         </div>
                     </form>

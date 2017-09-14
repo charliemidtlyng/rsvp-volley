@@ -11,3 +11,7 @@ gradle
 gradle/
 .gradle/2.2/taskArtifacts/**
 gradle/**
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

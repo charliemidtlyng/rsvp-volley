@@ -1,6 +1,6 @@
 
 var React = require('react');
-var Utils = require('./Utils');
+var Utils = require('../utils/Utils');
 var ReactBootstrap = require('react-bootstrap');
 var Tooltip = ReactBootstrap.Tooltip;
 var OverlayTrigger = ReactBootstrap.OverlayTrigger;

@@ -67,36 +67,16 @@ var App = React.createClass({
 
 module.exports = App;
 
-},{"./EventStore":4,"react":633,"react-bootstrap":325}],2:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-
-var EventImage = React.createClass({
-    displayName: 'EventImage',
-
-    render: function render() {
-        var images = {
-            general: '/css/people.png',
-            trophy: '/css/sport.png'
-        };
-        var imageSrc = this.props.event.eventSubType === 'Match' ? images.trophy : images.general;
-        return React.createElement('img', { className: 'margin-right-5 pull-left', src: imageSrc });
-    }
-});
-
-module.exports = EventImage;
-
-},{"react":633}],3:[function(require,module,exports){
+},{"./EventStore":3,"react":633,"react-bootstrap":325}],2:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
 var EventStore = require('./EventStore');
 var ReactRouter = require('react-router');
-var Utils = require('./Utils');
+var Utils = require('./utils/Utils');
 var ReactBootstrap = require('react-bootstrap');
 var Input = ReactBootstrap.Input;
-var Recaptcha = require('./Recaptcha');
+var Recaptcha = require('./utils/Recaptcha');
 var Panel = ReactBootstrap.Panel;
 
 var Participant = React.createClass({
@@ -297,7 +277,7 @@ var Event = React.createClass({
 });
 module.exports = Event;
 
-},{"./EventStore":4,"./Recaptcha":9,"./Utils":11,"react":633,"react-bootstrap":325,"react-router":433}],4:[function(require,module,exports){
+},{"./EventStore":3,"./utils/Recaptcha":24,"./utils/Utils":26,"react":633,"react-bootstrap":325,"react-router":433}],3:[function(require,module,exports){
 'use strict';
 
 var Promise = require('promise-js');
@@ -402,297 +382,7 @@ function deleteJSON(url) {
     });
 }
 
-},{"promise-js":235}],5:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var EventStore = require('./EventStore');
-var ImportEventsList = require('./ImportEventsList');
-var moment = require('moment');
-function updateEvent(events, savedEvent) {
-    return events.map(function (item) {
-        if (item.startTime === savedEvent.startTime) {
-            return savedEvent;
-        }
-        return item;
-    });
-}
-
-function parseDates(event) {
-    var convertedEvent = Object.assign({}, event);
-    convertedEvent.startTime = moment(event.startTime).format();
-    convertedEvent.endTime = moment(event.endTime).format();
-    convertedEvent.regStart = moment(event.regStart).format();
-    convertedEvent.regEnd = moment(event.regEnd).format();
-    return convertedEvent;
-}
-
-var ImportEvents = React.createClass({
-    displayName: 'ImportEvents',
-
-
-    getInitialState: function getInitialState() {
-        return {
-            events: [],
-            importDetails: {}
-        };
-    },
-    generateFromUrl: function generateFromUrl(event) {
-        event.preventDefault();
-        EventStore.importEvents(this.state.importDetails).then(function (events) {
-            this.setState({ events: events });
-        }.bind(this));
-    },
-    createEvent: function createEvent(event) {
-        EventStore.addEvent(parseDates(event)).then(function (savedEvent) {
-            this.setState({ events: updateEvent(this.state.events, savedEvent) });
-        }.bind(this));
-    },
-    onValueChange: function onValueChange(event) {
-        var inputName = event.target.name;
-        var stateValue = this.state.importDetails;
-        var value = event.target.value;
-
-        if (inputName === 'maxNumber' || inputName === 'teamId' || inputName === 'tournamentId') {
-            value = value && !isNaN(parseInt(value)) ? parseInt(value) : value;
-        }
-        stateValue[inputName] = value;
-        this.setState({ importDetails: stateValue });
-    },
-    render: function render() {
-        return React.createElement(
-            'div',
-            null,
-            React.createElement(
-                'h2',
-                { className: 'page-header' },
-                'Importere hendelser'
-            ),
-            React.createElement(
-                'form',
-                { className: 'form-horizontal' },
-                React.createElement(
-                    'div',
-                    { className: 'form-group' },
-                    React.createElement(
-                        'label',
-                        { htmlFor: 'subject', className: 'col-sm-2 control-label' },
-                        'Tittel'
-                    ),
-                    React.createElement(
-                        'div',
-                        { className: 'col-sm-5' },
-                        React.createElement('input', { className: 'form-control', type: 'text', name: 'subject', ref: 'subject', placeholder: 'tittel',
-                            value: this.state.importDetails.subject, onChange: this.onValueChange })
-                    )
-                ),
-                React.createElement(
-                    'div',
-                    { className: 'form-group' },
-                    React.createElement(
-                        'label',
-                        { htmlFor: 'tournamentId', className: 'col-sm-2 control-label' },
-                        'TournamentId'
-                    ),
-                    React.createElement(
-                        'div',
-                        { className: 'col-sm-5' },
-                        React.createElement('input', { className: 'form-control', type: 'text', name: 'tournamentId', ref: 'tournamentId',
-                            placeholder: 'tournamentId', value: this.state.importDetails.tournamentId,
-                            onChange: this.onValueChange })
-                    )
-                ),
-                React.createElement(
-                    'div',
-                    { className: 'form-group' },
-                    React.createElement(
-                        'label',
-                        { htmlFor: 'teamId', className: 'col-sm-2 control-label' },
-                        'TeamId'
-                    ),
-                    React.createElement(
-                        'div',
-                        { className: 'col-sm-5' },
-                        React.createElement('input', { className: 'form-control', type: 'text', name: 'teamId', ref: 'teamId', placeholder: 'teamId',
-                            value: this.state.importDetails.teamId, onChange: this.onValueChange })
-                    )
-                ),
-                React.createElement(
-                    'div',
-                    { className: 'form-group' },
-                    React.createElement(
-                        'label',
-                        { htmlFor: 'maxNumber', className: 'col-sm-2 control-label' },
-                        'Maks antall'
-                    ),
-                    React.createElement(
-                        'div',
-                        { className: 'col-sm-5' },
-                        React.createElement('input', { className: 'form-control', type: 'text', name: 'maxNumber', ref: 'maxNumber', placeholder: 'maks antall',
-                            value: this.state.maxNumber, onChange: this.onValueChange })
-                    )
-                ),
-                React.createElement(
-                    'div',
-                    { className: 'form-group' },
-                    React.createElement(
-                        'div',
-                        { className: 'col-sm-offset-2 col-sm-5' },
-                        React.createElement(
-                            'button',
-                            { type: 'button', className: 'btn btn-default', onClick: this.generateFromUrl },
-                            'Generer events'
-                        )
-                    )
-                )
-            ),
-            React.createElement(ImportEventsList, { events: this.state.events, createEvent: this.createEvent })
-        );
-    }
-});
-module.exports = ImportEvents;
-
-},{"./EventStore":4,"./ImportEventsList":6,"moment":233,"react":633}],6:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var Utils = require('./Utils');
-var ReactBootstrap = require('react-bootstrap');
-var Tooltip = ReactBootstrap.Tooltip;
-var OverlayTrigger = ReactBootstrap.OverlayTrigger;
-
-var ImportEventsItem = React.createClass({
-    displayName: 'ImportEventsItem',
-
-    render: function render() {
-        var event = this.props.event;
-        var tipId = "id-" + event.startTime;
-        var tooltip = React.createElement(
-            Tooltip,
-            { id: tipId },
-            React.createElement(
-                'p',
-                { className: 'pre-wrap' },
-                this.props.event.description
-            )
-        );
-        var isSaveable = event.id === null;
-        return React.createElement(
-            'tr',
-            null,
-            React.createElement(
-                'td',
-                null,
-                Utils.timeStampToDate(event.startTime),
-                ' ',
-                Utils.formatDateTime(event.startTime, 'dd.MM.yyyy'),
-                ' ',
-                Utils.formatDateTime(event.startTime, 'HH:mm'),
-                ' - ',
-                Utils.formatDateTime(event.endTime, 'HH:mm')
-            ),
-            React.createElement(
-                'td',
-                null,
-                event.subject,
-                ' - ',
-                event.location
-            ),
-            React.createElement(
-                'td',
-                null,
-                event.maxNumber
-            ),
-            React.createElement(
-                'td',
-                null,
-                ' ',
-                React.createElement(
-                    OverlayTrigger,
-                    { placement: 'top', overlay: tooltip },
-                    React.createElement(
-                        'span',
-                        null,
-                        'info'
-                    )
-                )
-            ),
-            React.createElement(
-                'td',
-                null,
-                isSaveable ? React.createElement(
-                    'button',
-                    { type: 'button', className: 'btn-default btn-danger', onClick: this.props.createEvent(event) },
-                    'Legg til kamp'
-                ) : React.createElement(
-                    'span',
-                    null,
-                    'Lagret'
-                )
-            )
-        );
-    }
-
-});
-
-var ImportEventsList = React.createClass({
-    displayName: 'ImportEventsList',
-
-
-    createEvent: function createEvent(event) {
-        return function () {
-            this.props.createEvent(event);
-        }.bind(this);
-    },
-    render: function render() {
-        var events = this.props.events.map(function (event, i) {
-            return React.createElement(ImportEventsItem, { event: event, createEvent: this.createEvent, key: i });
-        }.bind(this));
-        return events.length == 0 ? React.createElement('div', null) : React.createElement(
-            'div',
-            null,
-            React.createElement(
-                'h2',
-                { className: 'page-header' },
-                'Genererte kamper'
-            ),
-            React.createElement(
-                'table',
-                { className: 'table table-striped table-bordered' },
-                React.createElement(
-                    'tbody',
-                    null,
-                    events
-                )
-            )
-        );
-    }
-});
-module.exports = ImportEventsList;
-
-},{"./Utils":11,"react":633,"react-bootstrap":325}],7:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-
-var Loader = React.createClass({
-    displayName: 'Loader',
-
-    render: function render() {
-        if (this.props.isLoading) {
-            return React.createElement('div', { className: 'spinner' });
-        } else {
-            return React.createElement(
-                'div',
-                null,
-                this.props.children
-            );
-        }
-    }
-});
-module.exports = Loader;
-
-},{"react":633}],8:[function(require,module,exports){
+},{"promise-js":235}],4:[function(require,module,exports){
 'use strict';
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
@@ -1077,197 +767,7 @@ var NewEvent = React.createClass({
 });
 module.exports = NewEvent;
 
-},{"./EventStore":4,"./utils/DefaultEvents":26,"moment":233,"react":633,"react-router":433,"react-widgets":475}],9:[function(require,module,exports){
-// From https://github.com/appleboy/react-recaptcha
-// Changed to fulfill requirements of loading script in different ways
-'use strict';
-
-var React = require('react');
-
-var Recaptcha = React.createClass({
-  displayName: 'Recaptcha',
-
-  propTypes: {
-    className: React.PropTypes.string,
-    CallbackName: React.PropTypes.string,
-    elementID: React.PropTypes.string,
-    onloadCallback: React.PropTypes.func,
-    verifyCallback: React.PropTypes.func
-  },
-
-  getDefaultProps: function getDefaultProps() {
-    return {
-      elementID: 'g-recaptcha',
-      onloadCallback: undefined,
-      onloadCallbackName: 'onloadRecaptchaCallback',
-      verifyCallback: undefined,
-      render: 'onload',
-      theme: 'light',
-      type: 'image'
-    };
-  },
-  resetRecaptcha: function resetRecaptcha() {
-    // Two lines of hacky code - not able to destroy previously created reCaptchas
-    if (___grecaptcha_cfg) {
-      ___grecaptcha_cfg.Ye = {};
-      ___grecaptcha_cfg.count = 0;
-    }
-  },
-  renderAsyncRecaptcha: function renderAsyncRecaptcha() {
-    this.resetRecaptcha();
-    grecaptcha.render(this.props.elementID, {
-      'sitekey': this.props.sitekey,
-      'callback': this.props.verifyCallback ? this.props.verifyCallback : undefined,
-      'theme': this.props.theme,
-      'type': this.props.type
-    });
-
-    if (this.props.onloadCallback) {
-      this.props.onloadCallback();
-    }
-  },
-  componentDidMount: function componentDidMount() {
-    // Check if the grecaptcha is already loaded, if not - add a callback
-    if (window.grecaptcha) {
-      this.renderAsyncRecaptcha();
-    } else {
-      window[this.props.onloadCallbackName] = function () {
-        this.renderAsyncRecaptcha();
-      }.bind(this);
-    }
-  },
-  render: function render() {
-    return React.createElement('div', { id: this.props.elementID,
-      'data-onloadcallbackname': this.props.onloadCallbackName,
-      'data-verifycallbackname': this.props.verifyCallbackName
-    });
-  }
-});
-
-module.exports = Recaptcha;
-
-},{"react":633}],10:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var ReactBootstrap = require('react-bootstrap');
-var Alert = ReactBootstrap.Alert;
-var Timer = React.createClass({
-    displayName: 'Timer',
-
-
-    getInitialState: function getInitialState() {
-        return {
-            elapsed: 0
-        };
-    },
-    componentWillMount: function componentWillMount() {
-        this.timer = setInterval(this.tick, 1000);
-    },
-    componentWillUnmount: function componentWillUnmount() {
-        clearInterval(this.timer);
-    },
-    tick: function tick() {
-        if (this.diff() <= 0) {
-            clearInterval(this.timer);
-            this.setState({ elapsed: this.props.remainingTime * 1000 });
-        } else {
-            this.setState({ elapsed: this.state.elapsed + 1 });
-        }
-    },
-    diff: function diff() {
-        return (this.props.remainingTime / 1000).toFixed(0) - this.state.elapsed;
-    },
-    secondsToTime: function secondsToTime(remainingSeconds) {
-        var returnString = '';
-        var days = Math.floor(remainingSeconds / 3600 / 24);
-        var hours = Math.floor(remainingSeconds / 3600 % 24);
-        var minutes = Math.floor(remainingSeconds / 60 % 60);
-        var seconds = (remainingSeconds % 60).toFixed(0);
-
-        if (days > 0) {
-            var dayString = days > 1 ? ' dager ' : ' dag ';
-            returnString += days + dayString;
-        }
-        if (hours > 0) {
-            var hourString = hours > 1 ? ' timer ' : ' time ';
-            returnString += hours + hourString;
-        }
-        if (minutes > 0) {
-            var minuteString = minutes > 1 ? ' minutter ' : ' minutt ';
-            returnString += minutes + minuteString;
-        }
-        returnString += seconds + ' sekunder';
-
-        return returnString;
-    },
-    alertWrapper: function alertWrapper(content, open) {
-        return React.createElement(
-            Alert,
-            { bsStyle: open ? 'success' : 'danger', className: 'col-xs-12' },
-            React.createElement(
-                'h3',
-                { className: 'no-margin' },
-                content
-            )
-        );
-    },
-    render: function render() {
-        if (this.diff() <= 0) {
-            return this.alertWrapper(React.createElement(
-                'div',
-                null,
-                'P\xE5meldingen er \xE5pnet!'
-            ), true);
-        }
-        return this.alertWrapper(React.createElement(
-            'div',
-            null,
-            this.secondsToTime(this.diff()),
-            ' til p\xE5meldingen \xE5pner'
-        ), false);
-    }
-});
-module.exports = Timer;
-
-},{"react":633,"react-bootstrap":325}],11:[function(require,module,exports){
-'use strict';
-
-require('datejs');
-require('datejs/src/i18n/nb-NO');
-Date.i18n.setLanguage('nb-NO');
-var Utils = {
-    formatDateTime: function formatDateTime(timestamp, formatter) {
-        var formatter = formatter || 'yyyy-MM-dd kl. HH:mm:ss';
-        if (timestamp) {
-            return new Date(timestamp).toString(formatter);
-        }
-        return '';
-    },
-    sortByTimestampDesc: function sortByTimestampDesc(eventA, eventB) {
-        return eventB.startTime - eventA.startTime;
-    },
-    sortByTimestampAsc: function sortByTimestampAsc(eventA, eventB) {
-        return eventA.startTime - eventB.startTime;
-    },
-    isOldEvent: function isOldEvent(event) {
-        return Date.today().isAfter(new Date(event.startTime));
-    },
-    isNewEvent: function isNewEvent(event) {
-        return !Date.today().isAfter(new Date(event.startTime));
-    },
-    timeStampToDate: function timeStampToDate(timestamp) {
-        if (timestamp) {
-            var dayName = new Date(timestamp).toString('dddd');
-            return dayName.charAt(0).toUpperCase() + dayName.slice(1);
-        }
-        return '';
-    }
-};
-
-module.exports = Utils;
-
-},{"datejs":62,"datejs/src/i18n/nb-NO":75}],12:[function(require,module,exports){
+},{"./EventStore":3,"./utils/DefaultEvents":21,"moment":233,"react":633,"react-router":433,"react-widgets":475}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1348,20 +848,20 @@ function receiveEvent(eventId, event) {
   };
 }
 
-},{}],13:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
 var EventStore = require('../EventStore');
 var ReactRouter = require('react-router');
-var EventImage = require('../EventImage');
-var Timer = require('../Timer');
-var Utils = require('../Utils');
-var Loader = require('../Loader');
+var EventImage = require('../utils/EventImage');
+var Timer = require('../utils/Timer');
+var Utils = require('../utils/Utils');
+var Loader = require('../utils/Loader');
 var ReactWidgets = require('react-widgets');
 var Combobox = ReactWidgets.Combobox;
 var ReactBootstrap = require('react-bootstrap');
-var Recaptcha = require('../Recaptcha');
+var Recaptcha = require('../utils/Recaptcha');
 var Panel = ReactBootstrap.Panel;
 var LocalStorageMixin = require('react-localstorage');
 
@@ -1719,7 +1219,7 @@ var Event = React.createClass({
 });
 module.exports = Event;
 
-},{"../EventImage":2,"../EventStore":4,"../Loader":7,"../Recaptcha":9,"../Timer":10,"../Utils":11,"react":633,"react-bootstrap":325,"react-localstorage":338,"react-router":433,"react-widgets":475}],14:[function(require,module,exports){
+},{"../EventStore":3,"../utils/EventImage":22,"../utils/Loader":23,"../utils/Recaptcha":24,"../utils/Timer":25,"../utils/Utils":26,"react":633,"react-bootstrap":325,"react-localstorage":338,"react-router":433,"react-widgets":475}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1730,7 +1230,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _redux = require('redux');
 
-var _Utils = require('.././Utils');
+var _Utils = require('../utils/Utils');
 
 var _actions = require('./actions');
 
@@ -1795,7 +1295,7 @@ var rootReducer = (0, _redux.combineReducers)({
 
 exports.default = rootReducer;
 
-},{".././Utils":11,"./actions":12,"redux":651}],15:[function(require,module,exports){
+},{"../utils/Utils":26,"./actions":5,"redux":651}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1989,7 +1489,7 @@ function startup() {
 
 exports.default = startup;
 
-},{"./actions":12,"isomorphic-fetch":151,"redux-saga/effects":634,"regenerator-runtime":653}],16:[function(require,module,exports){
+},{"./actions":5,"isomorphic-fetch":151,"redux-saga/effects":634,"regenerator-runtime":653}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2032,7 +1532,7 @@ var VisibleEvent = (0, _reactRedux.connect)(mapStateToEventProps, mapFetchEventT
 
 exports.default = VisibleEvent;
 
-},{"./actions":12,"./event":13,"react-redux":398}],17:[function(require,module,exports){
+},{"./actions":5,"./event":6,"react-redux":398}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2076,15 +1576,15 @@ function receiveEvents(event, events) {
   };
 }
 
-},{}],18:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
-var EventImage = require('.././EventImage');
+var EventImage = require('../utils/EventImage');
 var ReactRouter = require('react-router');
 var Link = ReactRouter.Link;
-var Utils = require('.././Utils');
-var Loader = require('.././Loader');
+var Utils = require('../utils/Utils');
+var Loader = require('../utils/Loader');
 var classNames = require('classnames');
 var moment = require('moment');
 
@@ -2248,7 +1748,7 @@ var EventList = React.createClass({
 
 module.exports = EventList;
 
-},{".././EventImage":2,".././Loader":7,".././Utils":11,"classnames":37,"moment":233,"react":633,"react-router":433}],19:[function(require,module,exports){
+},{"../utils/EventImage":22,"../utils/Loader":23,"../utils/Utils":26,"classnames":37,"moment":233,"react":633,"react-router":433}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2259,7 +1759,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _redux = require('redux');
 
-var _Utils = require('.././Utils');
+var _Utils = require('../utils/Utils');
 
 var _actions = require('./actions');
 
@@ -2333,7 +1833,7 @@ var rootReducer = (0, _redux.combineReducers)({
 
 exports.default = rootReducer;
 
-},{".././Utils":11,"./actions":17,"redux":651}],20:[function(require,module,exports){
+},{"../utils/Utils":26,"./actions":10,"redux":651}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2419,7 +1919,7 @@ function root() {
   }, _marked[1], this);
 }
 
-},{"./actions":17,"./selectors":21,"isomorphic-fetch":151,"redux-saga/effects":634,"regenerator-runtime":653}],21:[function(require,module,exports){
+},{"./actions":10,"./selectors":14,"isomorphic-fetch":151,"redux-saga/effects":634,"regenerator-runtime":653}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2429,7 +1929,7 @@ var allEventsSelector = exports.allEventsSelector = function allEventsSelector(s
   return state.allEvents;
 };
 
-},{}],22:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2469,7 +1969,275 @@ var VisibleEventList = (0, _reactRedux.connect)(mapStateToEventListProps, mapTog
 
 exports.default = VisibleEventList;
 
-},{"./actions":17,"./list":18,"react-redux":398}],23:[function(require,module,exports){
+},{"./actions":10,"./list":11,"react-redux":398}],16:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var EventStore = require('../EventStore');
+var ImportEventsList = require('./ImportEventsList');
+var moment = require('moment');
+function updateEvent(events, savedEvent) {
+    return events.map(function (item) {
+        if (item.startTime === savedEvent.startTime) {
+            return savedEvent;
+        }
+        return item;
+    });
+}
+
+function parseDates(event) {
+    var convertedEvent = Object.assign({}, event);
+    convertedEvent.startTime = moment(event.startTime).format();
+    convertedEvent.endTime = moment(event.endTime).format();
+    convertedEvent.regStart = moment(event.regStart).format();
+    convertedEvent.regEnd = moment(event.regEnd).format();
+    return convertedEvent;
+}
+
+var ImportEvents = React.createClass({
+    displayName: 'ImportEvents',
+
+
+    getInitialState: function getInitialState() {
+        return {
+            events: [],
+            importDetails: {}
+        };
+    },
+    generateFromUrl: function generateFromUrl(event) {
+        event.preventDefault();
+        EventStore.importEvents(this.state.importDetails).then(function (events) {
+            this.setState({ events: events });
+        }.bind(this));
+    },
+    createEvent: function createEvent(event) {
+        EventStore.addEvent(parseDates(event)).then(function (savedEvent) {
+            this.setState({ events: updateEvent(this.state.events, savedEvent) });
+        }.bind(this));
+    },
+    onValueChange: function onValueChange(event) {
+        var inputName = event.target.name;
+        var stateValue = this.state.importDetails;
+        var value = event.target.value;
+
+        if (inputName === 'maxNumber' || inputName === 'teamId' || inputName === 'tournamentId') {
+            value = value && !isNaN(parseInt(value)) ? parseInt(value) : value;
+        }
+        stateValue[inputName] = value;
+        this.setState({ importDetails: stateValue });
+    },
+    render: function render() {
+        return React.createElement(
+            'div',
+            null,
+            React.createElement(
+                'h2',
+                { className: 'page-header' },
+                'Importere hendelser'
+            ),
+            React.createElement(
+                'form',
+                { className: 'form-horizontal' },
+                React.createElement(
+                    'div',
+                    { className: 'form-group' },
+                    React.createElement(
+                        'label',
+                        { htmlFor: 'subject', className: 'col-sm-2 control-label' },
+                        'Tittel'
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: 'col-sm-5' },
+                        React.createElement('input', { className: 'form-control', type: 'text', name: 'subject', ref: 'subject', placeholder: 'tittel',
+                            value: this.state.importDetails.subject, onChange: this.onValueChange })
+                    )
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'form-group' },
+                    React.createElement(
+                        'label',
+                        { htmlFor: 'tournamentId', className: 'col-sm-2 control-label' },
+                        'TournamentId'
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: 'col-sm-5' },
+                        React.createElement('input', { className: 'form-control', type: 'text', name: 'tournamentId', ref: 'tournamentId',
+                            placeholder: 'tournamentId', value: this.state.importDetails.tournamentId,
+                            onChange: this.onValueChange })
+                    )
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'form-group' },
+                    React.createElement(
+                        'label',
+                        { htmlFor: 'teamId', className: 'col-sm-2 control-label' },
+                        'TeamId'
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: 'col-sm-5' },
+                        React.createElement('input', { className: 'form-control', type: 'text', name: 'teamId', ref: 'teamId', placeholder: 'teamId',
+                            value: this.state.importDetails.teamId, onChange: this.onValueChange })
+                    )
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'form-group' },
+                    React.createElement(
+                        'label',
+                        { htmlFor: 'maxNumber', className: 'col-sm-2 control-label' },
+                        'Maks antall'
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: 'col-sm-5' },
+                        React.createElement('input', { className: 'form-control', type: 'text', name: 'maxNumber', ref: 'maxNumber', placeholder: 'maks antall',
+                            value: this.state.maxNumber, onChange: this.onValueChange })
+                    )
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'form-group' },
+                    React.createElement(
+                        'div',
+                        { className: 'col-sm-offset-2 col-sm-5' },
+                        React.createElement(
+                            'button',
+                            { type: 'button', className: 'btn btn-default', onClick: this.generateFromUrl },
+                            'Generer events'
+                        )
+                    )
+                )
+            ),
+            React.createElement(ImportEventsList, { events: this.state.events, createEvent: this.createEvent })
+        );
+    }
+});
+module.exports = ImportEvents;
+
+},{"../EventStore":3,"./ImportEventsList":17,"moment":233,"react":633}],17:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var Utils = require('../utils/Utils');
+var ReactBootstrap = require('react-bootstrap');
+var Tooltip = ReactBootstrap.Tooltip;
+var OverlayTrigger = ReactBootstrap.OverlayTrigger;
+
+var ImportEventsItem = React.createClass({
+    displayName: 'ImportEventsItem',
+
+    render: function render() {
+        var event = this.props.event;
+        var tipId = "id-" + event.startTime;
+        var tooltip = React.createElement(
+            Tooltip,
+            { id: tipId },
+            React.createElement(
+                'p',
+                { className: 'pre-wrap' },
+                this.props.event.description
+            )
+        );
+        var isSaveable = event.id === null;
+        return React.createElement(
+            'tr',
+            null,
+            React.createElement(
+                'td',
+                null,
+                Utils.timeStampToDate(event.startTime),
+                ' ',
+                Utils.formatDateTime(event.startTime, 'dd.MM.yyyy'),
+                ' ',
+                Utils.formatDateTime(event.startTime, 'HH:mm'),
+                ' - ',
+                Utils.formatDateTime(event.endTime, 'HH:mm')
+            ),
+            React.createElement(
+                'td',
+                null,
+                event.subject,
+                ' - ',
+                event.location
+            ),
+            React.createElement(
+                'td',
+                null,
+                event.maxNumber
+            ),
+            React.createElement(
+                'td',
+                null,
+                ' ',
+                React.createElement(
+                    OverlayTrigger,
+                    { placement: 'top', overlay: tooltip },
+                    React.createElement(
+                        'span',
+                        null,
+                        'info'
+                    )
+                )
+            ),
+            React.createElement(
+                'td',
+                null,
+                isSaveable ? React.createElement(
+                    'button',
+                    { type: 'button', className: 'btn-default btn-danger', onClick: this.props.createEvent(event) },
+                    'Legg til kamp'
+                ) : React.createElement(
+                    'span',
+                    null,
+                    'Lagret'
+                )
+            )
+        );
+    }
+
+});
+
+var ImportEventsList = React.createClass({
+    displayName: 'ImportEventsList',
+
+
+    createEvent: function createEvent(event) {
+        return function () {
+            this.props.createEvent(event);
+        }.bind(this);
+    },
+    render: function render() {
+        var events = this.props.events.map(function (event, i) {
+            return React.createElement(ImportEventsItem, { event: event, createEvent: this.createEvent, key: i });
+        }.bind(this));
+        return events.length == 0 ? React.createElement('div', null) : React.createElement(
+            'div',
+            null,
+            React.createElement(
+                'h2',
+                { className: 'page-header' },
+                'Genererte kamper'
+            ),
+            React.createElement(
+                'table',
+                { className: 'table table-striped table-bordered' },
+                React.createElement(
+                    'tbody',
+                    null,
+                    events
+                )
+            )
+        );
+    }
+});
+module.exports = ImportEventsList;
+
+},{"../utils/Utils":26,"react":633,"react-bootstrap":325}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2495,7 +2263,7 @@ var IndexReducer = (0, _redux.combineReducers)({
 
 exports.default = IndexReducer;
 
-},{"./event/reducer":14,"./events/reducer":19,"redux":651}],24:[function(require,module,exports){
+},{"./event/reducer":7,"./events/reducer":12,"redux":651}],19:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2531,7 +2299,7 @@ function IndexSaga() {
   }, _marked[0], this);
 }
 
-},{"./event/sagas":15,"./events/sagas":20}],25:[function(require,module,exports){
+},{"./event/sagas":8,"./events/sagas":13}],20:[function(require,module,exports){
 'use strict';
 
 var _regeneratorRuntime = require('regenerator-runtime');
@@ -2567,7 +2335,7 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var EventStore = require('./EventStore');
 var NewEvent = require('./NewEvent');
-var ImportEvents = require('./ImportEvents');
+var ImportEvents = require('./import/ImportEvents');
 
 var VisibleEvent = require('./event/visibleEvent');
 var EventLineup = require('./EventLineup');
@@ -2620,7 +2388,7 @@ var routes = React.createElement(
 
 ReactDOM.render(routes, document.getElementById('react-content'));
 
-},{"./App":1,"./EventLineup":3,"./EventStore":4,"./ImportEvents":5,"./NewEvent":8,"./event/visibleEvent":16,"./events/visibleEventList":22,"./index-reducer":23,"./index-sagas":24,"moment":233,"moment/locale/nb":232,"react":633,"react-bootstrap":325,"react-dom":336,"react-redux":398,"react-router":433,"react-widgets/lib/localizers/moment":476,"redux":651,"redux-saga":635,"regenerator-runtime":653}],26:[function(require,module,exports){
+},{"./App":1,"./EventLineup":2,"./EventStore":3,"./NewEvent":4,"./event/visibleEvent":9,"./events/visibleEventList":15,"./import/ImportEvents":16,"./index-reducer":18,"./index-sagas":19,"moment":233,"moment/locale/nb":232,"react":633,"react-bootstrap":325,"react-dom":336,"react-redux":398,"react-router":433,"react-widgets/lib/localizers/moment":476,"redux":651,"redux-saga":635,"regenerator-runtime":653}],21:[function(require,module,exports){
 'use strict';
 
 function nextMonday(hour, minute) {
@@ -2683,7 +2451,239 @@ var DefaultEvents = {
 };
 module.exports = DefaultEvents;
 
-},{}],27:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+
+var EventImage = React.createClass({
+    displayName: 'EventImage',
+
+    render: function render() {
+        var images = {
+            general: '/css/people.png',
+            trophy: '/css/sport.png'
+        };
+        var imageSrc = this.props.event.eventSubType === 'Match' ? images.trophy : images.general;
+        return React.createElement('img', { className: 'margin-right-5 pull-left', src: imageSrc });
+    }
+});
+
+module.exports = EventImage;
+
+},{"react":633}],23:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+
+var Loader = React.createClass({
+    displayName: 'Loader',
+
+    render: function render() {
+        if (this.props.isLoading) {
+            return React.createElement('div', { className: 'spinner' });
+        } else {
+            return React.createElement(
+                'div',
+                null,
+                this.props.children
+            );
+        }
+    }
+});
+module.exports = Loader;
+
+},{"react":633}],24:[function(require,module,exports){
+// From https://github.com/appleboy/react-recaptcha
+// Changed to fulfill requirements of loading script in different ways
+'use strict';
+
+var React = require('react');
+
+var Recaptcha = React.createClass({
+  displayName: 'Recaptcha',
+
+  propTypes: {
+    className: React.PropTypes.string,
+    CallbackName: React.PropTypes.string,
+    elementID: React.PropTypes.string,
+    onloadCallback: React.PropTypes.func,
+    verifyCallback: React.PropTypes.func
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      elementID: 'g-recaptcha',
+      onloadCallback: undefined,
+      onloadCallbackName: 'onloadRecaptchaCallback',
+      verifyCallback: undefined,
+      render: 'onload',
+      theme: 'light',
+      type: 'image'
+    };
+  },
+  resetRecaptcha: function resetRecaptcha() {
+    // Two lines of hacky code - not able to destroy previously created reCaptchas
+    if (___grecaptcha_cfg) {
+      ___grecaptcha_cfg.Ye = {};
+      ___grecaptcha_cfg.count = 0;
+    }
+  },
+  renderAsyncRecaptcha: function renderAsyncRecaptcha() {
+    this.resetRecaptcha();
+    grecaptcha.render(this.props.elementID, {
+      'sitekey': this.props.sitekey,
+      'callback': this.props.verifyCallback ? this.props.verifyCallback : undefined,
+      'theme': this.props.theme,
+      'type': this.props.type
+    });
+
+    if (this.props.onloadCallback) {
+      this.props.onloadCallback();
+    }
+  },
+  componentDidMount: function componentDidMount() {
+    // Check if the grecaptcha is already loaded, if not - add a callback
+    if (window.grecaptcha) {
+      this.renderAsyncRecaptcha();
+    } else {
+      window[this.props.onloadCallbackName] = function () {
+        this.renderAsyncRecaptcha();
+      }.bind(this);
+    }
+  },
+  render: function render() {
+    return React.createElement('div', { id: this.props.elementID,
+      'data-onloadcallbackname': this.props.onloadCallbackName,
+      'data-verifycallbackname': this.props.verifyCallbackName
+    });
+  }
+});
+
+module.exports = Recaptcha;
+
+},{"react":633}],25:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var ReactBootstrap = require('react-bootstrap');
+var Alert = ReactBootstrap.Alert;
+var Timer = React.createClass({
+    displayName: 'Timer',
+
+
+    getInitialState: function getInitialState() {
+        return {
+            elapsed: 0
+        };
+    },
+    componentWillMount: function componentWillMount() {
+        this.timer = setInterval(this.tick, 1000);
+    },
+    componentWillUnmount: function componentWillUnmount() {
+        clearInterval(this.timer);
+    },
+    tick: function tick() {
+        if (this.diff() <= 0) {
+            clearInterval(this.timer);
+            this.setState({ elapsed: this.props.remainingTime * 1000 });
+        } else {
+            this.setState({ elapsed: this.state.elapsed + 1 });
+        }
+    },
+    diff: function diff() {
+        return (this.props.remainingTime / 1000).toFixed(0) - this.state.elapsed;
+    },
+    secondsToTime: function secondsToTime(remainingSeconds) {
+        var returnString = '';
+        var days = Math.floor(remainingSeconds / 3600 / 24);
+        var hours = Math.floor(remainingSeconds / 3600 % 24);
+        var minutes = Math.floor(remainingSeconds / 60 % 60);
+        var seconds = (remainingSeconds % 60).toFixed(0);
+
+        if (days > 0) {
+            var dayString = days > 1 ? ' dager ' : ' dag ';
+            returnString += days + dayString;
+        }
+        if (hours > 0) {
+            var hourString = hours > 1 ? ' timer ' : ' time ';
+            returnString += hours + hourString;
+        }
+        if (minutes > 0) {
+            var minuteString = minutes > 1 ? ' minutter ' : ' minutt ';
+            returnString += minutes + minuteString;
+        }
+        returnString += seconds + ' sekunder';
+
+        return returnString;
+    },
+    alertWrapper: function alertWrapper(content, open) {
+        return React.createElement(
+            Alert,
+            { bsStyle: open ? 'success' : 'danger', className: 'col-xs-12' },
+            React.createElement(
+                'h3',
+                { className: 'no-margin' },
+                content
+            )
+        );
+    },
+    render: function render() {
+        if (this.diff() <= 0) {
+            return this.alertWrapper(React.createElement(
+                'div',
+                null,
+                'P\xE5meldingen er \xE5pnet!'
+            ), true);
+        }
+        return this.alertWrapper(React.createElement(
+            'div',
+            null,
+            this.secondsToTime(this.diff()),
+            ' til p\xE5meldingen \xE5pner'
+        ), false);
+    }
+});
+module.exports = Timer;
+
+},{"react":633,"react-bootstrap":325}],26:[function(require,module,exports){
+'use strict';
+
+require('datejs');
+require('datejs/src/i18n/nb-NO');
+Date.i18n.setLanguage('nb-NO');
+var Utils = {
+    formatDateTime: function formatDateTime(timestamp, formatter) {
+        var formatter = formatter || 'yyyy-MM-dd kl. HH:mm:ss';
+        if (timestamp) {
+            return new Date(timestamp).toString(formatter);
+        }
+        return '';
+    },
+    sortByTimestampDesc: function sortByTimestampDesc(eventA, eventB) {
+        return eventB.startTime - eventA.startTime;
+    },
+    sortByTimestampAsc: function sortByTimestampAsc(eventA, eventB) {
+        return eventA.startTime - eventB.startTime;
+    },
+    isOldEvent: function isOldEvent(event) {
+        return Date.today().isAfter(new Date(event.startTime));
+    },
+    isNewEvent: function isNewEvent(event) {
+        return !Date.today().isAfter(new Date(event.startTime));
+    },
+    timeStampToDate: function timeStampToDate(timestamp) {
+        if (timestamp) {
+            var dayName = new Date(timestamp).toString('dddd');
+            return dayName.charAt(0).toUpperCase() + dayName.slice(1);
+        }
+        return '';
+    }
+};
+
+module.exports = Utils;
+
+},{"datejs":62,"datejs/src/i18n/nb-NO":75}],27:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/assign"), __esModule: true };
 },{"core-js/library/fn/object/assign":38}],28:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/create"), __esModule: true };
@@ -70181,4 +70181,4 @@ arguments[4][382][0].apply(exports,arguments)
   self.fetch.polyfill = true
 })(typeof self !== 'undefined' ? self : this);
 
-},{}]},{},[25]);
+},{}]},{},[20]);

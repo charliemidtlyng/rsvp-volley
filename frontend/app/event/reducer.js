@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux'
-import { isOldEvent, isNewEvent }  from '.././Utils';
+import { isOldEvent, isNewEvent }  from '../utils/Utils';
 
 
 import {

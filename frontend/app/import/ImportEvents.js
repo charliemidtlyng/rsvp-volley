@@ -1,5 +1,5 @@
 var React = require('react');
-var EventStore = require('./EventStore');
+var EventStore = require('../EventStore');
 var ImportEventsList = require('./ImportEventsList');
 var moment = require('moment');
 function updateEvent(events, savedEvent) {

@@ -2,10 +2,10 @@
 var React = require('react');
 var EventStore = require('./EventStore');
 var ReactRouter = require('react-router');
-var Utils = require('./Utils');
+var Utils = require('./utils/Utils');
 var ReactBootstrap = require('react-bootstrap');
 var Input = ReactBootstrap.Input;
-var Recaptcha = require('./Recaptcha');
+var Recaptcha = require('./utils/Recaptcha');
 var Panel = ReactBootstrap.Panel;
 
 var Participant = React.createClass({

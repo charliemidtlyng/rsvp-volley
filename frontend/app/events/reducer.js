@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux'
-import { isOldEvent, isNewEvent, sortByTimestampAsc, sortByTimestampDesc }  from '.././Utils';
+import { isOldEvent, isNewEvent, sortByTimestampAsc, sortByTimestampDesc }  from '../utils/Utils';
 
 
 import {

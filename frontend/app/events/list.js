@@ -1,10 +1,10 @@
 
 var React = require('react');
-var EventImage = require('.././EventImage');
+var EventImage = require('../utils/EventImage');
 var ReactRouter = require('react-router');
 var Link = ReactRouter.Link;
-var Utils = require('.././Utils');
-var Loader = require('.././Loader');
+var Utils = require('../utils/Utils');
+var Loader = require('../utils/Loader');
 var classNames = require('classnames');
 var moment = require('moment');
 

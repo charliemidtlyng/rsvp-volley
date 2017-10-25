@@ -16,7 +16,8 @@ var ShowHide = React.createClass({
             'btn-danger': this.props.visibleHistory
         });
         var text = this.props.visibleHistory ? 'Skjul historikk' : 'Vis historikk';
-        return <div className="row"><div className="margin-bottom-10 col-xs-12"> <button className={btnClasses} onClick={this.props.toggleShowHide}>{text}</button> </div></div>
+        const toggle = () => { this.props.toggleShowHide(!this.props.visibleHistory) };
+        return <div className="row"><div className="margin-bottom-10 col-xs-12"> <button className={btnClasses} onClick={toggle}>{text}</button> </div></div>
     }
 });
 

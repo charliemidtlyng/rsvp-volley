@@ -1,14 +1,9 @@
 var React = require('react');
 var EventStore = require('./EventStore');
-var ReactRouter = require('react-router');
-var Router = ReactRouter.Router;
 var ReactWidgets = require('react-widgets');
 var DefaultEvents = require('./utils/DefaultEvents');
 var DateTimePicker = ReactWidgets.DateTimePicker;
 var Combobox = ReactWidgets.Combobox;
-var Link = Router.Link;
-var browserHistory = ReactRouter.browserHistory;
-var moment = require('moment');
 var NewEvent = React.createClass({
 
     mixins: [],
@@ -46,8 +41,7 @@ var NewEvent = React.createClass({
     createMultipleEvent: function (event) {
         event.preventDefault();
         
-        [...Array(this.state.repeats)].forEach((_, i) => {
-            const index = i + 1;
+        [...Array(this.state.repeats)].forEach((_, index) => {
             const current = {
                 subject: this.state.subject,
                 description: this.state.description,

@@ -389,15 +389,10 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 var React = require('react');
 var EventStore = require('./EventStore');
-var ReactRouter = require('react-router');
-var Router = ReactRouter.Router;
 var ReactWidgets = require('react-widgets');
 var DefaultEvents = require('./utils/DefaultEvents');
 var DateTimePicker = ReactWidgets.DateTimePicker;
 var Combobox = ReactWidgets.Combobox;
-var Link = Router.Link;
-var browserHistory = ReactRouter.browserHistory;
-var moment = require('moment');
 var NewEvent = React.createClass({
     displayName: 'NewEvent',
 
@@ -439,8 +434,7 @@ var NewEvent = React.createClass({
 
         event.preventDefault();
 
-        [].concat(_toConsumableArray(Array(this.state.repeats))).forEach(function (_, i) {
-            var index = i + 1;
+        [].concat(_toConsumableArray(Array(this.state.repeats))).forEach(function (_, index) {
             var current = {
                 subject: _this.state.subject,
                 description: _this.state.description,
@@ -767,7 +761,7 @@ var NewEvent = React.createClass({
 });
 module.exports = NewEvent;
 
-},{"./EventStore":3,"./utils/DefaultEvents":21,"moment":233,"react":633,"react-router":433,"react-widgets":475}],5:[function(require,module,exports){
+},{"./EventStore":3,"./utils/DefaultEvents":21,"react":633,"react-widgets":475}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1539,12 +1533,18 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.refreshEvents = refreshEvents;
+exports.refreshOldEvents = refreshOldEvents;
 exports.toggleOldEvents = toggleOldEvents;
 exports.requestEvents = requestEvents;
+exports.requestOldEvents = requestOldEvents;
 exports.receiveEvents = receiveEvents;
+exports.receiveOldEvents = receiveOldEvents;
 var REFRESH_EVENTS = exports.REFRESH_EVENTS = 'REFRESH_EVENTS';
+var REFRESH_OLD_EVENTS = exports.REFRESH_OLD_EVENTS = 'REFRESH_OLD_EVENTS';
 var REQUEST_EVENTS = exports.REQUEST_EVENTS = 'REQUEST_EVENTS';
+var REQUEST_OLD_EVENTS = exports.REQUEST_OLD_EVENTS = 'REQUEST_OLD_EVENTS';
 var RECEIVE_EVENTS = exports.RECEIVE_EVENTS = 'RECEIVE_EVENTS';
+var RECEIVE_OLD_EVENTS = exports.RECEIVE_OLD_EVENTS = 'RECEIVE_OLD_EVENTS';
 var TOGGLE_OLD_EVENTS = exports.TOGGLE_OLD_EVENTS = 'TOGGLE_OLD_EVENTS';
 
 function refreshEvents() {
@@ -1552,6 +1552,13 @@ function refreshEvents() {
     type: REFRESH_EVENTS
   };
 }
+
+function refreshOldEvents() {
+  return {
+    type: REFRESH_OLD_EVENTS
+  };
+}
+
 function toggleOldEvents(event, events) {
   return {
     type: TOGGLE_OLD_EVENTS,
@@ -1567,9 +1574,24 @@ function requestEvents(event) {
   };
 }
 
+function requestOldEvents(event) {
+  return {
+    type: REQUEST_OLD_EVENTS,
+    event: event
+  };
+}
+
 function receiveEvents(event, events) {
   return {
     type: RECEIVE_EVENTS,
+    event: event,
+    events: events,
+    receivedAt: Date.now()
+  };
+}
+function receiveOldEvents(event, events) {
+  return {
+    type: RECEIVE_OLD_EVENTS,
     event: event,
     events: events,
     receivedAt: Date.now()
@@ -1592,12 +1614,17 @@ var ShowHide = React.createClass({
     displayName: 'ShowHide',
 
     render: function render() {
+        var _this = this;
+
         var btnClasses = classNames({
             'btn': true,
             'btn-default': !this.props.visibleHistory,
             'btn-danger': this.props.visibleHistory
         });
         var text = this.props.visibleHistory ? 'Skjul historikk' : 'Vis historikk';
+        var toggle = function toggle() {
+            _this.props.toggleShowHide(!_this.props.visibleHistory);
+        };
         return React.createElement(
             'div',
             { className: 'row' },
@@ -1607,7 +1634,7 @@ var ShowHide = React.createClass({
                 ' ',
                 React.createElement(
                     'button',
-                    { className: btnClasses, onClick: this.props.toggleShowHide },
+                    { className: btnClasses, onClick: toggle },
                     text
                 ),
                 ' '
@@ -1804,6 +1831,21 @@ function fetchEventList() {
 	}
 }
 
+function fetchOldEventList() {
+	var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
+	var action = arguments[1];
+
+	switch (action.type) {
+		case _actions.REFRESH_OLD_EVENTS:
+		case _actions.REQUEST_OLD_EVENTS:
+			return _extends({}, state, { loading: true, items: [] });
+		case _actions.RECEIVE_OLD_EVENTS:
+			return _extends({}, state, { loading: false, items: action.events, lastUpdated: action.receivedAt });
+		default:
+			return state;
+	}
+}
+
 function mapOld(events) {
 	return events.filter(_Utils.isOldEvent).sort(_Utils.sortByTimestampDesc);
 }
@@ -1820,6 +1862,11 @@ function events() {
 		case _actions.RECEIVE_EVENTS:
 		case _actions.REFRESH_EVENTS:
 			var newState = fetchEventList(state["events"], action);
+			return _extends({}, state, newState, { oldEvents: mapOld(newState.items), upcomingEvents: mapUpComing(newState.items) });
+		case _actions.REQUEST_OLD_EVENTS:
+		case _actions.RECEIVE_OLD_EVENTS:
+		case _actions.REFRESH_OLD_EVENTS:
+			var newState = fetchOldEventList(state["events"], action);
 			return _extends({}, state, newState, { oldEvents: mapOld(newState.items), upcomingEvents: mapUpComing(newState.items) });
 		default:
 			return state;
@@ -1841,6 +1888,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.fetchPostsApi = fetchPostsApi;
 exports.fetchPosts = fetchPosts;
+exports.fetchOldPosts = fetchOldPosts;
 exports.default = root;
 
 var _effects = require('redux-saga/effects');
@@ -1863,14 +1911,15 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _marked = [fetchPosts, root].map(_regeneratorRuntime2.default.mark);
+var _marked = [fetchPosts, fetchOldPosts, root].map(_regeneratorRuntime2.default.mark);
 
 window.regeneratorRuntime = _regeneratorRuntime2.default;
 
-var API = '/api/events';
+var API_ALL = '/api/events';
+var API_UPCOMING = '/api/events/upcoming';
 
-function fetchPostsApi(event) {
-  return (0, _isomorphicFetch2.default)(API).then(function (response) {
+function fetchPostsApi(apiUrl) {
+  return (0, _isomorphicFetch2.default)(apiUrl).then(function (response) {
     return response.json();
   }).then(function (json) {
     return json;
@@ -1888,7 +1937,7 @@ function fetchPosts(event) {
 
         case 2:
           _context.next = 4;
-          return (0, _effects.call)(fetchPostsApi, event);
+          return (0, _effects.call)(fetchPostsApi, API_UPCOMING);
 
         case 4:
           posts = _context.sent;
@@ -1903,20 +1952,50 @@ function fetchPosts(event) {
   }, _marked[0], this);
 }
 
-function root() {
-  return _regeneratorRuntime2.default.wrap(function root$(_context2) {
+function fetchOldPosts(event) {
+  var posts;
+  return _regeneratorRuntime2.default.wrap(function fetchOldPosts$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
           _context2.next = 2;
-          return (0, _effects.takeEvery)(actions.REFRESH_EVENTS, fetchPosts);
+          return (0, _effects.put)(actions.requestOldEvents(event));
 
         case 2:
+          _context2.next = 4;
+          return (0, _effects.call)(fetchPostsApi, API_ALL);
+
+        case 4:
+          posts = _context2.sent;
+          _context2.next = 7;
+          return (0, _effects.put)(actions.receiveOldEvents(event, posts));
+
+        case 7:
         case 'end':
           return _context2.stop();
       }
     }
   }, _marked[1], this);
+}
+
+function root() {
+  return _regeneratorRuntime2.default.wrap(function root$(_context3) {
+    while (1) {
+      switch (_context3.prev = _context3.next) {
+        case 0:
+          _context3.next = 2;
+          return (0, _effects.takeEvery)(actions.REFRESH_EVENTS, fetchPosts);
+
+        case 2:
+          _context3.next = 4;
+          return (0, _effects.takeEvery)(actions.REFRESH_OLD_EVENTS, fetchOldPosts);
+
+        case 4:
+        case 'end':
+          return _context3.stop();
+      }
+    }
+  }, _marked[2], this);
 }
 
 },{"./actions":10,"./selectors":14,"isomorphic-fetch":151,"redux-saga/effects":634,"regenerator-runtime":653}],14:[function(require,module,exports){
@@ -1956,7 +2035,10 @@ var mapStateToEventListProps = function mapStateToEventListProps(state) {
 // // maps redux store dispatch to list of components
 var mapToggleOldToProps = function mapToggleOldToProps(dispatch) {
 	return {
-		toggleOldEvents: function toggleOldEvents() {
+		toggleOldEvents: function toggleOldEvents(show) {
+			if (show) {
+				dispatch((0, _actions.refreshOldEvents)());
+			}
 			dispatch((0, _actions.toggleOldEvents)());
 		},
 		fetchEvents: function fetchEvents() {

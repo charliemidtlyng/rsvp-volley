@@ -24,8 +24,9 @@ class MailServiceImpl implements MailService {
         if (participant.email) {
             SendGrid sendgrid = new SendGrid(System.getenv("SENDGRID_USERNAME"), System.getenv("SENDGRID_PASSWORD"))
             SendGrid.Email email = new SendGrid.Email()
+            String epostFra = System.getenv("EPOST_FRA")
             email.addTo(participant.email)
-            email.setFrom("charlie.midtlyng@gmail.com")
+            email.setFrom(epostFra)
             email.setSubject("[BEKK-Fotball] - ${event.subject}")
             def startTimeString = event.startTime?.
                     withZone(DateTimeZone.forID('Europe/Oslo'))?.
@@ -53,11 +54,13 @@ class MailServiceImpl implements MailService {
     @Override
     void sendEventNotification(Event event) {
         String mailText = generateNotificationMailText(event)
+        String epostFra = System.getenv("EPOST_FRA")
+        String epostTil = System.getenv("EPOST_LISTE")
 
         SendGrid sendgrid = new SendGrid(System.getenv("SENDGRID_USERNAME"), System.getenv("SENDGRID_PASSWORD"))
         SendGrid.Email email = new SendGrid.Email()
-        email.addTo("fotball@bekk.no")
-        email.setFrom("charlie.midtlyng@gmail.com")
+        email.addTo(epostTil)
+        email.setFrom(epostFra)
         email.setSubject(generateSubject(event))
         email.setHtml(mailText)
         try {
@@ -114,10 +117,10 @@ class MailServiceImpl implements MailService {
     
     static void sendMailToAdmin(Participant p, event) {
         SendGrid sendgrid = new SendGrid(System.getenv("SENDGRID_USERNAME"), System.getenv("SENDGRID_PASSWORD"))
-
+        String epostAdmin = System.getenv("EPOST_FRA")
         SendGrid.Email email = new SendGrid.Email()
-        email.addTo("charlie.midtlyng@bekk.no")
-        email.setFrom("charlie.midtlyng@bekk.no")
+        email.addTo(epostAdmin)
+        email.setFrom(epostAdmin)
         email.setSubject("[BEKK-Fotball] - ${event.subject}")
         email.setText("${p.name} har gått fra reservelisten til påmeldtlisten, men ikke registrert eposten sin må derfor få beskjed!")
         try {

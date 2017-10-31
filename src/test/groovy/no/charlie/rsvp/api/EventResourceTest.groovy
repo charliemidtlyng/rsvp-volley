@@ -45,7 +45,7 @@ class EventResourceTest extends Specification {
                     "creator"     : "Charlie",
                     "location"    : "Vallhall",
                     "description" : "Vanlig trening",
-                    "eventType"   : "Football",
+                    "eventType"   : "Volleyball",
                     "eventSubType": "Match",
                     "maxNumber"   : 15
             ]

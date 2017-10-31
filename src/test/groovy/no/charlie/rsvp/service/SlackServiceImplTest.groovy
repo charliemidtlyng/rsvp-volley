@@ -38,7 +38,7 @@ class SlackServiceImplTest extends Specification {
                 regEnd: endTime,
                 subject: 'Trening',
                 location: 'Vallhall',
-                description: 'Fotballtrening i Vallhall.'
+                description: 'Volleyballtrening.'
         )
     }
 }

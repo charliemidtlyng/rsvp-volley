@@ -14,7 +14,7 @@ import javax.persistence.Transient
 
 import static no.charlie.rsvp.domain.Event.EventSubType.Match
 import static no.charlie.rsvp.domain.Event.EventSubType.Training
-import static no.charlie.rsvp.domain.Event.EventType.Football
+import static no.charlie.rsvp.domain.Event.EventType.Volleyball
 /**
  * @author Charlie Midtlyng (charlie.midtlyng@BEKK.no)
  */
@@ -26,7 +26,7 @@ class Event {
     @PDateTime DateTime regStart
     @PDateTime DateTime regEnd
 
-    @PEnum EventType eventType = Football
+    @PEnum EventType eventType = Volleyball
     @PEnum EventSubType eventSubType = Training
 
     String creator
@@ -72,7 +72,7 @@ class Event {
         return """\
                BEGIN:VCALENDAR
                VERSION:2.0
-               PRODID:-//BEKK//BEKK Fotball//NO
+               PRODID:-//BEKK//BEKK Volleyball//NO
                BEGIN:VEVENT
                UID:$id@rsvp-app
                DTSTAMP;TZID=Europe/Oslo:${dt.print(DateTime.now().withZone(tz))}
@@ -85,7 +85,7 @@ class Event {
     }
 
     public static enum EventType {
-        Football
+        Volleyball
     }
 
     public static enum EventSubType {

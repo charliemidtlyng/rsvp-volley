@@ -20,8 +20,6 @@ class SlackServiceImpl implements SlackService {
     private static final Logger LOGGER = getLogger(SlackService)
 
     String webhookUrl = 'https://hooks.slack.com'
-    String matchImage = 'http://www.soccerblog.com/wp-content/uploads/2016/09/cl.jpg'
-    String trainingImage = 'http://pub.tv2.no/multimedia/TV2/archive/00560/pondus_illustrasjon_560016i.jpg'
 
     @Override
     void sendEventNotification(Event event) {
@@ -36,7 +34,6 @@ class SlackServiceImpl implements SlackService {
 
         def http = new HTTPBuilder(webhookUrl)
         http.ignoreSSLIssues()
-        def eventImageUrl = event.eventSubType == Match ? matchImage : trainingImage
         http.post(
                 path: webhookPath,
                 requestContentType: JSON,
@@ -44,8 +41,7 @@ class SlackServiceImpl implements SlackService {
                         text: event.subject,
                         attachments: [[
                                 fallback : notification,
-                                text     : notification,
-                                image_url: eventImageUrl
+                                text     : notification
                         ]]
                 ]);
 
@@ -65,6 +61,6 @@ class SlackServiceImpl implements SlackService {
     }
 
     private static String eventUrl(Event event) {
-        "<http://fotball.bekk.no/#/event/${event.id}>"
+        "<http://volleyball.bekk.no/#/event/${event.id}>"
     }
 }

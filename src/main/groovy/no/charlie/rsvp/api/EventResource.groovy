@@ -149,7 +149,7 @@ class EventResource {
                 location: map.location,
                 subject: map.subject,
                 description: map.description,
-                eventType: map.eventType ? map.eventType as EventType : EventType.Football,
+                eventType: map.eventType ? map.eventType as EventType : EventType.Volleyball,
                 eventSubType: map.eventSubType ? map.eventSubType as EventSubType : EventSubType.Training,
                 maxNumber: map.maxNumber ? map.maxNumber : Integer.MAX_VALUE)
     }

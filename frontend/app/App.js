@@ -12,7 +12,7 @@ var App = React.createClass({
                 <Navbar fixedTop={true} >
                     <Navbar.Header>
                         <Navbar.Brand>
-                            <a href="#"><img src="/css/fotball_logo.png" /></a>
+                            <a href="#"><img src="/css/volley_logo.png" /></a>
                         </Navbar.Brand>
                         <Navbar.Toggle />
                     </Navbar.Header>

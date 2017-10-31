@@ -41,7 +41,7 @@ class SmsServiceImpl implements SmsService {
         String password = System.getenv('SMS_PASSWORD')
 
         def http = new HTTPBuilder('https://telenormobil.no')
-        String message = "${otp} - [BEKK-Fotball] Engangspassord"
+        String message = "${otp} - [BEKK-Volleyball] Engangspassord"
         http.get(
                 path: '/smapi/3/sms',
                 query: [

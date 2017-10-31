@@ -17,7 +17,7 @@ var NewEvent = React.createClass({
             endTime: null,
             regStart: null,
             regEnd: null,
-            eventType: 'Football',
+            eventType: 'Volleyball',
             eventSubType: 'Training',
             creator: '',
             repeats: 1
@@ -25,7 +25,7 @@ var NewEvent = React.createClass({
     },
     getDefaultProps: function(){
       return {
-          listOfEventTypes: ['Football'],
+          listOfEventTypes: ['Volleyball'],
           listOfEventSubTypes: ['Match', 'Training'],
           messages: {
               emptyFilter: {}
@@ -100,16 +100,12 @@ var NewEvent = React.createClass({
             eventSubType: defaultValue.eventSubType
         });
     },
-    defaultFootball: function() {
-        var defaultValue = DefaultEvents.football();
+    defaultTraining: function() {
+        var defaultValue = DefaultEvents.training();
         this.updateWithDefaultValue(defaultValue);
     },
-    defaultFootballMatch: function() {
-        var defaultValue = DefaultEvents.footballMatch();
-        this.updateWithDefaultValue(defaultValue)
-    },
-    defaultFootballMatchOutdoor: function() {
-        var defaultValue = DefaultEvents.footballMatchOutdoor();
+    defaultMatch: function() {
+        var defaultValue = DefaultEvents.match();
         this.updateWithDefaultValue(defaultValue)
     },
     render: function () {
@@ -119,13 +115,10 @@ var NewEvent = React.createClass({
                     <form className="form-horizontal">
                         <div className="form-group">
                             <span className="col-sm-offset-2 col-sm-3">
-                                <button type="button" className="btn btn-default" onClick={this.defaultFootball}>Ferdigutfyll fotballtrening</button>
+                                <button type="button" className="btn btn-default" onClick={this.defaultTraining}>Ferdigutfyll trening</button>
                             </span>
                             <span className="col-sm-3">
-                                <button type="button" className="btn btn-default" onClick={this.defaultFootballMatch}>Ferdigutfyll fotballkamp (inne)</button>
-                            </span>
-                            <span className="col-sm-3">
-                                <button type="button" className="btn btn-default" onClick={this.defaultFootballMatch}>Ferdigutfyll fotballkamp (ute)</button>
+                                <button type="button" className="btn btn-default" onClick={this.defaultMatch}>Ferdigutfyll kamp</button>
                             </span>
                         </div>
                         <div className="form-group">

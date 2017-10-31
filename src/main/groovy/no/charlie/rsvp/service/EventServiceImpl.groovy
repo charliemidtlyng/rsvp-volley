@@ -106,7 +106,7 @@ class EventServiceImpl implements EventService {
         }.last()
         try {
             mailService.sendMail(newAttender, event)
-            smsService.sendSms(newAttender, '[BEKK-Fotball] Du er flyttet fra reservelisten til paameldtlisten! PS:meld deg av dersom du ikke kan stille. -Charlie')
+            smsService.sendSms(newAttender, '[BEKK-Volleyball] Du er flyttet fra reservelisten til paameldtlisten! PS:meld deg av dersom du ikke kan stille. -BEKKVolley')
         } catch (Exception e) {
             LOGGER.error("Kunne ikke sende mail/SMS", e)
         }

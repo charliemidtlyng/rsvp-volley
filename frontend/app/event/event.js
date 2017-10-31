@@ -111,8 +111,8 @@ var Event = React.createClass({
         this.props.fetchEventById(this.props.params.id);
     },
     deleteEvent: function () {
-        var luckyNumber = prompt("Er du helt sikker på at du vil slette denne hendelsen? \n I så fall - hvilket draktnummer har Charlie")
-        if (luckyNumber && parseInt(luckyNumber) === 7) {
+        var luckyNumber = prompt("Er du helt sikker på at du vil slette denne hendelsen? \n I så fall - hva er meningen med livet?")
+        if (luckyNumber && parseInt(luckyNumber) === 42) {
             EventStore.removeEvent(this.props.event.currentEvent.id);
             window.location.hash = '';
         }

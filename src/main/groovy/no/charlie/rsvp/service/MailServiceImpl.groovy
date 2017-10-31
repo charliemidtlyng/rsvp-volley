@@ -27,7 +27,7 @@ class MailServiceImpl implements MailService {
             String epostFra = System.getenv("EPOST_FRA")
             email.addTo(participant.email)
             email.setFrom(epostFra)
-            email.setSubject("[BEKK-Fotball] - ${event.subject}")
+            email.setSubject("[BEKK-Volleyball] - ${event.subject}")
             def startTimeString = event.startTime?.
                     withZone(DateTimeZone.forID('Europe/Oslo'))?.
                     toLocalDateTime()?.toString('yyyy-MM-dd HH:mm')
@@ -72,7 +72,7 @@ class MailServiceImpl implements MailService {
     }
 
     String generateSubject(Event event) {
-        "[BEKK-Fotball] ${event.subject} på ${toDayOfWeek(event.startTime)}"
+        "[BEKK-Volleyball] ${event.subject} på ${toDayOfWeek(event.startTime)}"
     }
 
     private String generateNotificationMailText(Event event) {
@@ -81,7 +81,7 @@ class MailServiceImpl implements MailService {
         def startDay = toDayOfWeek(event.startTime)
         def startTime = toTime(event.startTime)
         def endTime = toTime(event.endTime)
-        def url = "http://fotball.bekk.no/#/event/${event.id}"
+        def url = "http://volleyball.bekk.no/#/event/${event.id}"
         def regStartDay = toDayOfWeek(event.regStart)
         def regStartTime = toTime(event.regStart)
         if (event.eventSubType == Training) {
@@ -95,9 +95,8 @@ class MailServiceImpl implements MailService {
             </ul>
             <p>Info og påmelding: <a href='${url}'>${url}</a></p>
 
-            <p>NB: Det er mange avmeldinger i siste liten. Tenk på dine kollegaer og meld deg av senest 12:00 på ${startDay}!</p>
-            <p><b>CHARLIE</b></p>
-            <p><b>99402316</b></p>"""
+            <p>NB: Det er upraktisk med avmeldinger i siste liten. Tenk på dine kollegaer og meld deg av senest 12:00 på ${startDay}!</p>
+            <p><b>BEKK Volleyball</b></p>"""
         } else if (event.eventSubType == Match) {
             mailText = """<p>Hei!</p>
             <p>Ny kamp på ${startDay}. Påmelding er åpen!</p>
@@ -108,8 +107,7 @@ class MailServiceImpl implements MailService {
             <p>Info og påmelding: <a href='${url}'>${url}</a></p>
 
             <p>NB: Uttak skjer innen rimelig tid!</p>
-            <p><b>CHARLIE</b></p>
-            <p><b>99402316</b></p>"""
+            <p><b>BEKK Volleyball</b></p>"""
         }
 
         mailText
@@ -121,7 +119,7 @@ class MailServiceImpl implements MailService {
         SendGrid.Email email = new SendGrid.Email()
         email.addTo(epostAdmin)
         email.setFrom(epostAdmin)
-        email.setSubject("[BEKK-Fotball] - ${event.subject}")
+        email.setSubject("[BEKK-Volleyball] - ${event.subject}")
         email.setText("${p.name} har gått fra reservelisten til påmeldtlisten, men ikke registrert eposten sin må derfor få beskjed!")
         try {
             sendgrid.send(email)

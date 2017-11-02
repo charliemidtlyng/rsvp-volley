@@ -7,6 +7,13 @@ function nextMonday(hour, minute) {
     return monday;
 }
 
+function nextWednesday(hour, minute) {
+    var isWednesday = Date.today().is().wednesday();
+    var wednesday = isWednesday ? Date.today() : Date.today().next().wednesday();
+    wednesday.set({hour: hour, minute: minute, second: 0});
+    return wednesday;
+}
+
 function nextFriday(hour, minute) {
     var isFriday = Date.today().is().friday();
     var friday = isFriday ? Date.today() : Date.today().next().friday();
@@ -18,13 +25,13 @@ var DefaultEvents = {
     training: function () {
         return {
             subject: 'Trening',
-            description: 'Oppmøte 19:45!\nTrening i OBIK-hallen. Hallen ligger rett bak Oslo Skatepark. \n\n¡Avmelding!\nHvis det viser seg at du allikevel ikke \nkan komme, meld deg av så snart \ndu vet dette - og si ifra til nestemann \npå lista (evt. Slack). \n\nLegger du ved epost/mobilnr får du \nmail/sms så snart du forflytter deg \nfra reservelista til påmeldtlista!',
+            description: 'Oppmøte 18:30!\nTrening i OBIK-hallen. Hallen ligger rett bak Oslo Skatepark. \n\n¡Avmelding!\nHvis det viser seg at du allikevel ikke \nkan komme, meld deg av så snart \ndu vet dette - og si ifra til nestemann \npå lista (evt. Slack). \n\nLegger du ved epost/mobilnr får du \nmail/sms så snart du forflytter deg \nfra reservelista til påmeldtlista!',
             location: 'OBIK-hallen',
-            maxNumber: 12,
-            startTime: nextMonday(20, 0),
-            endTime: nextMonday(21, 0),
-            regStart: nextFriday(8, 30),
-            regEnd: nextMonday(21, 0),
+            maxNumber: 14,
+            startTime: nextWednesday(18, 45),
+            endTime: nextWednesday(19, 45),
+            regStart: nextMonday(9, 30),
+            regEnd: nextWednesday(19, 45),
             eventSubType: 'Training',
             creator: 'Auto'
         };

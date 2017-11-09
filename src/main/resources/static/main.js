@@ -974,7 +974,7 @@ var Event = React.createClass({
                 { isLoading: this.props.event.loading },
                 React.createElement(
                     'div',
-                    { className: 'clearfix margin-bottom-30 margin-top-50 event event-with-padding' },
+                    { className: 'clearfix margin-bottom-30 margin-top-100 event event-with-padding' },
                     React.createElement(
                         'h6',
                         { className: 'margin-bottom-0' },
@@ -1728,7 +1728,7 @@ var EventList = React.createClass({
             { isLoading: this.props.loading },
             React.createElement(
                 'div',
-                { className: 'eventList row margin-top-50 ' },
+                { className: 'eventList row margin-top-100 ' },
                 React.createElement(
                     'div',
                     { className: 'alert alert-info col-xs-12 col-md-9', role: 'alert' },

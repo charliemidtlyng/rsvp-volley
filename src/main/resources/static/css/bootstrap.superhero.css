@@ -1414,7 +1414,7 @@ a.bg-danger:focus {
 }
 .page-header {
     padding-bottom: 9.5px;
-    margin: 42px 0 21px;
+    margin: 92px 0 21px;
     border-bottom: 1px solid #ebebeb;
 }
 ul,
@@ -4335,6 +4335,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 }
 .navbar-brand > img {
     display: block;
+    width: 70px;
 }
 @media (min-width: 768px) {
     .navbar > .container .navbar-brand,
@@ -4346,7 +4347,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
     position: relative;
     float: right;
     margin-right: 15px;
-    padding: 9px 10px;
+    padding: 30px 30px;
     margin-top: 3px;
     margin-bottom: 3px;
     background-color: transparent;
@@ -4375,9 +4376,10 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
     margin: 4.75px -15px;
 }
 .navbar-nav > li > a {
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-top: 30px;
+    padding-bottom: 30px;
     line-height: 21px;
+    font-size: 16px;
 }
 @media (max-width: 767px) {
     .navbar-nav .open .dropdown-menu {
@@ -4411,8 +4413,8 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
         float: left;
     }
     .navbar-nav > li > a {
-        padding-top: 9.5px;
-        padding-bottom: 9.5px;
+        padding-top: 30px;
+        padding-bottom: 30px;
     }
 }
 .navbar-form {
@@ -4559,7 +4561,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
     color: #ebebeb;
 }
 .navbar-default .navbar-nav > li > a {
-    color: #ebebeb;
+    color: #ebebeb;              3
 }
 .navbar-default .navbar-nav > li > a:hover,
 .navbar-default .navbar-nav > li > a:focus {
@@ -4655,7 +4657,7 @@ fieldset[disabled] .navbar-default .btn-link:focus {
     color: #ebebeb;
 }
 .navbar-inverse .navbar-nav > li > a {
-    color: #ebebeb;
+    color: #ebebeb;              3
 }
 .navbar-inverse .navbar-nav > li > a:hover,
 .navbar-inverse .navbar-nav > li > a:focus {
